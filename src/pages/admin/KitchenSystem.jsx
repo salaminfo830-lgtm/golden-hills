@@ -13,20 +13,20 @@ const KitchenSystem = () => {
 
   return (
     <div className="space-y-8 font-sans">
-      <div className="flex justify-between items-end">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h2 className="text-3xl font-serif font-bold tracking-tight">Kitchen & Dining Board</h2>
-          <p className="text-gray-400 font-medium">Real-time F&B operation tracking</p>
+          <p className="text-gray-400 font-medium tracking-wide text-sm font-semibold">Real-time F&B operation tracking</p>
         </div>
-        <div className="flex gap-4">
-           <div className="p-4 bg-white border border-gray-100 rounded-2xl flex items-center gap-3 shadow-sm">
+        <div className="flex gap-4 w-full md:w-auto">
+           <div className="flex-1 md:flex-none p-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-center gap-3 shadow-sm">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-sm font-bold text-gray-700">Kitchen Active</span>
+              <span className="text-[10px] uppercase font-serif font-bold tracking-widest text-gray-700">Kitchen Active</span>
            </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-luxury-black">
          {activeOrders.map((order, i) => (
            <motion.div
               key={i}
@@ -34,7 +34,7 @@ const KitchenSystem = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: i * 0.1 }}
            >
-              <GlassCard className={`relative overflow-hidden h-full border-l-8 ${order.priority === 'High' ? 'border-red-500' : 'border-luxury-gold'}`}>
+              <GlassCard className={`relative overflow-hidden h-full border-l-[6px] md:border-l-[8px] ${order.priority === 'High' ? 'border-red-500' : 'border-luxury-gold'}`}>
                  <div className="flex justify-between items-start mb-6">
                     <div>
                        <h3 className="text-2xl font-bold font-serif">{order.table}</h3>
@@ -47,7 +47,7 @@ const KitchenSystem = () => {
                        }`}>
                          {order.status}
                        </span>
-                       <div className="flex items-center gap-1 text-gray-400 text-xs">
+                       <div className="flex items-center gap-1 text-gray-400 font-bold text-[10px] uppercase tracking-tighter">
                           <Clock className="w-3 h-3" /> {order.time}
                        </div>
                     </div>
@@ -55,16 +55,16 @@ const KitchenSystem = () => {
                  
                  <div className="space-y-3 mb-8">
                     {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-sm text-gray-600 font-medium">
-                         <div className="w-1.5 h-1.5 rounded-full bg-gray-200" />
+                      <div key={idx} className="flex items-center gap-2 text-xs md:text-sm text-gray-600 font-medium">
+                         <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold/30" />
                          {item}
                       </div>
-                    ))}
+                     ))}
                  </div>
 
                  <div className="flex gap-2">
-                    <button className="flex-1 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors text-[10px] font-bold uppercase tracking-widest text-gray-500">HOLD</button>
-                    <button className="flex-1 py-2 rounded-xl gold-gradient text-white text-[10px] font-bold uppercase tracking-widest">READY</button>
+                    <button className="flex-1 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-[10px] font-bold uppercase tracking-widest text-gray-500">HOLD</button>
+                    <button className="flex-1 py-3 rounded-xl bg-luxury-black text-white text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-colors">READY</button>
                  </div>
               </GlassCard>
            </motion.div>
@@ -73,17 +73,17 @@ const KitchenSystem = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
          <div className="lg:col-span-2">
-             <GlassCard className="bg-white border-gray-100 p-8 shadow-sm">
-                <div className="flex justify-between items-center mb-8">
-                   <h3 className="text-xl font-bold">Restaurant Occupancy</h3>
-                   <span className="text-xs font-bold text-luxury-gold cursor-pointer hover:underline">Manage Tables</span>
+             <GlassCard className="bg-white border-gray-100 p-6 md:p-8 shadow-sm">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                   <h3 className="text-xl font-bold font-serif">Restaurant Occupancy</h3>
+                   <span className="text-[10px] uppercase tracking-widest font-bold text-luxury-gold cursor-pointer hover:underline transition-all">Manage Floor Tables</span>
                 </div>
-                <div className="grid grid-cols-5 md:grid-cols-8 lg:grid-cols-12 gap-4">
+                <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4">
                    {Array.from({ length: 36 }).map((_, i) => {
                       const isOccupied = Math.random() > 0.4;
                       return (
-                         <div key={i} className={`aspect-square rounded-2xl border flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-110 ${
-                           isOccupied ? 'bg-luxury-gold/10 border-luxury-gold' : 'bg-gray-50 border-gray-100 opacity-40'
+                         <div key={i} className={`aspect-square rounded-xl md:rounded-2xl border flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-110 ${
+                            isOccupied ? 'bg-luxury-gold/10 border-luxury-gold/30' : 'bg-gray-50 border-gray-100 opacity-40'
                          }`}>
                            <span className="text-[10px] font-bold">{30 + i}</span>
                            <Utensils className={`w-3 h-3 mt-1 ${isOccupied ? 'text-luxury-gold' : 'text-gray-300'}`} />
@@ -96,8 +96,8 @@ const KitchenSystem = () => {
 
          <div className="space-y-8">
             <GlassCard className="bg-white border-gray-100 p-8">
-               <h3 className="text-xl font-bold mb-6 italic font-serif">Kitchen Stock Alerts</h3>
-               <div className="space-y-4">
+               <h3 className="text-xl font-bold mb-8 italic font-serif">Kitchen Stock Alerts</h3>
+               <div className="space-y-6">
                   {[
                     { item: 'Saffron Threads', level: 'Low (15g)', color: 'text-red-500' },
                     { item: 'Mint Leaves', level: 'Regular (2kg)', color: 'text-green-500' },

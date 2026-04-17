@@ -19,10 +19,10 @@ const AnalyticsOverview = () => {
         ].map((stat, i) => (
           <GlassCard key={i} className="flex items-center gap-6 bg-white border-gray-100 shadow-sm" variant="light">
             <div className={`p-4 rounded-2xl bg-gray-50 ${stat.color}`}>
-              {stat.icon}
+              <div className="w-5 h-5">{stat.icon}</div>
             </div>
             <div>
-              <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">{stat.label}</p>
+              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em]">{stat.label}</p>
               <div className="flex items-baseline gap-2">
                 <h3 className="text-2xl font-bold">{stat.value}</h3>
                 <span className={`text-[10px] font-bold ${stat.trend.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
@@ -37,25 +37,25 @@ const AnalyticsOverview = () => {
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
         <div className="xl:col-span-2 space-y-8">
           {/* Revenue Chart */}
-          <GlassCard className="bg-white border-gray-100">
-            <div className="flex justify-between items-center mb-8">
+          <GlassCard className="bg-white border-gray-100 p-6 md:p-8">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-10">
               <div>
-                <h3 className="text-xl font-bold">Revenue Analytics</h3>
-                <p className="text-gray-400 text-sm">Real-time financial performance</p>
+                <h3 className="text-xl font-bold font-serif">Revenue Analytics</h3>
+                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-widest">Real-time performance</p>
               </div>
-              <div className="flex gap-2">
-                <button className="px-4 py-2 text-[10px] font-bold rounded-xl border border-gray-100 text-gray-400">Week</button>
-                <button className="px-4 py-2 text-[10px] font-bold rounded-xl bg-luxury-black text-white">Month</button>
+              <div className="flex gap-2 w-full md:w-auto">
+                <button className="flex-1 md:flex-none px-6 py-2 text-[10px] font-bold rounded-xl border border-gray-100 text-gray-400">Week</button>
+                <button className="flex-1 md:flex-none px-6 py-2 text-[10px] font-bold rounded-xl bg-luxury-black text-white">Month</button>
               </div>
             </div>
-            <div className="h-64 flex items-end justify-between gap-4 px-4">
+            <div className="h-64 flex items-end justify-between gap-2 md:gap-4 px-2">
                {[40, 65, 45, 90, 65, 80, 55, 100, 85, 75, 40, 60].map((val, i) => (
                  <div key={i} className="flex-1 group relative">
                     <motion.div 
                       initial={{ height: 0 }}
                       animate={{ height: `${val}%` }}
                       transition={{ duration: 1, delay: i * 0.05 }}
-                      className={`w-full rounded-t-xl transition-all ${i === 7 ? 'gold-gradient shadow-lg shadow-luxury-gold/30' : 'bg-gray-100 group-hover:bg-luxury-gold/20'}`}
+                      className={`w-full rounded-t-lg md:rounded-t-xl transition-all ${i === 7 ? 'gold-gradient shadow-lg shadow-luxury-gold/30' : 'bg-gray-100 group-hover:bg-luxury-gold/10'}`}
                     />
                  </div>
                ))}
@@ -63,28 +63,30 @@ const AnalyticsOverview = () => {
           </GlassCard>
 
           {/* Room Grid */}
-          <GlassCard className="bg-white border-gray-100">
-             <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold">Room Management Status</h3>
-                <span className="text-luxury-gold text-xs font-bold flex items-center gap-1 cursor-pointer hover:underline uppercase tracking-widest">Floor Map <ChevronUp className="w-4 h-4" /></span>
+          <GlassCard className="bg-white border-gray-100 p-6 md:p-8">
+             <div className="flex justify-between items-center mb-8">
+                <h3 className="text-xl font-bold font-serif">Room Grid</h3>
+                <span className="text-luxury-gold text-[10px] font-bold flex items-center gap-2 cursor-pointer hover:underline uppercase tracking-widest transition-all">
+                  Floor Map <ChevronUp className="w-4 h-4 translate-y-[1px]" />
+                </span>
              </div>
-             <div className="grid grid-cols-4 md:grid-cols-6 lg:grid-cols-10 gap-3">
+             <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-2 md:gap-3">
                 {Array.from({ length: 30 }).map((_, i) => {
                   const states = ['vacant', 'occupied', 'dirty', 'maintenance'];
                   const status = states[Math.floor(Math.random() * 4)];
                   const colors = {
-                    vacant: 'bg-green-50 text-green-600 border-green-100',
-                    occupied: 'bg-luxury-gold/10 text-luxury-gold border-luxury-gold/20',
-                    dirty: 'bg-orange-50 text-orange-600 border-orange-100',
-                    maintenance: 'bg-red-50 text-red-600 border-red-100'
+                    vacant: 'bg-green-50 text-green-600 border-green-100 hover:bg-green-100',
+                    occupied: 'bg-luxury-gold/10 text-luxury-gold border-luxury-gold/20 hover:bg-luxury-gold/20',
+                    dirty: 'bg-orange-50 text-orange-600 border-orange-100 hover:bg-orange-100',
+                    maintenance: 'bg-red-50 text-red-600 border-red-100 hover:bg-red-100'
                   };
                   return (
                     <motion.div 
                       key={i} 
-                      whileHover={{ scale: 1.05, y: -2 }}
-                      className={`aspect-square rounded-xl border flex flex-col items-center justify-center cursor-pointer transition-all shadow-sm ${colors[status]}`}
+                      whileHover={{ scale: 1.1, zIndex: 10 }}
+                      className={`aspect-square rounded-lg md:rounded-xl border flex flex-col items-center justify-center cursor-pointer transition-all shadow-sm ${colors[status]}`}
                     >
-                      <span className="text-xs font-bold">{101 + i}</span>
+                      <span className="text-[10px] md:text-xs font-bold">{101 + i}</span>
                     </motion.div>
                   );
                 })}
@@ -93,41 +95,27 @@ const AnalyticsOverview = () => {
         </div>
 
         <div className="space-y-8">
-           <GlassCard className="bg-white border-gray-100">
-              <h3 className="text-xl font-bold mb-6">Recent Arrivals</h3>
+           <GlassCard className="bg-white border-gray-100 p-8">
+              <h3 className="text-xl font-bold mb-8 font-serif">Recent Arrivals</h3>
               <div className="space-y-6">
                  {['Sarah Benali', 'John Miller', 'Moussa Brahimi'].map((guest, i) => (
                    <div key={i} className="flex items-center justify-between pb-6 border-b border-gray-50 last:border-0 last:pb-0">
                       <div className="flex items-center gap-4">
-                         <div className="w-10 h-10 rounded-xl bg-gray-50 overflow-hidden">
-                            <img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${guest}`} alt={guest} />
+                         <div className="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-xs">
+                            {guest.split(' ').map(n => n[0]).join('')}
                          </div>
                          <div>
-                            <p className="font-bold text-sm">{guest}</p>
-                            <p className="text-[10px] text-gray-400 font-medium">Standard Double • 202</p>
+                            <p className="text-sm font-bold">{guest}</p>
+                            <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Suite 104 • Checked In</p>
                          </div>
                       </div>
-                      <span className="text-[10px] font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg italic">Checked In</span>
+                      <MoreVertical className="w-4 h-4 text-gray-300" />
                    </div>
                  ))}
               </div>
-           </GlassCard>
-
-           <GlassCard className="bg-luxury-black text-white">
-              <div className="flex items-center gap-3 mb-6 font-bold">
-                 <AlertCircle className="text-luxury-gold" />
-                 <h3>System Alerts</h3>
-              </div>
-              <div className="space-y-4 text-xs">
-                 <div className="p-4 rounded-xl glass-dark border-white/5">
-                    <p className="text-luxury-gold font-bold mb-1">KITCHEN</p>
-                    <p className="opacity-80 leading-relaxed font-medium">Walk-in Fridge #2 temperature sensor anomaly detected.</p>
-                 </div>
-                 <div className="p-4 rounded-xl glass-dark border-white/5">
-                    <p className="text-orange-400 font-bold mb-1">SECURITY</p>
-                    <p className="opacity-80 leading-relaxed font-medium">Unauthorized elevator access attempt - Floor 7.</p>
-                 </div>
-              </div>
+              <button className="w-full mt-8 py-3 rounded-xl border border-dashed border-gray-200 text-gray-400 text-[10px] font-bold uppercase tracking-widest hover:border-luxury-gold hover:text-luxury-gold transition-all">
+                 View All Arrivals
+              </button>
            </GlassCard>
         </div>
       </div>

@@ -16,6 +16,7 @@ import FinanceSystem from './admin/FinanceSystem';
 import KitchenSystem from './admin/KitchenSystem';
 import SecuritySystem from './admin/SecuritySystem';
 import SettingsSystem from './admin/SettingsSystem';
+import RoomsSystem from './admin/RoomsSystem';
 
 const AdminPanel = () => {
   return (
@@ -23,7 +24,7 @@ const AdminPanel = () => {
       <Routes>
         <Route path="/" element={<AnalyticsOverview />} />
         <Route path="/reservations" element={<ReservationsSystem />} />
-        <Route path="/rooms" element={<AnalyticsOverview />} /> {/* Reuse/Expand */}
+        <Route path="/rooms" element={<RoomsSystem />} />
         <Route path="/kitchen" element={<KitchenSystem />} />
         <Route path="/hr" element={<HRSystem />} />
         <Route path="/finance" element={<FinanceSystem />} />

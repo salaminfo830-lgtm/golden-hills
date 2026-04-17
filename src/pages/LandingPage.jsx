@@ -84,70 +84,70 @@ const LandingPage = () => {
 
         <div className="container mx-auto px-6 relative z-10 text-center text-white">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h4 className="text-luxury-gold font-serif italic text-xl mb-4 tracking-widest">WELCOME TO ELEGANCE</h4>
-            <h1 className="text-6xl md:text-8xl font-serif font-bold mb-8 leading-tight">
-              A Symphony of <br /> Luxury & Comfort
+            <h4 className="text-luxury-gold font-serif italic text-sm md:text-xl mb-4 tracking-[0.4em] uppercase">Setif's Gilded Sanctuary</h4>
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-serif font-bold mb-8 leading-[1.1] tracking-tight">
+              A Symphony of <br className="hidden md:block" /> Luxury & Light
             </h1>
-            <p className="text-xl md:text-2xl text-white/80 max-w-2xl mx-auto mb-12">
-              Discover the pinnacle of Algerian hospitality at Golden Hills Hotel, where every detail is a masterpiece of gold and light.
+            <p className="text-sm md:text-xl text-white/70 max-w-xl md:max-w-2xl mx-auto mb-10 md:mb-14 font-medium leading-relaxed px-4 md:px-0">
+              Experience the pinnacle of Algerian hospitality at Golden Hills Hotel, where every moment is a masterpiece of gold and light.
             </p>
-            <div className="flex flex-col md:flex-row gap-6 justify-center items-center">
-              <GoldButton className="text-lg px-10">BOOK YOUR STAY</GoldButton>
-              <button className="flex items-center gap-3 text-lg font-medium hover:text-luxury-gold transition-colors">
-                <PlayCircle className="w-8 h-8" /> WATCH THE EXPERIENCE
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <GoldButton className="w-full sm:w-auto text-sm md:text-lg px-8 md:px-12 py-4 md:py-5 shadow-2xl">RESERVE YOUR MOMENT</GoldButton>
+              <button className="flex items-center gap-3 text-sm md:text-lg font-bold tracking-widest uppercase hover:text-luxury-gold transition-colors group">
+                <PlayCircle className="w-8 h-8 md:w-10 md:h-10 group-hover:scale-110 transition-transform" /> THE EXPERIENCE
               </button>
             </div>
           </motion.div>
         </div>
 
         {/* Floating Booking Widget */}
-        <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6">
-          <GlassCard className="flex flex-col md:flex-row gap-6 p-8 shadow-2xl border-white/40">
-            <div className="flex-1 space-y-2">
-              <label className="text-xs uppercase tracking-widest font-bold text-luxury-gold">Check-in</label>
-              <div className="flex items-center gap-3 border-b border-luxury-gold/20 pb-2">
-                <Calendar className="text-luxury-gold w-5 h-5" />
-                <span className="font-medium">12 Oct 2026</span>
+        <div className="hidden md:block absolute -bottom-16 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6">
+          <GlassCard className="flex flex-row gap-8 p-10 shadow-2xl border-white/40 ring-1 ring-white/10">
+            <div className="flex-1 space-y-3">
+              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Check-in <div className="w-1 h-1 rounded-full bg-luxury-gold" /></label>
+              <div className="flex items-center gap-4 border-b border-luxury-gold/20 pb-3">
+                <Calendar className="text-luxury-gold w-5 h-5 opacity-60" />
+                <span className="font-bold text-luxury-black">12 Oct 2026</span>
               </div>
             </div>
-            <div className="flex-1 space-y-2">
-              <label className="text-xs uppercase tracking-widest font-bold text-luxury-gold">Check-out</label>
-              <div className="flex items-center gap-3 border-b border-luxury-gold/20 pb-2">
-                <Calendar className="text-luxury-gold w-5 h-5" />
-                <span className="font-medium">18 Oct 2026</span>
+            <div className="flex-1 space-y-3">
+              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Check-out <div className="w-1 h-1 rounded-full bg-orange-400" /></label>
+              <div className="flex items-center gap-4 border-b border-luxury-gold/20 pb-3">
+                <Calendar className="text-luxury-gold w-5 h-5 opacity-60" />
+                <span className="font-bold text-luxury-black">18 Oct 2026</span>
               </div>
             </div>
-            <div className="flex-1 space-y-2">
-              <label className="text-xs uppercase tracking-widest font-bold text-luxury-gold">Guests</label>
-              <div className="flex items-center gap-3 border-b border-luxury-gold/20 pb-2">
-                <Users className="text-luxury-gold w-5 h-5" />
-                <span className="font-medium">2 Adults, 0 Children</span>
+            <div className="flex-1 space-y-3">
+              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Guests <div className="w-1 h-1 rounded-full bg-blue-400" /></label>
+              <div className="flex items-center gap-4 border-b border-luxury-gold/20 pb-3">
+                <Users className="text-luxury-gold w-5 h-5 opacity-60" />
+                <span className="font-bold text-luxury-black">2 Adults, 0 Children</span>
               </div>
             </div>
-            <div className="flex items-center">
-              <GoldButton className="w-full md:w-auto px-12">CHECK AVAILABILITY</GoldButton>
+            <div className="flex items-center pt-5">
+              <GoldButton className="px-12 py-4 shadow-gold">PROCEED</GoldButton>
             </div>
           </GlassCard>
         </div>
       </section>
 
       {/* About Section */}
-      <section id="about" className="pt-40 pb-20 container mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-20 items-center">
+      <section id="about" className="pt-24 md:pt-48 pb-20 container mx-auto px-6">
+        <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
           <motion.div
-             initial={{ opacity: 0, x: -50 }}
+             initial={{ opacity: 0, x: -30 }}
              whileInView={{ opacity: 1, x: 0 }}
              viewport={{ once: true }}
              transition={{ duration: 1 }}
           >
-            <h4 className="text-luxury-gold font-serif italic text-lg mb-2">Our Story</h4>
-            <h2 className="text-5xl font-serif font-bold mb-8">Setif's Gided Landmark <br /> Since 1998</h2>
-            <p className="text-gray-600 leading-relaxed text-lg mb-8">
-              Golden Hills Hotel is more than just a place to stay; it is a testament to the enduring beauty of Algerian heritage blended with modern luxury. Situated in the heart of Setif, we offer a sanctuary of peace and prestige.
+            <h4 className="text-luxury-gold font-serif italic text-lg mb-3 tracking-wide">Centuries of Excellence</h4>
+            <h2 className="text-4xl md:text-6xl font-serif font-bold mb-8 leading-tight text-luxury-black">A Gilded Landmark <br className="hidden md:block" /> Since 1998</h2>
+            <p className="text-gray-500 leading-relaxed text-base md:text-lg mb-10 font-medium">
+              Golden Hills Hotel is more than just a destination; it is a testament to the enduring beauty of Algerian heritage blended with modern sophistication. Situated in the cultural heart of Setif, we offer a sanctuary of peace, prestige, and unparalleled service.
             </p>
             <div className="grid grid-cols-2 gap-8 mb-10">
               <div className="flex items-start gap-4">
