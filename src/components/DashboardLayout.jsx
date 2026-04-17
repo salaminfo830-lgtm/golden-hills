@@ -78,7 +78,7 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+            className="fixed inset-0 bg-black/40 backdrop-blur-md z-40 lg:hidden"
           />
         )}
       </AnimatePresence>
@@ -88,29 +88,47 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
         initial={{ x: '-100%' }}
         animate={{ x: isMobileOpen ? 0 : '-100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-y-0 left-0 w-80 bg-luxury-black z-50 lg:hidden flex flex-col"
+        className="fixed inset-y-0 left-0 w-[280px] bg-luxury-black/95 backdrop-blur-2xl z-50 lg:hidden flex flex-col border-r border-white/10"
       >
         <div className="p-8"><Logo inverse /></div>
         <nav className="flex-1 px-4 space-y-2 mt-8">
-           {sidebarItems.map((item, idx) => (
-             <Link key={idx} to={item.path} onClick={() => setMobileOpen(false)} className="flex items-center gap-4 px-6 py-4 rounded-2xl text-white/60 hover:text-white">
-                {item.icon} <span className="font-bold text-sm uppercase tracking-widest">{item.label}</span>
+           {(userType === 'Admin' ? sidebarItems : [
+             { icon: <Home className="w-5 h-5" />, label: 'My Tasks', path: '/staff' },
+             { icon: <Calendar className="w-5 h-5" />, label: 'My Shift', path: '/staff/shift' },
+             { icon: <Mail className="w-5 h-5" />, label: 'Messages', path: '/staff/messages' },
+             { icon: <ClipboardList className="w-5 h-5" />, label: 'Checklist', path: '/staff/checklist' },
+           ]).map((item, idx) => (
+             <Link 
+               key={idx} 
+               to={item.path} 
+               onClick={() => setMobileOpen(false)} 
+               className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${
+                 currentPath === item.path ? 'bg-luxury-gold/10 text-luxury-gold' : 'text-white/60 hover:text-white'
+               }`}
+              >
+                {item.icon} <span className="font-bold text-xs uppercase tracking-widest">{item.label}</span>
              </Link>
            ))}
         </nav>
+        <div className="p-6 border-t border-white/10">
+           <Link to="/" className="flex items-center gap-4 px-6 py-4 text-white/40 hover:text-white transition-colors w-full rounded-2xl">
+             <LogOut className="w-5 h-5 shrink-0" />
+             <span className="font-bold text-xs uppercase tracking-widest">Exit Systems</span>
+           </Link>
+        </div>
       </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 overflow-y-auto relative">
+      <main className="flex-1 overflow-y-auto relative bg-[#fafafa]">
         {/* Topbar */}
-        <header className="sticky top-0 bg-white/70 backdrop-blur-xl border-b border-gray-100 z-20 px-4 md:px-8 py-4 flex justify-between items-center">
+        <header className="sticky top-0 bg-white/60 backdrop-blur-2xl border-b border-gray-100/50 z-20 px-4 md:px-8 py-3 flex justify-between items-center shadow-sm">
            <div className="flex items-center gap-4">
-             <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-3 hover:bg-gray-100 rounded-2xl transition-colors">
+             <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-gray-600">
                <MenuIcon />
              </button>
              <div className="hidden md:block">
-               <h2 className="text-xl font-bold text-gray-800 tracking-tight">Golden Hills <span className="text-luxury-gold">Systems</span></h2>
-               <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Integrated Platform 2.0</p>
+               <h2 className="text-lg font-serif font-bold text-gray-800 tracking-tight">Golden Hills <span className="text-luxury-gold">Systems</span></h2>
+               <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Integrated v2.0</p>
              </div>
            </div>
 

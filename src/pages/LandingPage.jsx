@@ -9,11 +9,12 @@ import GlassCard from '../components/GlassCard';
 import GoldButton from '../components/GoldButton';
 
 import Logo from '../components/Logo';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LandingPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
@@ -35,7 +36,7 @@ const LandingPage = () => {
             <a href="#suites" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Suites</a>
             <a href="#services" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Services</a>
             <a href="#contact" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Contact</a>
-            <GoldButton className="px-8 py-2 text-xs" onClick={() => window.location.href='/admin'}>MANAGEMENT</GoldButton>
+            <GoldButton className="px-8 py-2 text-xs" onClick={() => navigate('/admin')}>MANAGEMENT</GoldButton>
           </div>
 
           <button className="lg:hidden p-2 rounded-lg glass" onClick={() => setIsMenuOpen(!isMenuOpen)}>
@@ -62,7 +63,7 @@ const LandingPage = () => {
                 <a href="#suites" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Luxury Suites</a>
                 <a href="#services" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Experience</a>
                 <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Get in Touch</a>
-                <GoldButton className="mt-8" onClick={() => window.location.href='/admin'}>Admin Login</GoldButton>
+                <GoldButton className="mt-8" onClick={() => navigate('/admin')}>Admin Login</GoldButton>
               </div>
               <div className="mt-auto border-t border-white/10 pt-8 opacity-40 text-sm text-white text-center">
                 © 2026 Golden Hills Hotel
@@ -196,15 +197,15 @@ const LandingPage = () => {
 
           <div className="grid md:grid-cols-3 gap-10">
              {[
-               { name: 'Royal Gold Suite', price: '$450', img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070' },
-               { name: 'Heritage Deluxe', price: '$320', img: 'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974' },
-               { name: 'Presidential Panorama', price: '$850', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070' }
+               { id: 0, name: 'Royal Gold Suite', price: '$450', img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070' },
+               { id: 1, name: 'Heritage Deluxe', price: '$320', img: 'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974' },
+               { id: 2, name: 'Presidential Panorama', price: '$850', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070' }
              ].map((suite, i) => (
                <motion.div 
                  key={i}
                  whileHover={{ y: -10 }}
                  className="group cursor-pointer"
-                 onClick={() => window.location.href=`/room/${i}`}
+                 onClick={() => navigate(`/room/${suite.id}`)}
                >
                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-6">
                    <img src={suite.img} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" alt={suite.name} />
@@ -218,7 +219,7 @@ const LandingPage = () => {
                      <span className="flex items-center gap-1"><Users className="w-4 h-4" /> 2 Guests</span>
                      <span className="flex items-center gap-1"><Wind className="w-4 h-4" /> AC</span>
                    </div>
-                   <Link to={`/room/${i}`} className="text-luxury-gold font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                   <Link to={`/room/${suite.id}`} className="text-luxury-gold font-bold flex items-center gap-1 hover:gap-2 transition-all">
                      View Details <ChevronRight className="w-4 h-4" />
                    </Link>
                  </div>
@@ -282,10 +283,10 @@ const LandingPage = () => {
             <div>
               <h5 className="font-bold mb-6 text-luxury-gold text-lg">Quick Links</h5>
               <ul className="space-y-4 text-white/50">
-                <li className="hover:text-white transition-colors cursor-pointer">About Us</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Our Rooms</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Spa & Wellness</li>
-                <li className="hover:text-white transition-colors cursor-pointer">Dining</li>
+                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/about">About Us</Link></li>
+                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/suites">Our Rooms</Link></li>
+                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/spa">Spa & Wellness</Link></li>
+                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/dining">Dining</Link></li>
               </ul>
             </div>
             <div>
@@ -300,12 +301,25 @@ const LandingPage = () => {
           <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6 text-white/30 text-sm">
             <p>© 2026 Golden Hills Hotel Setif. All rights reserved.</p>
             <div className="flex gap-10">
-              <span className="hover:text-white cursor-pointer">Privacy Policy</span>
-              <span className="hover:text-white cursor-pointer">Terms of Service</span>
+              <Link to="/privacy" className="hover:text-white cursor-pointer">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-white cursor-pointer">Terms of Service</Link>
             </div>
           </div>
         </div>
       </footer>
+      {/* Mobile Sticky CTA */}
+      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[90%] pointer-events-none">
+        <motion.div
+           initial={{ y: 100 }}
+           animate={{ y: 0 }}
+           className="pointer-events-auto"
+        >
+           <GoldButton className="w-full py-4 text-sm shadow-[0_20px_50px_rgba(212,175,55,0.3)]" onClick={() => window.location.href='#contact'}>
+             BOOK YOUR STAY
+           </GoldButton>
+        </motion.div>
+      </div>
+
     </div>
   );
 };

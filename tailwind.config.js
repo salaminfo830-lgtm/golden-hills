@@ -9,11 +9,11 @@ export default {
       colors: {
         luxury: {
           gold: {
-            DEFAULT: '#FFD700',
-            light: '#FFECB3',
-            dark: '#B8860B',
-            shimmer: '#FFED4D',
-            vibrant: '#FFC107',
+            DEFAULT: '#D4AF37', // Champagne Gold
+            light: '#F4E7B5',
+            dark: '#A68546',
+            shimmer: '#EDD196',
+            vibrant: '#F9D976',
           },
           white: {
             DEFAULT: '#FFFFFF',
@@ -21,8 +21,9 @@ export default {
             cream: '#FFFBED',
           },
           black: {
-            DEFAULT: '#1a1a1a',
-            glass: 'rgba(26, 26, 26, 0.8)',
+            DEFAULT: '#121212',
+            glass: 'rgba(18, 18, 18, 0.7)',
+            vapor: 'rgba(18, 18, 18, 0.4)',
           }
         }
       },
