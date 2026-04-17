@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 
 const KitchenSystem = () => {
   const activeOrders = [
-    { table: 'T-104', items: ['Z'Labia Setif', 'Traditional Couscous', 'Mint Tea'], status: 'Preparing', time: '12m', priority: 'High' },
+    { table: 'T-104', items: ["Z'Labia Setif", 'Traditional Couscous', 'Mint Tea'], status: 'Preparing', time: '12m', priority: 'High' },
     { table: 'Room 304', items: ['Continental Breakfast', 'Extra Espresso'], status: 'Cooking', time: '5m', priority: 'Normal' },
     { table: 'Bar-4', items: ['Mocktail Royal', 'Mixed Nuts'], status: 'Pending', time: '2m', priority: 'Low' },
     { table: 'T-202', items: ['Grilled Sea Bass', 'Saffron Rice'], status: 'Preparing', time: '18m', priority: 'High' },

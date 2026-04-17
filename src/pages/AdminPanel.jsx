@@ -33,8 +33,5 @@ const AdminPanel = () => {
     </DashboardLayout>
   );
 };
-    </DashboardLayout>
-  );
-};
 
 export default AdminPanel;

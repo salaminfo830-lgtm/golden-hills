@@ -105,7 +105,7 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
         {/* Topbar */}
         <header className="sticky top-0 bg-white/70 backdrop-blur-xl border-b border-gray-100 z-20 px-4 md:px-8 py-4 flex justify-between items-center">
            <div className="flex items-center gap-4">
-             <button onClick={() => lg: lg ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-3 hover:bg-gray-100 rounded-2xl transition-colors">
+             <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-3 hover:bg-gray-100 rounded-2xl transition-colors">
                <MenuIcon />
              </button>
              <div className="hidden md:block">
