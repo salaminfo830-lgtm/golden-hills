@@ -1,6 +1,4 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 const GoldButton = ({ children, className, onClick, outline = false }) => {

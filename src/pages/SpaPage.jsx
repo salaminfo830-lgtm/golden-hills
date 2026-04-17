@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Waves, Flower2, Wind, Sparkles, MapPin, Clock } from 'lucide-react';
+import { Waves, Flower2 } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import { Link } from 'react-router-dom';
 import Logo from '../components/Logo';
@@ -42,7 +41,7 @@ const SpaPage = () => {
               <section className="space-y-8">
                  <h2 className="text-4xl font-serif font-bold italic">Ancient Rituals, Modern Luxury</h2>
                  <p className="text-lg text-gray-600 leading-relaxed font-medium">
-                    Our multi-award-winning wellness sanctuary draws inspiration from ancient Algerian hammam rituals. Each treatment is tailored to your body's specific needs, using organic oils sourced from the surrounding hills and premium saffron extracts.
+                    Our multi-award-winning wellness sanctuary draws inspiration from ancient Algerian hammam rituals. Each treatment is tailored to your body&apos;s specific needs, using organic oils sourced from the surrounding hills and premium saffron extracts.
                  </p>
                  <div className="grid md:grid-cols-2 gap-8 pt-6">
                     <img src="https://images.unsplash.com/photo-1596178065887-1198b6148b2b?auto=format&fit=crop&q=80&w=2070" className="rounded-3xl shadow-lg" alt="Spa Treatment" />

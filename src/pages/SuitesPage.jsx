@@ -1,6 +1,5 @@
-import React from 'react';
 import { motion } from 'framer-motion';
-import { Bed, Users, Wind, Coffee, ChevronRight, Star } from 'lucide-react';
+import { Bed, Users, ChevronRight, Star } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import { Link } from 'react-router-dom';
 import Logo from '../components/Logo';

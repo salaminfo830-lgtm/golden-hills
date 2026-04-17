@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
   ChevronLeft, Star, Coffee, Wind, 
-  Tv, Waves, MapPin, CheckCircle2, 
-  Calendar, Users, ShieldCheck
+  Tv, Waves, 
+  Calendar, ShieldCheck, ArrowRight
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import GoldButton from '../components/GoldButton';
@@ -12,6 +12,7 @@ import Logo from '../components/Logo';
 
 const RoomDetails = () => {
   const { id } = useParams();
+  console.log('Viewing room:', id);
   const [selectedImage, setSelectedImage] = useState(0);
 
   // Mock data for the room

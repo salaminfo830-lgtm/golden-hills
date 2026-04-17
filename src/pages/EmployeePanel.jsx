@@ -1,13 +1,11 @@
-import React from 'react';
 import DashboardLayout from '../components/DashboardLayout';
 import GlassCard from '../components/GlassCard';
 import { 
   CheckCircle2, Clock, MapPin, 
-  MessageSquare, Star, Calendar,
-  Utensils, Bed, Wind, AlertCircle,
-  MoreVertical, ChevronRight
+  Utensils, Bed, Wind, AlertCircle
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import GoldButton from '../components/GoldButton';
 
 const EmployeePanel = () => {
   return (

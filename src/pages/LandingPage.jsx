@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calendar, Users, MapPin, Star, Coffee, 
   Wind, Ship, UtensilsCrossed, Waves, 
@@ -88,7 +88,7 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
           >
-            <h4 className="text-luxury-gold font-serif italic text-sm md:text-xl mb-4 tracking-[0.4em] uppercase">Setif's Gilded Sanctuary</h4>
+            <h4 className="text-luxury-gold font-serif italic text-sm md:text-xl mb-4 tracking-[0.4em] uppercase">Setif&apos;s Gilded Sanctuary</h4>
             <h1 className="text-3xl sm:text-6xl md:text-8xl font-serif font-bold mb-6 md:mb-8 leading-[1.1] tracking-tight">
               A Symphony of <br className="hidden md:block" /> Luxury & Light
             </h1>

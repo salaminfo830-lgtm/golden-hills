@@ -1,9 +1,42 @@
-import React from 'react';
-import { Calendar, Filter, Plus, Search, ChevronLeft, ChevronRight, MoreHorizontal, User, Bed, Clock, Star } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, ChevronLeft, ChevronRight, User, Star, Loader2 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';
 
 const ReservationsSystem = () => {
+  const [reservations, setReservations] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchReservations();
+
+    const subscription = supabase
+      .channel('public:Reservation')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Reservation' }, payload => {
+        console.log('Real-time reservation update:', payload);
+        fetchReservations();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, []);
+
+  const fetchReservations = async () => {
+    const { data, error } = await supabase
+      .from('Reservation')
+      .select('*')
+      .order('created_at', { ascending: false });
+    
+    if (!error) {
+      setReservations(data);
+    }
+    setLoading(false);
+  };
+
   return (
     <div className="space-y-8 font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -11,7 +44,7 @@ const ReservationsSystem = () => {
           <h2 className="text-3xl font-serif font-bold tracking-tight">Reservation Hub</h2>
           <p className="text-gray-400 font-medium">Global booking synchronization</p>
         </div>
-        <GoldButton className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 md:py-3">
+        <GoldButton className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 md:py-3 cursor-not-allowed opacity-50">
           <Plus className="w-4 h-4" /> NEW BOOKING
         </GoldButton>
       </div>
@@ -40,7 +73,13 @@ const ReservationsSystem = () => {
             {Array.from({ length: 35 }).map((_, i) => {
                const day = i - 3;
                const isCurrent = day === 12;
-               const hasBooking = day >= 12 && day <= 18;
+               // Filter reservations for this day
+               const todayBooking = reservations.find(res => {
+                 const start = new Date(res.start_date).getDate();
+                 const end = new Date(res.end_date).getDate();
+                 return day >= start && day <= end;
+               });
+
                return (
                   <div key={i} className={`aspect-square md:h-28 rounded-xl md:rounded-2xl border p-1 md:p-2 transition-all relative group cursor-pointer ${
                     day < 1 || day > 31 ? 'opacity-0' : 
@@ -49,16 +88,17 @@ const ReservationsSystem = () => {
                      {day > 0 && day <= 31 && (
                        <>
                          <span className={`text-[10px] md:text-sm font-bold ${isCurrent ? 'text-luxury-gold' : 'text-gray-400'}`}>{day}</span>
-                         {hasBooking && (
+                         {todayBooking && (
                            <motion.div 
-                             layoutId={`booking-${day}`}
-                             className={`mt-1 md:mt-2 h-1.5 md:h-10 rounded-full md:rounded-lg ${day === 12 ? 'bg-luxury-gold' : day === 18 ? 'bg-orange-500' : 'bg-blue-400'} p-2 hidden md:block text-[8px] font-bold text-white overflow-hidden leading-tight`}
+                             initial={{ opacity: 0 }}
+                             animate={{ opacity: 1 }}
+                             className={`mt-1 md:mt-2 h-1.5 md:h-10 rounded-full md:rounded-lg ${new Date(todayBooking.start_date).getDate() === day ? 'bg-luxury-gold' : 'bg-blue-400'} p-2 hidden md:block text-[8px] font-bold text-white overflow-hidden leading-tight`}
                            >
-                              {day === 12 ? 'CHECK-IN: BENALI' : 'SUITE 405'}
+                              {new Date(todayBooking.start_date).getDate() === day ? `IN: ${todayBooking.guest_name.split(' ')[1] || todayBooking.guest_name}` : todayBooking.room_id ? `ROOM ${todayBooking.room_id}` : 'STAY'}
                            </motion.div>
                          )}
-                         {hasBooking && (
-                           <div className={`absolute bottom-1 md:hidden left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${day === 12 ? 'bg-luxury-gold' : day === 18 ? 'bg-orange-500' : 'bg-blue-400'}`} />
+                         {todayBooking && (
+                           <div className={`absolute bottom-1 md:hidden left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${new Date(todayBooking.start_date).getDate() === day ? 'bg-luxury-gold' : 'bg-blue-400'}`} />
                          )}
                        </>
                      )}
@@ -70,35 +110,37 @@ const ReservationsSystem = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
          <div className="lg:col-span-2">
-            <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden">
+            <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden min-h-[400px]">
                <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-                  <h3 className="font-bold font-serif text-lg">Pending Requests</h3>
+                  <h3 className="font-bold font-serif text-lg">Active Requests</h3>
                   <div className="flex gap-2 text-[10px] uppercase font-bold text-gray-400 cursor-pointer hover:text-luxury-gold transition-all">
-                     View All <ChevronRight className="w-4 h-4 translate-y-[1px]" />
+                     Syncing Real-time <Loader2 className={`w-4 h-4 translate-y-[1px] ${loading ? 'animate-spin' : ''}`} />
                   </div>
                </div>
                <div className="divide-y divide-gray-50">
-                  {[
-                    { name: 'Alice Cooper', info: '2 Guests • 3 Nights', type: 'Luxury Double', date: 'Oct 20 - 23', status: 'Pending Approval' },
-                    { name: 'Robert Fox', info: '1 Guest • 1 Night', type: 'Studio Gold', date: 'Oct 15 - 16', status: 'Requires Payment' },
-                    { name: 'Yasmine Dris', info: '4 Guests • 2 Suites', type: 'Royal Heritage', date: 'Oct 25 - 30', status: 'Vip Request' },
-                  ].map((req, i) => (
+                  {reservations.length === 0 ? (
+                    <div className="p-20 text-center">
+                       <p className="text-gray-400 text-sm font-medium italic">No active reservations in the system.</p>
+                    </div>
+                  ) : reservations.map((req, i) => (
                     <div key={i} className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:bg-gray-50/50 transition-colors group">
                        <div className="flex gap-4 md:gap-6 items-center w-full md:w-auto">
                           <div className="w-12 h-12 bg-gray-50 group-hover:bg-white rounded-2xl flex items-center justify-center text-gray-400 transition-colors">
                              <User className="w-6 h-6" />
                           </div>
                           <div className="flex-1">
-                             <h4 className="font-bold text-gray-800">{req.name}</h4>
-                             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{req.info}</p>
+                             <h4 className="font-bold text-gray-800">{req.guest_name}</h4>
+                             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{req.guests_count} Guests • {req.nights} Nights</p>
                           </div>
                           <div className="hidden md:block pl-6 border-l border-gray-100 uppercase tracking-[0.2em] text-[10px] font-bold text-gray-300">
-                             <p>{req.type}</p>
-                             <p className="text-luxury-gold">{req.date}</p>
+                             <p>{req.room_type}</p>
+                             <p className="text-luxury-gold">{new Date(req.start_date).toLocaleDateString()}</p>
                           </div>
                        </div>
                        <div className="flex items-center justify-between w-full md:w-auto gap-6 sm:pl-[72px] md:pl-0">
-                          <span className="text-[10px] font-bold uppercase tracking-widest px-3 py-1 bg-white border border-gray-100 rounded-full text-gray-400 shadow-sm">
+                          <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border transition-all ${
+                            req.status === 'Confirmed' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-white border-gray-100 text-gray-400'
+                          }`}>
                              {req.status}
                           </span>
                           <GoldButton outline className="px-6 py-2 text-[10px]">PROCESS</GoldButton>
@@ -114,9 +156,9 @@ const ReservationsSystem = () => {
                <h3 className="text-xl font-bold mb-8">Booking Sources</h3>
                <div className="space-y-8">
                   {[
-                    { label: 'Direct Site', val: '72%', color: 'bg-luxury-gold' },
-                    { label: 'Booking.com', val: '18%', color: 'bg-blue-600' },
-                    { label: 'Expedia', val: '10%', color: 'bg-orange-500' },
+                    { label: 'Direct Site', val: '100%', color: 'bg-luxury-gold' },
+                    { label: 'Booking.com', val: '0%', color: 'bg-blue-600' },
+                    { label: 'Expedia', val: '0%', color: 'bg-orange-500' },
                   ].map((item, i) => (
                     <div key={i} className="flex flex-col gap-2">
                        <div className="flex justify-between text-xs font-bold uppercase tracking-widest mb-1">
@@ -126,7 +168,7 @@ const ReservationsSystem = () => {
                        <div className="w-full h-1 bg-gray-50 rounded-full overflow-hidden">
                           <motion.div 
                              initial={{ width: 0 }}
-                             whileInView={{ width: item.val }}
+                             animate={{ width: item.val }}
                              transition={{ duration: 1 }}
                              className={`h-full ${item.color}`}
                           />
@@ -142,7 +184,7 @@ const ReservationsSystem = () => {
                   <h3>Occupancy Forecast</h3>
                </div>
                <p className="text-xs opacity-80 leading-relaxed mb-6">
-                  Based on historical data for Setif region, we expect <span className="font-bold underline">100% occupancy</span> during next week's festival season.
+                  Based on historical data for Setif region, we expect <span className="font-bold underline">100% occupancy</span> during next week&apos;s festival season.
                </p>
                <GoldButton outline className="w-full border-white/40 text-white hover:bg-white hover:text-luxury-gold">ANALYZE TRENDS</GoldButton>
             </GlassCard>

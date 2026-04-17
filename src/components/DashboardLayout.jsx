@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BarChart3, Calendar, Users, Home, 
   Settings, LogOut, Bell, Search,
-  ClipboardList, Coffee, Utensils, 
+  ClipboardList, Utensils, 
   Bed, ShieldCheck, Mail
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';

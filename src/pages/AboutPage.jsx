@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, MapPin, Award, History } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
@@ -53,7 +52,7 @@ const AboutPage = () => {
                  <h2 className="text-3xl font-serif font-bold italic">The Golden Story</h2>
               </div>
               <p className="text-lg text-gray-600 leading-relaxed font-medium">
-                Golden Hills Hotel Setif was founded with a singular vision: to create a sanctuary where the rugged beauty of the Algerian hills meets the refined elegance of international luxury. For over two decades, we have been the preferred destination for royalty, diplomats, and discerning travelers seeking a true "Golden" experience.
+                Golden Hills Hotel Setif was founded with a singular vision: to create a sanctuary where the rugged beauty of the Algerian hills meets the refined elegance of international luxury. For over two decades, we have been the preferred destination for royalty, diplomats, and discerning travelers seeking a true &quot;Golden&quot; experience.
               </p>
               <div className="grid grid-cols-2 gap-10 pt-10">
                  <div className="space-y-2">

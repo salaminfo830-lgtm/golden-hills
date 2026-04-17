@@ -1,5 +1,4 @@
-import React from 'react';
-import { Settings, Globe, Bell, Shield, Database, Palette, HelpCircle, Save } from 'lucide-react';
+import { Globe, Bell, Shield, Database, Palette, Save } from 'lucide-react';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';
 

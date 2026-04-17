@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { Shield, FileText, ChevronLeft } from 'lucide-react';
 import GlassCard from '../components/GlassCard';

@@ -1,12 +1,4 @@
-import React from 'react';
 import DashboardLayout from '../components/DashboardLayout';
-import GlassCard from '../components/GlassCard';
-import { 
-  TrendingUp, Users, Bed, CreditCard, 
-  Clock, Package, AlertCircle, ChevronUp,
-  MapPin, Calendar, CheckCircle2, MoreVertical
-} from 'lucide-react';
-import { motion } from 'framer-motion';
 
 import { Routes, Route } from 'react-router-dom';
 import AnalyticsOverview from './admin/AnalyticsOverview';

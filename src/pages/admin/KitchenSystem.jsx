@@ -1,133 +1,161 @@
-import React from 'react';
-import { Utensils, Clock, Flame, CheckCircle2, AlertTriangle, User, MoreVertical } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  Clock, AlertCircle, CheckCircle2, 
+  Flame, Inbox, Timer, Loader2
+} from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
-import { motion } from 'framer-motion';
+import GoldButton from '../../components/GoldButton';
 
 const KitchenSystem = () => {
-  const activeOrders = [
-    { table: 'T-104', items: ["Z'Labia Setif", 'Traditional Couscous', 'Mint Tea'], status: 'Preparing', time: '12m', priority: 'High' },
-    { table: 'Room 304', items: ['Continental Breakfast', 'Extra Espresso'], status: 'Cooking', time: '5m', priority: 'Normal' },
-    { table: 'Bar-4', items: ['Mocktail Royal', 'Mixed Nuts'], status: 'Pending', time: '2m', priority: 'Low' },
-    { table: 'T-202', items: ['Grilled Sea Bass', 'Saffron Rice'], status: 'Preparing', time: '18m', priority: 'High' },
-  ];
+  const [activeOrders, setActiveOrders] = useState([]);
+  const [stockAlerts, setStockAlerts] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchData();
+
+    const ordersSub = supabase
+      .channel('public:KitchenOrder')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'KitchenOrder' }, () => fetchData())
+      .subscribe();
+
+    const stockSub = supabase
+      .channel('public:StockItem')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'StockItem' }, () => fetchData())
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(ordersSub);
+      supabase.removeChannel(stockSub);
+    };
+  }, []);
+
+  const fetchData = async () => {
+    const { data: orders } = await supabase.from('KitchenOrder').select('*').order('created_at', { ascending: false });
+    const { data: stock } = await supabase.from('StockItem').select('*');
+    
+    if (orders) setActiveOrders(orders);
+    if (stock) setStockAlerts(stock);
+    setLoading(false);
+  };
+
+  const getPriorityColor = (p) => {
+    if (p === 'High') return 'text-red-500 bg-red-50 border-red-100';
+    if (p === 'Normal') return 'text-blue-500 bg-blue-50 border-blue-100';
+    return 'text-gray-400 bg-gray-50 border-gray-100';
+  };
 
   return (
     <div className="space-y-8 font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight">Kitchen & Dining Board</h2>
-          <p className="text-gray-400 font-medium tracking-wide text-sm font-semibold">Real-time F&B operation tracking</p>
+          <h2 className="text-3xl font-serif font-bold tracking-tight">Kitchen Operations</h2>
+          <p className="text-gray-400 font-medium tracking-wide">Live order flow & pantry synchronization</p>
         </div>
         <div className="flex gap-4 w-full md:w-auto">
-           <div className="flex-1 md:flex-none p-4 bg-white border border-gray-100 rounded-2xl flex items-center justify-center gap-3 shadow-sm">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[10px] uppercase font-serif font-bold tracking-widest text-gray-700">Kitchen Active</span>
-           </div>
+           <GoldButton outline className="flex-1 md:flex-none py-3 px-6 text-[10px] cursor-not-allowed opacity-50">STATION VIEW</GoldButton>
+           <GoldButton className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2 cursor-not-allowed opacity-50">
+             <Flame className="w-4 h-4" /> BUMP ALL
+           </GoldButton>
         </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 text-luxury-black">
-         {activeOrders.map((order, i) => (
-           <motion.div
-              key={i}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: i * 0.1 }}
-           >
-              <GlassCard className={`relative overflow-hidden h-full border-l-[6px] md:border-l-[8px] ${order.priority === 'High' ? 'border-red-500' : 'border-luxury-gold'}`}>
-                 <div className="flex justify-between items-start mb-6">
-                    <div>
-                       <h3 className="text-2xl font-bold font-serif">{order.table}</h3>
-                       <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">{order.priority} Priority</p>
-                    </div>
-                    <div className="flex flex-col items-end">
-                       <span className={`text-[10px] font-bold px-3 py-1 rounded-full uppercase mb-2 ${
-                         order.status === 'Preparing' ? 'bg-orange-50 text-orange-500' : 
-                         order.status === 'Cooking' ? 'bg-red-50 text-red-500' : 'bg-gray-100 text-gray-400'
-                       }`}>
-                         {order.status}
-                       </span>
-                       <div className="flex items-center gap-1 text-gray-400 font-bold text-[10px] uppercase tracking-tighter">
-                          <Clock className="w-3 h-3" /> {order.time}
-                       </div>
-                    </div>
-                 </div>
-                 
-                 <div className="space-y-3 mb-8">
-                    {order.items.map((item, idx) => (
-                      <div key={idx} className="flex items-center gap-2 text-xs md:text-sm text-gray-600 font-medium">
-                         <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold/30" />
-                         {item}
-                      </div>
-                     ))}
-                 </div>
-
-                 <div className="flex gap-2">
-                    <button className="flex-1 py-3 rounded-xl bg-gray-50 hover:bg-gray-100 transition-colors text-[10px] font-bold uppercase tracking-widest text-gray-500">HOLD</button>
-                    <button className="flex-1 py-3 rounded-xl bg-luxury-black text-white text-[10px] font-bold uppercase tracking-widest hover:bg-black transition-colors">READY</button>
-                 </div>
-              </GlassCard>
-           </motion.div>
-         ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-         <div className="lg:col-span-2">
-             <GlassCard className="bg-white border-gray-100 p-6 md:p-8 shadow-sm">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-                   <h3 className="text-xl font-bold font-serif">Restaurant Occupancy</h3>
-                   <span className="text-[10px] uppercase tracking-widest font-bold text-luxury-gold cursor-pointer hover:underline transition-all">Manage Floor Tables</span>
-                </div>
-                <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-12 gap-2 md:gap-4">
-                   {Array.from({ length: 36 }).map((_, i) => {
-                      const isOccupied = Math.random() > 0.4;
-                      return (
-                         <div key={i} className={`aspect-square rounded-xl md:rounded-2xl border flex flex-col items-center justify-center cursor-pointer transition-all hover:scale-110 ${
-                            isOccupied ? 'bg-luxury-gold/10 border-luxury-gold/30' : 'bg-gray-50 border-gray-100 opacity-40'
-                         }`}>
-                           <span className="text-[10px] font-bold">{30 + i}</span>
-                           <Utensils className={`w-3 h-3 mt-1 ${isOccupied ? 'text-luxury-gold' : 'text-gray-300'}`} />
-                         </div>
-                      );
-                   })}
-                </div>
-             </GlassCard>
+         {/* Live Orders Column */}
+         <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between px-2">
+               <h3 className="font-bold font-serif text-lg flex items-center gap-2">
+                  <Inbox className="w-5 h-5 text-luxury-gold" /> Active Queue
+               </h3>
+               {loading && <Loader2 className="w-4 h-4 text-luxury-gold animate-spin" />}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <AnimatePresence mode="popLayout">
+                  {activeOrders.length === 0 ? (
+                    <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-dashed border-gray-200">
+                       <p className="text-gray-400 font-medium">Kitchen is clear. No pending orders.</p>
+                    </div>
+                  ) : activeOrders.map((order) => (
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.95 }}
+                      key={order.id}
+                    >
+                       <GlassCard className="bg-white border-gray-100 p-8 hover:border-luxury-gold/30 transition-all">
+                          <div className="flex justify-between items-start mb-6">
+                             <div>
+                                <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${getPriorityColor(order.priority)}`}>
+                                   {order.priority} Priority
+                                </span>
+                                <h4 className="text-2xl font-serif font-bold mt-3">Table {order.table_id}</h4>
+                             </div>
+                             <div className="p-3 bg-gray-50 rounded-2xl text-luxury-gold">
+                                <Timer className="w-5 h-5" />
+                             </div>
+                          </div>
+
+                          <div className="space-y-3 mb-8">
+                             {Array.isArray(order.items) && order.items.map((item, idx) => (
+                               <div key={idx} className="flex justify-between items-center text-sm">
+                                  <span className="font-medium text-gray-700">{item}</span>
+                                  <CheckCircle2 className="w-4 h-4 text-gray-100 hover:text-green-500 cursor-pointer transition-colors" />
+                                </div>
+                             ))}
+                          </div>
+
+                          <div className="flex justify-between items-center pt-6 border-t border-gray-50">
+                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                                <Clock className="w-3.5 h-3.5" /> {new Date(order.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                             </span>
+                             <button className="text-[10px] font-bold text-luxury-gold uppercase tracking-tighter hover:underline">Mark Ready</button>
+                          </div>
+                       </GlassCard>
+                    </motion.div>
+                  ))}
+               </AnimatePresence>
+            </div>
          </div>
 
+         {/* Stock & Alerts Column */}
          <div className="space-y-8">
-            <GlassCard className="bg-white border-gray-100 p-8">
-               <h3 className="text-xl font-bold mb-8 italic font-serif">Kitchen Stock Alerts</h3>
+            <GlassCard className="bg-white border-gray-100 p-8 shadow-sm">
+               <h3 className="text-xl font-bold mb-8 flex items-center gap-2">
+                  <Flame className="w-5 h-5 text-orange-500" /> Stock Monitor
+               </h3>
                <div className="space-y-6">
-                  {[
-                    { item: 'Saffron Threads', level: 'Low (15g)', color: 'text-red-500' },
-                    { item: 'Mint Leaves', level: 'Regular (2kg)', color: 'text-green-500' },
-                    { item: 'Olive Oil (Premium)', level: 'Critical (5L)', color: 'text-red-500' },
-                  ].map((stock, i) => (
-                    <div key={i} className="flex justify-between items-center border-b border-gray-50 pb-4 last:border-0 last:pb-0">
-                       <span className="text-sm font-bold text-gray-700">{stock.item}</span>
-                       <span className={`text-[10px] font-bold uppercase tracking-tighter ${stock.color}`}>{stock.level}</span>
+                  {stockAlerts.map((item, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100">
+                       <div className="flex items-center gap-4">
+                          <div className={`w-2 h-2 rounded-full ${
+                            item.status === 'Critical' ? 'bg-red-500 animate-pulse' :
+                            item.status === 'Low' ? 'bg-orange-500' : 'bg-green-500'
+                          }`} />
+                          <div>
+                             <p className="font-bold text-sm text-gray-800">{item.name}</p>
+                             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{item.category}</p>
+                          </div>
+                       </div>
+                       <span className="font-serif font-bold text-luxury-gold">{item.level}</span>
                     </div>
                   ))}
                </div>
-               <button className="w-full mt-6 py-3 border border-gray-100 rounded-xl text-xs font-bold text-gray-400 hover:text-luxury-gold hover:border-luxury-gold transition-colors">
-                  ORDER REPLENISHMENT
-               </button>
+               <GoldButton outline className="w-full mt-8 py-3 text-[10px] cursor-not-allowed opacity-50">ORDER SUPPLIES</GoldButton>
             </GlassCard>
 
-            <GlassCard className="bg-luxury-black text-white p-8">
+            <GlassCard className="gold-gradient text-white p-8">
                <div className="flex items-center gap-3 mb-6">
-                  <Flame className="text-orange-500" />
-                  <h3 className="font-bold">Staff On Duty (F&B)</h3>
+                  <AlertCircle className="text-white" />
+                  <h3 className="font-bold">Hygiene Protocol</h3>
                </div>
-               <div className="space-y-4">
-                  {['Chef Ahmed', 'Chef Leila', 'Sous Karim'].map((name, i) => (
-                    <div key={i} className="flex items-center gap-4">
-                       <div className="w-8 h-8 rounded-full border border-white/20 overflow-hidden shrink-0 italic text-[8px] flex items-center justify-center bg-white/5">IMG</div>
-                       <span className="text-sm font-medium">{name}</span>
-                       <span className="ml-auto text-[10px] font-bold text-luxury-gold uppercase px-2 py-1 glass rounded">Station {i+1}</span>
-                    </div>
-                  ))}
-               </div>
+               <p className="text-xs opacity-80 leading-relaxed mb-6">
+                  Next standard health inspection scheduled for <span className="font-bold underline">Friday, Oct 23rd</span>. Please ensure logs are up-to-date.
+               </p>
+               <button className="text-[10px] font-bold uppercase underline">View Checklist</button>
             </GlassCard>
          </div>
       </div>

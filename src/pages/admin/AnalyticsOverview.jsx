@@ -1,8 +1,7 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 import { 
   TrendingUp, Users, Bed, Clock, 
-  ChevronUp, AlertCircle, MoreVertical
+  ChevronUp, MoreVertical
 } from 'lucide-react';
 import GlassCard from '../../components/GlassCard';
 

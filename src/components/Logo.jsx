@@ -1,4 +1,3 @@
-import React from 'react';
 import { motion } from 'framer-motion';
 
 const Logo = ({ className = "w-auto h-auto", textVisible = true, inverse = false }) => {
