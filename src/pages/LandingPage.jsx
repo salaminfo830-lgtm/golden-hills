@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { 
   Calendar, Users, MapPin, Star, Coffee, 
   Wind, Ship, UtensilsCrossed, Waves, 
