@@ -8,6 +8,9 @@ import {
 import GlassCard from '../components/GlassCard';
 import GoldButton from '../components/GoldButton';
 
+import Logo from '../components/Logo';
+import { Link } from 'react-router-dom';
+
 const LandingPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -23,23 +26,50 @@ const LandingPage = () => {
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'glass py-4 shadow-lg' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <div className="flex items-center gap-2">
-            <div className="w-10 h-10 gold-gradient rounded-lg flex items-center justify-center text-white font-serif text-2xl font-bold">G</div>
-            <span className="text-2xl font-serif font-bold tracking-tighter">GOLDEN HILLS <span className="text-luxury-gold">SETIF</span></span>
-          </div>
+          <Link to="/">
+            <Logo inverse={!isScrolled && !isMenuOpen} />
+          </Link>
           
-          <div className="hidden md:flex items-center gap-8 font-medium">
-            <a href="#about" className="hover:text-luxury-gold transition-colors">About</a>
-            <a href="#suites" className="hover:text-luxury-gold transition-colors">Suites</a>
-            <a href="#services" className="hover:text-luxury-gold transition-colors">Services</a>
-            <a href="#contact" className="hover:text-luxury-gold transition-colors">Contact</a>
-            <GoldButton className="px-6 py-2 text-sm" onClick={() => window.location.href='/admin'}>Admin Access</GoldButton>
+          <div className="hidden lg:flex items-center gap-10 font-bold tracking-widest text-xs uppercase">
+            <a href="#about" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>About</a>
+            <a href="#suites" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Suites</a>
+            <a href="#services" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Services</a>
+            <a href="#contact" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Contact</a>
+            <GoldButton className="px-8 py-2 text-xs" onClick={() => window.location.href='/admin'}>MANAGEMENT</GoldButton>
           </div>
 
-          <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X /> : <Menu />}
+          <button className="lg:hidden p-2 rounded-lg glass" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+            {isMenuOpen ? <X className={isScrolled ? 'text-black' : 'text-white'} /> : <Menu className={isScrolled ? 'text-black' : 'text-white'} />}
           </button>
         </div>
+
+        {/* Mobile Menu Drawer */}
+        <AnimatePresence>
+          {isMenuOpen && (
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="fixed inset-y-0 right-0 w-full md:w-80 bg-luxury-black border-l border-white/10 z-50 p-10 flex flex-col"
+            >
+              <div className="flex justify-between items-center mb-16">
+                <Logo inverse />
+                <button onClick={() => setIsMenuOpen(false)} className="p-2 glass rounded-full"><X className="text-white" /></button>
+              </div>
+              <div className="space-y-8 flex flex-col text-2xl font-serif">
+                <a href="#about" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Our Story</a>
+                <a href="#suites" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Luxury Suites</a>
+                <a href="#services" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Experience</a>
+                <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Get in Touch</a>
+                <GoldButton className="mt-8" onClick={() => window.location.href='/admin'}>Admin Login</GoldButton>
+              </div>
+              <div className="mt-auto border-t border-white/10 pt-8 opacity-40 text-sm text-white text-center">
+                © 2026 Golden Hills Hotel
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       {/* Hero Section */}
@@ -174,6 +204,7 @@ const LandingPage = () => {
                  key={i}
                  whileHover={{ y: -10 }}
                  className="group cursor-pointer"
+                 onClick={() => window.location.href=`/room/${i}`}
                >
                  <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-6">
                    <img src={suite.img} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" alt={suite.name} />
@@ -187,9 +218,9 @@ const LandingPage = () => {
                      <span className="flex items-center gap-1"><Users className="w-4 h-4" /> 2 Guests</span>
                      <span className="flex items-center gap-1"><Wind className="w-4 h-4" /> AC</span>
                    </div>
-                   <button className="text-luxury-gold font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                   <Link to={`/room/${i}`} className="text-luxury-gold font-bold flex items-center gap-1 hover:gap-2 transition-all">
                      View Details <ChevronRight className="w-4 h-4" />
-                   </button>
+                   </Link>
                  </div>
                </motion.div>
              ))}
@@ -234,12 +265,11 @@ const LandingPage = () => {
         <div className="container mx-auto px-6">
           <div className="grid md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2">
-              <div className="flex items-center gap-2 mb-8">
-                <div className="w-10 h-10 gold-gradient rounded-lg flex items-center justify-center text-white font-serif text-2xl font-bold">G</div>
-                <span className="text-2xl font-serif font-bold tracking-tighter">GOLDEN HILLS <span className="text-luxury-gold">SETIF</span></span>
+              <div className="mb-8">
+                <Logo inverse />
               </div>
-              <p className="text-white/60 max-w-sm mb-8 leading-relaxed">
-                The premier luxury destination in Setif, offering a perfect blend of modern comfort and traditional Algerian hospitality.
+              <p className="text-white/60 max-w-sm mb-8 leading-relaxed font-medium">
+                The premier luxury destination in Setif, offering a perfect blend of modern comfort and traditional Algerian hospitality. Crafted for the discerning traveler.
               </p>
               <div className="flex gap-4">
                  {[1,2,3,4].map(i => (

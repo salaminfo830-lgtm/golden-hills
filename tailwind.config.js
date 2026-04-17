@@ -9,15 +9,16 @@ export default {
       colors: {
         luxury: {
           gold: {
-            DEFAULT: '#c5a059',
-            light: '#d4af37',
-            dark: '#a68546',
-            shimmer: '#FFD700',
+            DEFAULT: '#FFD700',
+            light: '#FFECB3',
+            dark: '#B8860B',
+            shimmer: '#FFED4D',
+            vibrant: '#FFC107',
           },
           white: {
             DEFAULT: '#FFFFFF',
             warm: '#fdfbf7',
-            cream: '#F9F6EE',
+            cream: '#FFFBED',
           },
           black: {
             DEFAULT: '#1a1a1a',
