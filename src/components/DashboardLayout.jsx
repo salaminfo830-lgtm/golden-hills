@@ -126,9 +126,9 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
              <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-gray-600">
                <MenuIcon />
              </button>
-             <div className="hidden md:block">
-               <h2 className="text-lg font-serif font-bold text-gray-800 tracking-tight">Golden Hills <span className="text-luxury-gold">Systems</span></h2>
-               <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Integrated v2.0</p>
+             <div className="flex flex-col">
+               <h2 className="text-sm md:text-lg font-serif font-bold text-gray-800 tracking-tight">Golden Hills <span className="text-luxury-gold md:inline hidden">Systems</span></h2>
+               <p className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Integrated v2.0</p>
              </div>
            </div>
 

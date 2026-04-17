@@ -89,10 +89,10 @@ const LandingPage = () => {
             transition={{ duration: 1 }}
           >
             <h4 className="text-luxury-gold font-serif italic text-sm md:text-xl mb-4 tracking-[0.4em] uppercase">Setif's Gilded Sanctuary</h4>
-            <h1 className="text-4xl sm:text-6xl md:text-8xl font-serif font-bold mb-8 leading-[1.1] tracking-tight">
+            <h1 className="text-3xl sm:text-6xl md:text-8xl font-serif font-bold mb-6 md:mb-8 leading-[1.1] tracking-tight">
               A Symphony of <br className="hidden md:block" /> Luxury & Light
             </h1>
-            <p className="text-sm md:text-xl text-white/70 max-w-xl md:max-w-2xl mx-auto mb-10 md:mb-14 font-medium leading-relaxed px-4 md:px-0">
+            <p className="text-xs sm:text-lg md:text-xl text-white/70 max-w-xl md:max-w-2xl mx-auto mb-8 md:mb-14 font-medium leading-relaxed px-4 md:px-0">
               Experience the pinnacle of Algerian hospitality at Golden Hills Hotel, where every moment is a masterpiece of gold and light.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">

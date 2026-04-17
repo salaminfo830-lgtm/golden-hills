@@ -11,29 +11,48 @@
 }
 
 body {
-  @apply bg-luxury-white-warm text-luxury-black font-sans antialiased;
+  background-color: #fdfbf7;
+  color: #121212;
+  font-family: "Inter", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
 }
 
 h1, h2, h3, h4, .font-elegant {
-  @apply font-serif;
+  font-family: "Playfair Display", serif;
 }
 
 /* Glassmorphism Classes */
 .glass {
-  @apply bg-white/10 backdrop-blur-xl border border-white/20 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)];
+  background-color: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
 }
 
 .glass-dark {
-  @apply bg-black/40 backdrop-blur-2xl border border-white/10 shadow-2xl;
+  background-color: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
 .glass-gold {
-  @apply bg-luxury-gold/10 backdrop-blur-xl border border-luxury-gold/30 shadow-[0_8px_32px_0_rgba(212,175,55,0.1)];
+  background-color: rgba(212, 175, 55, 0.1);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  box-shadow: 0 8px 32px 0 rgba(212, 175, 55, 0.1);
 }
 
 .glass-vapor {
-  @apply bg-white/5 backdrop-blur-md border border-white/10;
+  background-color: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 /* Gold Gradient Effects */
@@ -42,7 +61,9 @@ h1, h2, h3, h4, .font-elegant {
 }
 
 .gold-text-gradient {
-  @apply bg-clip-text text-transparent;
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
   background-image: linear-gradient(135deg, #c5a059 0%, #d4af37 50%, #a68546 100%);
 }
 
@@ -52,11 +73,17 @@ h1, h2, h3, h4, .font-elegant {
 }
 
 ::-webkit-scrollbar-track {
-  @apply bg-luxury-white-warm;
+  background-color: #fdfbf7;
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-luxury-gold/30 rounded-full hover:bg-luxury-gold/50 transition-colors;
+  background-color: rgba(212, 175, 55, 0.3);
+  border-radius: 9999px;
+  transition: background-color 0.2s;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(212, 175, 55, 0.5);
 }
 
 /* Animations */
@@ -80,4 +107,15 @@ h1, h2, h3, h4, .font-elegant {
   background: linear-gradient(to right, transparent, rgba(255, 215, 0, 0.2), transparent);
   transform: skewX(-20deg);
   animation: shimmer 2s infinite;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

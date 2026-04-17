@@ -1,6 +1,7 @@
 import React from 'react';
 import { Bed, CheckCircle2, AlertTriangle, Hammer, Droplets, User, MoreVertical, Search, Filter } from 'lucide-react';
 import GlassCard from '../../components/GlassCard';
+import GoldButton from '../../components/GoldButton';
 import { motion } from 'framer-motion';
 
 const RoomsSystem = () => {

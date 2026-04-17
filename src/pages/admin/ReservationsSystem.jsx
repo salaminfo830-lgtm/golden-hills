@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Filter, Plus, Search, ChevronLeft, ChevronRight, MoreHorizontal, User, Bed, Clock } from 'lucide-react';
+import { Calendar, Filter, Plus, Search, ChevronLeft, ChevronRight, MoreHorizontal, User, Bed, Clock, Star } from 'lucide-react';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';
 
