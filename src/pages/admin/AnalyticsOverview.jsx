@@ -87,7 +87,7 @@ const AnalyticsOverview = () => {
       {/* Top Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { icon: <TrendingUp />, label: 'Total Revenue', value: loading ? '...' : `$${stats.revenue.toLocaleString()}`, trend: '+12.5%', color: 'text-green-500' },
+          { icon: <TrendingUp />, label: 'Total Revenue', value: loading ? '...' : `${stats.revenue.toLocaleString()} DZD`, trend: '+12.5%', color: 'text-green-500' },
           { icon: <Users />, label: 'Active Guests', value: loading ? '...' : stats.guests.toString(), trend: '+5.2%', color: 'text-blue-500' },
           { icon: <Bed />, label: 'Occupancy Rate', value: loading ? '...' : `${stats.occupancy}%`, trend: '+3.1%', color: 'text-luxury-gold' },
           { icon: <Clock />, label: 'Staff Efficiency', value: loading ? '...' : `${stats.efficiency}%`, trend: '+1.4%', color: 'text-orange-500' },

@@ -9,7 +9,7 @@ import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';
 
-const RoomsSystem = () => {
+const RoomsSystem = ({ userType = 'Admin' }) => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
@@ -102,9 +102,11 @@ const RoomsSystem = () => {
         </div>
         <div className="flex gap-4 w-full md:w-auto">
            <GoldButton outline onClick={fetchRooms} className="flex-1 md:flex-none py-3 px-6 text-[10px]">REFRESH</GoldButton>
-           <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
-             <Plus className="w-4 h-4" /> ADD ROOM
-           </GoldButton>
+           {userType === 'Admin' && (
+             <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
+               <Plus className="w-4 h-4" /> ADD ROOM
+             </GoldButton>
+           )}
         </div>
       </div>
 
@@ -196,9 +198,13 @@ const RoomsSystem = () => {
                    </div>
                 </td>
                 <td className="px-8 py-6">
-                   <button onClick={() => handleDeleteRoom(room.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors text-gray-400 hover:text-red-500">
-                     <Trash2 className="w-4 h-4" />
-                   </button>
+                   {userType === 'Admin' ? (
+                     <button onClick={() => handleDeleteRoom(room.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors text-gray-400 hover:text-red-500">
+                       <Trash2 className="w-4 h-4" />
+                     </button>
+                   ) : (
+                     <button className="px-4 py-1.5 text-[10px] font-bold rounded-lg border border-gray-200 text-gray-400">RESTRICTED</button>
+                   )}
                 </td>
               </tr>
             ))}
@@ -236,41 +242,94 @@ const RoomsSystem = () => {
          ))}
       </div>
 
+      <AnimatePresence>
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-           <GlassCard className="bg-white w-full max-w-md p-6 relative">
-              <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
-                <X className="w-5 h-5"/>
-              </button>
-              <h3 className="text-xl font-bold font-serif mb-6">Add New Room</h3>
-              <form onSubmit={handleAddRoom} className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Room Number</label>
-                  <input required value={newRoom.number} onChange={e=>setNewRoom({...newRoom, number: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none focus:border-luxury-gold" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Room Type</label>
-                  <select value={newRoom.type} onChange={e=>setNewRoom({...newRoom, type: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none focus:border-luxury-gold">
-                    <option>Heritage Deluxe</option>
-                    <option>Royal Gold Suite</option>
-                    <option>Presidential Panorama</option>
-                  </select>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Nightly Rate</label>
-                    <input required type="number" value={newRoom.price} onChange={e=>setNewRoom({...newRoom, price: Number(e.target.value)})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Housekeeper</label>
-                    <input type="text" placeholder="e.g. Amina K." value={newRoom.housekeeper} onChange={e=>setNewRoom({...newRoom, housekeeper: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                  </div>
-                </div>
-                <GoldButton type="submit" className="w-full mt-6 py-3">SAVE ROOM TO SYSTEM</GoldButton>
-              </form>
-           </GlassCard>
+        <div className="fixed inset-0 z-50 flex items-start justify-end">
+           {/* Backdrop */}
+           <motion.div 
+             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+             onClick={() => setShowAddModal(false)} 
+             className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+           />
+           
+           {/* Drawer */}
+           <motion.div 
+             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+             transition={{ type: "spring", damping: 25, stiffness: 200 }}
+             className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20"
+           >
+              {/* Header */}
+              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+                 <div>
+                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Add New Room</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Inventory Management</p>
+                 </div>
+                 <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
+                   <X className="w-5 h-5"/>
+                 </button>
+              </div>
+
+              {/* Body */}
+              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
+                 <form id="add-room-form" onSubmit={handleAddRoom} className="space-y-8">
+                   
+                   {/* Preview Card */}
+                   <div className="relative h-40 gold-gradient rounded-2xl p-6 text-white flex flex-col justify-end shadow-lg overflow-hidden group">
+                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                      <div className="relative z-10 flex justify-between items-end">
+                         <div>
+                            <h4 className="text-3xl font-serif font-bold tracking-tight">{newRoom.type}</h4>
+                            <p className="text-xs font-bold uppercase tracking-widest opacity-80 mt-1">Room {newRoom.number || '---'}</p>
+                         </div>
+                         <p className="text-xl font-bold">{newRoom.price ? `${newRoom.price.toLocaleString()} DZD` : '---'}</p>
+                      </div>
+                   </div>
+
+                   <div className="space-y-6">
+                     <div>
+                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Number / Identifier</label>
+                       <input required placeholder="e.g. 401" value={newRoom.number} onChange={e=>setNewRoom({...newRoom, number: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                     </div>
+                     <div>
+                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Category</label>
+                       <select value={newRoom.type} onChange={e=>setNewRoom({...newRoom, type: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
+                         <option>Heritage Deluxe</option>
+                         <option>Royal Gold Suite</option>
+                         <option>Presidential Panorama</option>
+                       </select>
+                     </div>
+                     <div className="grid grid-cols-2 gap-6">
+                       <div>
+                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Nightly Rate (DZD)</label>
+                         <input required type="number" placeholder="45000" value={newRoom.price} onChange={e=>setNewRoom({...newRoom, price: Number(e.target.value)})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                       </div>
+                       <div>
+                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Initial Status</label>
+                         <select value={newRoom.status} onChange={e=>setNewRoom({...newRoom, status: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
+                           <option>Vacant</option>
+                           <option>Maintenance</option>
+                           <option>Cleaning</option>
+                         </select>
+                       </div>
+                     </div>
+                     <div>
+                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Assigned Housekeeper (Optional)</label>
+                       <input type="text" placeholder="e.g. Amina K." value={newRoom.housekeeper} onChange={e=>setNewRoom({...newRoom, housekeeper: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                     </div>
+                   </div>
+                 </form>
+              </div>
+
+              {/* Footer */}
+              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
+                 <GoldButton form="add-room-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'SAVE ROOM TO SYSTEM'}
+                 </GoldButton>
+              </div>
+           </motion.div>
         </div>
       )}
+      </AnimatePresence>
 
     </div>
   );

@@ -55,6 +55,7 @@ model Staff {
   phone       String?
   email       String?
   avatar_url  String?
+  permissions Json?    // Array of allowed modules e.g. ["rooms", "kitchen"]
   created_at  DateTime @default(now())
   tasks       Task[]
 }

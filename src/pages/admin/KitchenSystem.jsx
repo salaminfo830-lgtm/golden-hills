@@ -214,70 +214,116 @@ const KitchenSystem = () => {
          </div>
       </div>
 
+      <AnimatePresence>
       {showOrderModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-           <GlassCard className="bg-white w-full max-w-md p-6 relative">
-              <button onClick={() => setShowOrderModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
-                <X className="w-5 h-5"/>
-              </button>
-              <h3 className="text-xl font-bold font-serif mb-6">Add Kitchen Order</h3>
-              <form onSubmit={handleAddOrder} className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Table / Room ID</label>
-                  <input required value={newOrder.table_id} onChange={e=>setNewOrder({...newOrder, table_id: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Items (comma separated)</label>
-                  <input required placeholder="e.g. 2x Wagyu Steak, 1x Cesar Salad" value={newOrder.items} onChange={e=>setNewOrder({...newOrder, items: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Priority</label>
-                  <select value={newOrder.priority} onChange={e=>setNewOrder({...newOrder, priority: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
-                    <option>Normal</option>
-                    <option>High</option>
-                  </select>
-                </div>
-                <GoldButton type="submit" className="w-full mt-6 py-3">SEND TO KITCHEN</GoldButton>
-              </form>
-           </GlassCard>
-        </div>
-      )}
+        <div className="fixed inset-0 z-50 flex items-start justify-end">
+           <motion.div 
+             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+             onClick={() => setShowOrderModal(false)} 
+             className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+           />
+           <motion.div 
+             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+             transition={{ type: "spring", damping: 25, stiffness: 200 }}
+             className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20"
+           >
+              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+                 <div>
+                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Add Kitchen Order</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Order Dispatch</p>
+                 </div>
+                 <button onClick={() => setShowOrderModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
+                   <X className="w-5 h-5"/>
+                 </button>
+              </div>
 
-      {showStockModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-           <GlassCard className="bg-white w-full max-w-md p-6 relative">
-              <button onClick={() => setShowStockModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
-                <X className="w-5 h-5"/>
-              </button>
-              <h3 className="text-xl font-bold font-serif mb-6">Add Stock Item</h3>
-              <form onSubmit={handleAddStock} className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Item Name</label>
-                  <input required value={newStock.name} onChange={e=>setNewStock({...newStock, name: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Level</label>
-                    <input required placeholder="e.g. 50kg" type="text" value={newStock.level} onChange={e=>setNewStock({...newStock, level: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Status</label>
-                    <select value={newStock.status} onChange={e=>setNewStock({...newStock, status: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
-                      <option>Regular</option>
-                      <option>Low</option>
-                      <option>Critical</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Category</label>
-                  <input required type="text" value={newStock.category} onChange={e=>setNewStock({...newStock, category: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                </div>
-                <GoldButton type="submit" className="w-full mt-6 py-3">SAVE ALERTS</GoldButton>
-              </form>
-           </GlassCard>
+              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
+                 <form id="add-order-form" onSubmit={handleAddOrder} className="space-y-6">
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Table / Room ID</label>
+                      <input required placeholder="e.g. Table 4" value={newOrder.table_id} onChange={e=>setNewOrder({...newOrder, table_id: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Items (comma separated)</label>
+                      <textarea rows="4" required placeholder="e.g. 2x Wagyu Steak, 1x Cesar Salad" value={newOrder.items} onChange={e=>setNewOrder({...newOrder, items: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm resize-none"></textarea>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Priority Level</label>
+                      <select value={newOrder.priority} onChange={e=>setNewOrder({...newOrder, priority: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
+                        <option>Normal</option>
+                        <option>High</option>
+                      </select>
+                    </div>
+                 </form>
+              </div>
+              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
+                 <GoldButton form="add-order-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'DISPATCH TO KITCHEN'}
+                 </GoldButton>
+              </div>
+           </motion.div>
         </div>
       )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+      {showStockModal && (
+        <div className="fixed inset-0 z-50 flex items-start justify-end">
+           <motion.div 
+             initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+             onClick={() => setShowStockModal(false)} 
+             className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+           />
+           <motion.div 
+             initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+             transition={{ type: "spring", damping: 25, stiffness: 200 }}
+             className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20"
+           >
+              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+                 <div>
+                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Add Stock Item</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Pantry Management</p>
+                 </div>
+                 <button onClick={() => setShowStockModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
+                   <X className="w-5 h-5"/>
+                 </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
+                 <form id="add-stock-form" onSubmit={handleAddStock} className="space-y-6">
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Item Name / Ingredient</label>
+                      <input required placeholder="e.g. Fresh Saffron" value={newStock.name} onChange={e=>setNewStock({...newStock, name: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Current Level</label>
+                        <input required placeholder="e.g. 50kg" type="text" value={newStock.level} onChange={e=>setNewStock({...newStock, level: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Alert Status</label>
+                        <select value={newStock.status} onChange={e=>setNewStock({...newStock, status: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
+                          <option>Regular</option>
+                          <option>Low</option>
+                          <option>Critical</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Category</label>
+                      <input required placeholder="e.g. Spices, Meat, Beverages" type="text" value={newStock.category} onChange={e=>setNewStock({...newStock, category: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    </div>
+                 </form>
+              </div>
+              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
+                 <GoldButton form="add-stock-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'SAVE PANTRY RECORD'}
+                 </GoldButton>
+              </div>
+           </motion.div>
+        </div>
+      )}
+      </AnimatePresence>
 
     </div>
   );

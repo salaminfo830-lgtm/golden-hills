@@ -76,7 +76,42 @@ const HRSystem = () => {
     fetchStaff();
   };
 
-  const filteredStaff = filter === 'All' 
+   const ALL_MODULES = [
+      { id: 'rooms', label: 'Rooms & Housekeeping' },
+      { id: 'reservations', label: 'Reservations' },
+      { id: 'kitchen', label: 'Kitchen Operations' },
+      { id: 'finance', label: 'Financial Ledger' },
+      { id: 'security', label: 'Security Command' }
+   ];
+
+   const [permissionsModal, setPermissionsModal] = useState({ show: false, staffId: null, permissions: [] });
+
+   const openPermissions = (person) => {
+      setPermissionsModal({ 
+         show: true, 
+         staffId: person.id, 
+         permissions: Array.isArray(person.permissions) ? person.permissions : [] 
+      });
+   };
+
+   const togglePermission = (moduleId) => {
+      setPermissionsModal(prev => {
+         const hasPerm = prev.permissions.includes(moduleId);
+         const newPerms = hasPerm 
+            ? prev.permissions.filter(p => p !== moduleId)
+            : [...prev.permissions, moduleId];
+         return { ...prev, permissions: newPerms };
+      });
+   };
+
+   const savePermissions = async () => {
+      setLoading(true);
+      await supabase.from('Staff').update({ permissions: permissionsModal.permissions }).eq('id', permissionsModal.staffId);
+      setPermissionsModal({ show: false, staffId: null, permissions: [] });
+      fetchStaff();
+   };
+
+   const filteredStaff = filter === 'All' 
     ? staff 
     : staff.filter(s => s.department === filter);
 
@@ -113,7 +148,7 @@ const HRSystem = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
          <AnimatePresence mode="popLayout">
-           {loading ? (
+           {loading && staff.length === 0 ? (
              <div className="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-[2.5rem] border border-gray-50 shadow-sm">
                 <Loader2 className="w-8 h-8 text-luxury-gold animate-spin mb-4" />
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Accessing Personnel Files</p>
@@ -145,7 +180,7 @@ const HRSystem = () => {
                       </div>
                    </div>
 
-                   <div className="space-y-4 mb-10 relative z-10">
+                   <div className="space-y-4 mb-6 relative z-10">
                       <div className="flex items-center gap-4 text-xs">
                          <div className="p-2 bg-gray-50 rounded-xl text-gray-400"><Mail className="w-4 h-4" /></div>
                          <span className="font-medium text-gray-600">{person.email || 'internal@golden-hills.com'}</span>
@@ -156,7 +191,14 @@ const HRSystem = () => {
                       </div>
                       <div className="flex items-center gap-4 text-xs">
                          <Clock className="w-4 h-4 text-gray-400 shrink-0" />
-                         <span className="font-medium text-gray-600">{person.department} Department</span>
+                         <span className="font-medium text-gray-600 flex items-center justify-between w-full">
+                           {person.department} Department
+                           {Array.isArray(person.permissions) && person.permissions.length > 0 && (
+                             <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[8px] uppercase tracking-widest font-bold">
+                               {person.permissions.length} Module{person.permissions.length > 1 ? 's' : ''} Access
+                             </span>
+                           )}
+                         </span>
                       </div>
                    </div>
 
@@ -166,6 +208,9 @@ const HRSystem = () => {
                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{person.status}</span>
                       </div>
                       <div className="flex gap-2">
+                         <button onClick={() => openPermissions(person)} className="px-3 py-1 text-[10px] font-bold bg-luxury-gold/5 text-luxury-gold border border-luxury-gold/20 hover:bg-luxury-gold hover:text-white rounded-xl transition-all uppercase tracking-widest">
+                            Access
+                         </button>
                          <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-xl transition-all text-gray-400 hover:text-red-500">
                             <Trash2 className="w-4 h-4" />
                          </button>
@@ -177,47 +222,102 @@ const HRSystem = () => {
          </AnimatePresence>
       </div>
 
+      <AnimatePresence>
+      {permissionsModal.show && (
+         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}>
+               <GlassCard className="bg-white w-full max-w-md p-8 relative shadow-2xl">
+                  <button onClick={() => setPermissionsModal({show:false, staffId:null, permissions:[]})} className="absolute top-6 right-6 text-gray-400 hover:text-black">
+                    <X className="w-5 h-5"/>
+                  </button>
+                  <h3 className="text-xl font-bold font-serif text-luxury-black">System Preferences</h3>
+                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-6">Access Control Manager</p>
+                  
+                  <div className="space-y-3 mb-8">
+                     {ALL_MODULES.map(module => {
+                        const hasAccess = permissionsModal.permissions.includes(module.id);
+                        return (
+                           <div 
+                              key={module.id} 
+                              onClick={() => togglePermission(module.id)}
+                              className={`flex justify-between items-center p-4 rounded-xl cursor-pointer border transition-all ${
+                                hasAccess ? 'border-luxury-gold bg-luxury-gold/5' : 'border-gray-100 hover:border-gray-300'
+                              }`}
+                           >
+                              <span className={`font-bold text-sm ${hasAccess ? 'text-luxury-gold' : 'text-gray-500'}`}>{module.label}</span>
+                              <div className={`w-10 h-6 rounded-full p-1 transition-colors ${hasAccess ? 'bg-luxury-gold' : 'bg-gray-200'}`}>
+                                 <div className={`w-4 h-4 bg-white rounded-full transition-transform ${hasAccess ? 'translate-x-4' : 'translate-x-0'}`} />
+                              </div>
+                           </div>
+                        );
+                     })}
+                  </div>
+
+                  <GoldButton onClick={savePermissions} className="w-full py-3 shadow-lg text-xs">
+                     {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'SAVE PERMISSIONS'}
+                  </GoldButton>
+               </GlassCard>
+            </motion.div>
+         </div>
+      )}
+      </AnimatePresence>
+
+      <AnimatePresence>
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-           <GlassCard className="bg-white w-full max-w-md p-6 relative">
-              <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
-                <X className="w-5 h-5"/>
-              </button>
-              <h3 className="text-xl font-bold font-serif mb-6">Recruit Personnel</h3>
-              <form onSubmit={handleAddStaff} className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Full Name</label>
-                  <input required value={newStaff.name} onChange={e=>setNewStaff({...newStaff, name: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Role</label>
-                    <input required placeholder="e.g. Concierge" type="text" value={newStaff.role} onChange={e=>setNewStaff({...newStaff, role: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Department</label>
-                    <select value={newStaff.department} onChange={e=>setNewStaff({...newStaff, department: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
-                      <option>Housekeeping</option>
-                      <option>Administration</option>
-                      <option>Kitchen</option>
-                      <option>Security</option>
-                      <option>Finance</option>
-                    </select>
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Phone</label>
-                  <input required type="text" value={newStaff.phone} onChange={e=>setNewStaff({...newStaff, phone: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Email</label>
-                  <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
-                </div>
-                <GoldButton type="submit" className="w-full mt-6 py-3">ONBOARD PERSONNEL</GoldButton>
-              </form>
-           </GlassCard>
+        <div className="fixed inset-0 z-50 flex items-start justify-end">
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddModal(false)} className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+           <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20">
+              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+                 <div>
+                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Recruit Personnel</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">HR Management</p>
+                 </div>
+                 <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
+                   <X className="w-5 h-5"/>
+                 </button>
+              </div>
+
+              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
+                 <form id="add-staff-form" onSubmit={handleAddStaff} className="space-y-6">
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Full Name</label>
+                      <input required value={newStaff.name} onChange={e=>setNewStaff({...newStaff, name: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Role</label>
+                        <input required placeholder="e.g. Concierge" type="text" value={newStaff.role} onChange={e=>setNewStaff({...newStaff, role: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                      </div>
+                      <div>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Department</label>
+                        <select value={newStaff.department} onChange={e=>setNewStaff({...newStaff, department: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
+                          <option>Housekeeping</option>
+                          <option>Administration</option>
+                          <option>Kitchen</option>
+                          <option>Security</option>
+                          <option>Finance</option>
+                        </select>
+                      </div>
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Phone (DZD / Local)</label>
+                      <input required type="text" placeholder="+213 XX XX XX XX" value={newStaff.phone} onChange={e=>setNewStaff({...newStaff, phone: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Email</label>
+                      <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    </div>
+                 </form>
+              </div>
+              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
+                 <GoldButton form="add-staff-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'ONBOARD PERSONNEL'}
+                 </GoldButton>
+              </div>
+           </motion.div>
         </div>
       )}
+      </AnimatePresence>
 
     </div>
   );

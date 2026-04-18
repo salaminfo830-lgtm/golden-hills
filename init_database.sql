@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS "Staff" (
     "phone" TEXT,
     "email" TEXT,
     "avatar_url" TEXT,
+    "permissions" JSONB DEFAULT '[]'::jsonb,
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 

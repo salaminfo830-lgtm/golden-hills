@@ -98,7 +98,7 @@ const FinanceSystem = () => {
                </span>
             </div>
             <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em] mb-1">Net Cashflow</p>
-            <h3 className="text-3xl font-bold font-serif">${loading ? '...' : totals.toLocaleString()}</h3>
+            <h3 className="text-3xl font-bold font-serif">{loading ? '...' : `${totals.toLocaleString()} DZD`}</h3>
          </GlassCard>
 
          <GlassCard className="bg-white border-gray-100 p-8 shadow-sm">
@@ -120,7 +120,7 @@ const FinanceSystem = () => {
                <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Growth Plan</span>
             </div>
             <p className="text-[10px] uppercase font-bold text-white/80 tracking-[0.2em] mb-1">Investment Reserve</p>
-            <h3 className="text-3xl font-bold font-serif">$2.4M</h3>
+            <h3 className="text-3xl font-bold font-serif">2.4M DZD</h3>
          </GlassCard>
       </div>
 
@@ -173,7 +173,7 @@ const FinanceSystem = () => {
                             {new Date(item.date).toLocaleDateString()} {new Date(item.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                          </td>
                          <td className={`px-8 py-6 text-right font-serif font-bold ${item.is_up ? 'text-green-600' : 'text-red-500'}`}>
-                            {item.is_up ? '+' : '-'}${item.value.toLocaleString()}
+                            {item.is_up ? '+' : '-'}{item.value.toLocaleString()} DZD
                          </td>
                          <td className="px-4 py-6 text-center">
                             <button onClick={() => handleDeleteEntry(item.id)} className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -202,7 +202,7 @@ const FinanceSystem = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Amount ($)</label>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Amount (DZD)</label>
                     <input required type="number" value={newEntry.value} onChange={e=>setNewEntry({...newEntry, value: Number(e.target.value)})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
                   </div>
                   <div>

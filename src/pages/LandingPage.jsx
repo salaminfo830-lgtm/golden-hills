@@ -197,9 +197,9 @@ const LandingPage = () => {
 
           <div className="grid md:grid-cols-3 gap-10">
              {[
-               { id: 0, name: 'Royal Gold Suite', price: '$450', img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070' },
-               { id: 1, name: 'Heritage Deluxe', price: '$320', img: 'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974' },
-               { id: 2, name: 'Presidential Panorama', price: '$850', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070' }
+               { id: 0, name: 'Royal Gold Suite', price: '45,000 DZD', img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070' },
+               { id: 1, name: 'Heritage Deluxe', price: '32,000 DZD', img: 'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974' },
+               { id: 2, name: 'Presidential Panorama', price: '85,000 DZD', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070' }
              ].map((suite, i) => (
                <motion.div 
                  key={i}

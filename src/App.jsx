@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import LandingPage from './pages/LandingPage'
 import AdminPanel from './pages/AdminPanel'
-import EmployeePanel from './pages/EmployeePanel'
+import StaffPanel from './pages/StaffPanel'
 import RoomDetails from './pages/RoomDetails'
 import AboutPage from './pages/AboutPage'
 import SuitesPage from './pages/SuitesPage'
@@ -26,7 +26,7 @@ function App() {
       
       <Route path="/admin/*" element={<AdminPanel />} />
       
-      <Route path="/staff/*" element={<EmployeePanel />} />
+      <Route path="/staff/*" element={<StaffPanel />} />
 
       {/* Catch-all redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
