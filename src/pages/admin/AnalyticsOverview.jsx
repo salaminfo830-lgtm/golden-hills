@@ -83,29 +83,38 @@ const AnalyticsOverview = () => {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
+      <div className="border-b border-gray-100 pb-8">
+        <h1 className="text-4xl font-elegant font-bold text-luxury-black">Platform Overview</h1>
+        <p className="text-gray-400 font-medium mt-1">Real-time hospitality metrics and operational intelligence</p>
+      </div>
+
       {/* Top Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {[
-          { icon: <TrendingUp />, label: 'Total Revenue', value: loading ? '...' : `${stats.revenue.toLocaleString()} DZD`, trend: '+12.5%', color: 'text-green-500' },
-          { icon: <Users />, label: 'Active Guests', value: loading ? '...' : stats.guests.toString(), trend: '+5.2%', color: 'text-blue-500' },
-          { icon: <Bed />, label: 'Occupancy Rate', value: loading ? '...' : `${stats.occupancy}%`, trend: '+3.1%', color: 'text-luxury-gold' },
-          { icon: <Clock />, label: 'Staff Efficiency', value: loading ? '...' : `${stats.efficiency}%`, trend: '+1.4%', color: 'text-orange-500' },
+          { icon: <TrendingUp className="w-5 h-5"/>, label: 'Consolidated Revenue', value: loading ? '...' : `${stats.revenue.toLocaleString()} DZD`, trend: '+12.5%' },
+          { icon: <Users className="w-5 h-5"/>, label: 'In-House Guests', value: loading ? '...' : stats.guests.toString(), trend: '+5.2%' },
+          { icon: <Bed className="w-5 h-5"/>, label: 'Property Occupancy', value: loading ? '...' : `${stats.occupancy}%`, trend: '+3.1%' },
+          { icon: <Clock className="w-5 h-5"/>, label: 'Operational Efficiency', value: loading ? '...' : `${stats.efficiency}%`, trend: '+1.4%' },
         ].map((stat, i) => (
-          <GlassCard key={i} className="flex items-center gap-6 bg-white border-gray-100 shadow-sm" variant="light">
-            <div className={`p-4 rounded-2xl bg-gray-50 ${stat.color}`}>
-              <div className="w-5 h-5">{stat.icon}</div>
-            </div>
-            <div>
-              <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em]">{stat.label}</p>
-              <div className="flex items-baseline gap-2">
-                 {loading ? <Loader2 className="w-4 h-4 animate-spin text-gray-300 mt-2"/> : <h3 className="text-2xl font-bold">{stat.value}</h3>}
-                 {!loading && <span className={`text-[10px] font-bold ${stat.trend.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
-                   {stat.trend}
-                 </span>}
+          <div key={i} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm hover:shadow-md transition-all">
+            <div className="flex justify-between items-start mb-6">
+              <div className="p-3 rounded-xl bg-[#fafafa] text-luxury-gold ring-1 ring-gray-100">
+                {stat.icon}
               </div>
+              {!loading && (
+                <span className="text-[10px] font-bold text-green-500 bg-green-50 px-2 py-1 rounded-lg">
+                  {stat.trend}
+                </span>
+              )}
             </div>
-          </GlassCard>
+            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-[0.2em] mb-1">{stat.label}</p>
+            {loading ? (
+              <Loader2 className="w-6 h-6 animate-spin text-gray-200 mt-2"/>
+            ) : (
+              <h3 className="text-2xl font-bold text-luxury-black tracking-tight">{stat.value}</h3>
+            )}
+          </div>
         ))}
       </div>
 

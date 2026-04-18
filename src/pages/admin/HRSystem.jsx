@@ -111,9 +111,17 @@ const HRSystem = () => {
       fetchStaff();
    };
 
+   const confirmApproval = async (id) => {
+      setLoading(true);
+      await supabase.from('Staff').update({ status: 'Off Shift' }).eq('id', id);
+      fetchStaff();
+   };
+
    const filteredStaff = filter === 'All' 
-    ? staff 
-    : staff.filter(s => s.department === filter);
+    ? staff.filter(s => s.status !== 'Pending Approval')
+    : filter === 'Approvals'
+    ? staff.filter(s => s.status === 'Pending Approval')
+    : staff.filter(s => s.department === filter && s.status !== 'Pending Approval');
 
   return (
     <div className="space-y-8 font-sans relative">
@@ -132,7 +140,7 @@ const HRSystem = () => {
 
       <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
          <div className="flex gap-2 bg-gray-100/50 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto no-scrollbar">
-            {['All', 'Administration', 'Housekeeping', 'Kitchen', 'Security', 'Finance'].map((dept) => (
+            {['All', 'Approvals', 'Administration', 'Housekeeping', 'Kitchen', 'Security', 'Finance'].map((dept) => (
               <button 
                 key={dept}
                 onClick={() => setFilter(dept)}
@@ -140,7 +148,9 @@ const HRSystem = () => {
                   filter === dept ? 'bg-white text-luxury-gold shadow-sm' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
-                {dept}
+                {dept} {dept === 'Approvals' && staff.filter(s => s.status === 'Pending Approval').length > 0 && (
+                  <span className="ml-2 w-2 h-2 rounded-full bg-red-500 inline-block animate-pulse" />
+                )}
               </button>
             ))}
          </div>
@@ -208,9 +218,15 @@ const HRSystem = () => {
                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{person.status}</span>
                       </div>
                       <div className="flex gap-2">
-                         <button onClick={() => openPermissions(person)} className="px-3 py-1 text-[10px] font-bold bg-luxury-gold/5 text-luxury-gold border border-luxury-gold/20 hover:bg-luxury-gold hover:text-white rounded-xl transition-all uppercase tracking-widest">
-                            Access
-                         </button>
+                         {person.status === 'Pending Approval' ? (
+                           <button onClick={() => confirmApproval(person.id)} className="px-4 py-1 text-[10px] font-bold bg-green-500 text-white rounded-xl transition-all uppercase tracking-widest hover:bg-green-600">
+                             Confirm
+                           </button>
+                         ) : (
+                           <button onClick={() => openPermissions(person)} className="px-3 py-1 text-[10px] font-bold bg-luxury-gold/5 text-luxury-gold border border-luxury-gold/20 hover:bg-luxury-gold hover:text-white rounded-xl transition-all uppercase tracking-widest">
+                             Access
+                           </button>
+                         )}
                          <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-xl transition-all text-gray-400 hover:text-red-500">
                             <Trash2 className="w-4 h-4" />
                          </button>

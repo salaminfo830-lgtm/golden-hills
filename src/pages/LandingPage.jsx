@@ -27,8 +27,8 @@ const LandingPage = () => {
       {/* Navigation */}
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'glass py-4 shadow-lg' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <Link to="/">
-            <Logo inverse={!isScrolled && !isMenuOpen} />
+          <Link to="/" className="flex items-center gap-4">
+            <img src="/logo.jpg" alt="Golden Hills Logo" className={`transition-all duration-500 rounded-lg drop-shadow-md ${isScrolled ? 'w-16 h-16' : 'w-24 h-24 brightness-0 invert'}`} />
           </Link>
           
           <div className="hidden lg:flex items-center gap-10 font-bold tracking-widest text-xs uppercase">
@@ -55,7 +55,7 @@ const LandingPage = () => {
               className="fixed inset-y-0 right-0 w-full md:w-80 bg-luxury-black border-l border-white/10 z-50 p-10 flex flex-col"
             >
               <div className="flex justify-between items-center mb-16">
-                <Logo inverse />
+                <img src="/logo.jpg" alt="Golden Hills" className="w-16 h-16 brightness-0 invert" />
                 <button onClick={() => setIsMenuOpen(false)} className="p-2 glass rounded-full"><X className="text-white" /></button>
               </div>
               <div className="space-y-8 flex flex-col text-2xl font-serif">
@@ -87,9 +87,11 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
+            className="flex flex-col items-center"
           >
+            <img src="/logo.jpg" alt="Golden Hills Hotel" className="w-40 h-40 md:w-56 md:h-56 object-contain mb-8 brightness-0 invert drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
             <h4 className="text-luxury-gold font-serif italic text-sm md:text-xl mb-4 tracking-[0.4em] uppercase">Setif&apos;s Gilded Sanctuary</h4>
-            <h1 className="text-3xl sm:text-6xl md:text-8xl font-serif font-bold mb-6 md:mb-8 leading-[1.1] tracking-tight">
+            <h1 className="text-4xl sm:text-6xl md:text-8xl font-elegant font-bold mb-6 md:mb-8 leading-[1.1] tracking-tight">
               A Symphony of <br className="hidden md:block" /> Luxury & Light
             </h1>
             <p className="text-xs sm:text-lg md:text-xl text-white/70 max-w-xl md:max-w-2xl mx-auto mb-8 md:mb-14 font-medium leading-relaxed px-4 md:px-0">
@@ -267,7 +269,7 @@ const LandingPage = () => {
           <div className="grid md:grid-cols-4 gap-12 mb-20">
             <div className="col-span-2">
               <div className="mb-8">
-                <Logo inverse />
+                <img src="/logo.jpg" alt="Golden Hills" className="w-32 h-32 brightness-0 invert" />
               </div>
               <p className="text-white/60 max-w-sm mb-8 leading-relaxed font-medium">
                 The premier luxury destination in Setif, offering a perfect blend of modern comfort and traditional Algerian hospitality. Crafted for the discerning traveler.

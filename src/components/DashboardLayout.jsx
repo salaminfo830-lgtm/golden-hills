@@ -34,10 +34,10 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
       <motion.aside 
         initial={false}
         animate={{ width: isSidebarOpen ? 300 : 100 }}
-        className="hidden lg:flex bg-luxury-black border-r border-white/10 flex-col z-30 transition-all duration-500 relative"
+        className="hidden lg:flex bg-white border-r border-gray-100 flex-col z-30 transition-all duration-500 relative"
       >
-        <div className="p-8 mb-4">
-          <Logo inverse textVisible={isSidebarOpen} />
+        <div className="p-8 mb-4 h-32 flex items-center justify-center">
+             <img src="/logo.jpg" alt="Golden Hills" className={`object-contain transition-all duration-500 ${isSidebarOpen ? 'w-32 h-32' : 'w-12 h-12'}`} />
         </div>
 
         <nav className="flex-1 px-4 space-y-1">
@@ -52,8 +52,8 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
                 to={item.path}
                 className={`flex items-center gap-4 px-4 py-4 rounded-2xl transition-all duration-300 group ${
                   currentPath === item.path 
-                    ? 'bg-gradient-to-r from-luxury-gold/20 to-transparent text-luxury-gold border-r-4 border-luxury-gold' 
-                    : 'text-white/40 hover:text-white hover:bg-white/5'
+                    ? 'bg-luxury-gold/10 text-luxury-gold border-r-4 border-luxury-gold shadow-sm' 
+                    : 'text-gray-400 hover:text-luxury-black hover:bg-gray-50'
                 }`}
              >
                <div className={`shrink-0 ${currentPath === item.path ? 'text-luxury-gold' : 'group-hover:text-luxury-gold'} transition-colors`}>{item.icon}</div>
@@ -62,8 +62,8 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
            ))}
         </nav>
 
-        <div className="p-6 border-t border-white/10">
-           <Link to="/" className="flex items-center gap-4 px-4 py-4 text-white/40 hover:text-white transition-colors w-full rounded-2xl hover:bg-white/5">
+        <div className="p-6 border-t border-gray-100">
+           <Link to="/" className="flex items-center gap-4 px-4 py-4 text-gray-400 hover:text-red-500 transition-colors w-full rounded-2xl hover:bg-red-50">
              <LogOut className="w-5 h-5 shrink-0" />
              {isSidebarOpen && <span className="font-bold text-sm uppercase tracking-wide">Exit Systems</span>}
            </Link>
@@ -88,9 +88,11 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
         initial={{ x: '-100%' }}
         animate={{ x: isMobileOpen ? 0 : '-100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-y-0 left-0 w-[280px] bg-luxury-black/95 backdrop-blur-2xl z-50 lg:hidden flex flex-col border-r border-white/10"
+        className="fixed inset-y-0 left-0 w-[280px] bg-white z-50 lg:hidden flex flex-col border-r border-gray-100"
       >
-        <div className="p-8"><Logo inverse /></div>
+        <div className="p-8 flex justify-center">
+            <img src="/logo.jpg" alt="Golden Hills" className="w-24 h-24 object-contain" />
+        </div>
         <nav className="flex-1 px-4 space-y-2 mt-8">
            {(userType === 'Admin' ? sidebarItems : [
              { icon: <Home className="w-5 h-5" />, label: 'My Tasks', path: '/staff' },
@@ -103,15 +105,15 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
                to={item.path} 
                onClick={() => setMobileOpen(false)} 
                className={`flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${
-                 currentPath === item.path ? 'bg-luxury-gold/10 text-luxury-gold' : 'text-white/60 hover:text-white'
+                 currentPath === item.path ? 'bg-luxury-gold/10 text-luxury-gold' : 'text-gray-400 hover:text-luxury-black'
                }`}
               >
                 {item.icon} <span className="font-bold text-xs uppercase tracking-widest">{item.label}</span>
              </Link>
            ))}
         </nav>
-        <div className="p-6 border-t border-white/10">
-           <Link to="/" className="flex items-center gap-4 px-6 py-4 text-white/40 hover:text-white transition-colors w-full rounded-2xl">
+        <div className="p-6 border-t border-gray-100">
+           <Link to="/" className="flex items-center gap-4 px-6 py-4 text-gray-400 hover:text-red-500 transition-colors w-full rounded-2xl hover:bg-red-50">
              <LogOut className="w-5 h-5 shrink-0" />
              <span className="font-bold text-xs uppercase tracking-widest">Exit Systems</span>
            </Link>

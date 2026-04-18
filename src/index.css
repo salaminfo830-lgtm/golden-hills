@@ -1,26 +1,27 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --gold-primary: #c5a059;
-  --gold-light: #d4af37;
-  --white-warm: #fdfbf7;
+  --gold-primary: #bea269;
+  --gold-light: #d8c392;
+  --white-warm: #ffffff;
+  --luxury-black: #1a1a1a;
 }
 
 body {
-  background-color: #fdfbf7;
-  color: #121212;
-  font-family: "Inter", sans-serif;
+  background-color: var(--white-warm);
+  color: var(--luxury-black);
+  font-family: "Outfit", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
 }
 
 h1, h2, h3, h4, .font-elegant {
-  font-family: "Playfair Display", serif;
+  font-family: "Cormorant Garamond", serif;
 }
 
 /* Glassmorphism Classes */

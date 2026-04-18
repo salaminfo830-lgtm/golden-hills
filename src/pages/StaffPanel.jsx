@@ -1,20 +1,40 @@
-import DashboardLayout from '../components/DashboardLayout';
+import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
+import { Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+import DashboardLayout from '../components/DashboardLayout';
 
 import StaffDashboard from './StaffDashboard';
 import RoomsSystem from './admin/RoomsSystem';
 import KitchenSystem from './admin/KitchenSystem';
 import ReservationsSystem from './admin/ReservationsSystem';
 
-// In a real app we'd fetch this from the authenticated session context.
-// Here we simulate an employee who only has specific permissions:
-const MOCK_STAFF_PERMISSIONS = ['rooms', 'kitchen']; 
-
 const ProtectedModule = ({ id, children }) => {
-   if (!MOCK_STAFF_PERMISSIONS.includes(id)) {
+   const [permissions, setPermissions] = useState([]);
+   const [loading, setLoading] = useState(true);
+
+   useEffect(() => {
+      const fetchPermissions = async () => {
+         const { data: { session } } = await supabase.auth.getSession();
+         if (session) {
+            const { data } = await supabase.from('Staff').select('permissions').eq('id', session.user.id).single();
+            setPermissions(data?.permissions || []);
+         }
+         setLoading(false);
+      };
+      fetchPermissions();
+   }, []);
+
+   if (loading) return (
+      <div className="flex justify-center p-20">
+         <Loader2 className="w-8 h-8 text-luxury-gold animate-spin" />
+      </div>
+   );
+
+   if (!permissions.includes(id)) {
       return (
          <div className="flex flex-col items-center justify-center p-20 text-center">
-            <h2 className="text-2xl font-bold font-serif mb-2 text-luxury-black">Access Denied</h2>
+            <h2 className="text-2xl font-bold font-serif mb-2 text-luxury-black font-elegant">Access Denied</h2>
             <p className="text-gray-500 max-w-md">You do not have the required permissions assigned by the Administration to access this module.</p>
          </div>
       );

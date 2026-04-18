@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Shield, Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import GoldButton from '../components/GoldButton';
@@ -7,10 +7,11 @@ import GlassCard from '../components/GlassCard';
 import Logo from '../components/Logo';
 
 const LoginPage = () => {
+  const location = useLocation();
   const [email, setEmail] = useState('admin@gmail.com');
   const [password, setPassword] = useState('123456');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(location.state?.error || null);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -18,17 +19,41 @@ const LoginPage = () => {
     setLoading(true);
     setError(null);
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
-    if (error) {
-      setError(error.message);
+    if (authError) {
+      setError(authError.message);
       setLoading(false);
-    } else {
-      navigate('/admin');
+      return;
     }
+
+    const userId = authData.user?.id;
+    
+    // First check if they are an admin in Profile
+    const { data: profileData } = await supabase.from('Profile').select('role').eq('id', userId).single();
+    if (profileData && profileData.role === 'admin') {
+      navigate('/admin');
+      return;
+    }
+
+    // Otherwise, check Staff table
+    const { data: staffData } = await supabase.from('Staff').select('status, role').eq('id', userId).single();
+    if (staffData && staffData.status === 'Pending Approval') {
+       setError('Your account is awaiting approval by the Administration.');
+       await supabase.auth.signOut();
+       setLoading(false);
+       return;
+    }
+
+    if (profileData?.role === 'staff' || staffData?.role === 'staff') {
+       navigate('/staff');
+       return;
+    }
+
+    navigate('/admin'); // Fallback
   };
 
   return (
@@ -41,9 +66,9 @@ const LoginPage = () => {
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-10">
-          <Logo className="mb-6 justify-center scale-110" />
-          <h1 className="text-3xl font-serif font-bold text-luxury-black tracking-tight">System Access</h1>
-          <p className="text-gray-400 font-medium text-sm mt-2 uppercase tracking-widest">Administrator Portal</p>
+          <img src="/logo.jpg" alt="Golden Hills" className="w-24 h-24 mx-auto mb-6 object-contain rounded-2xl drop-shadow-xl" />
+          <h1 className="text-3xl font-elegant font-bold text-luxury-black tracking-tight">System Access</h1>
+          <p className="text-gray-400 font-medium text-sm mt-2 uppercase tracking-widest">Authorized Personnel</p>
         </div>
 
         <GlassCard className="bg-white/80 border-luxury-gold/20 p-8 md:p-10 shadow-2xl">
