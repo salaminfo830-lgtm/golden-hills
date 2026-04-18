@@ -184,4 +184,3 @@ const StaffDashboard = () => {
 };
 
 export default StaffDashboard;
-board;
