@@ -87,9 +87,8 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="flex flex-col items-center max-w-4xl mx-auto pt-20"
+            className="flex flex-col items-center max-w-4xl mx-auto pt-32 md:pt-40"
           >
-            <img src="/logo.jpg" alt="Golden Hills Hotel" className="w-32 h-32 md:w-44 md:h-44 object-contain mb-8 brightness-0 invert drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]" />
             <h4 className="text-luxury-gold font-elegant italic text-sm md:text-lg mb-4 tracking-[0.4em] uppercase">Setif&apos;s Gilded Sanctuary</h4>
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-elegant font-bold mb-6 md:mb-8 leading-tight tracking-tight">
               A Symphony of <br className="hidden md:block" /> Luxury & Light
@@ -200,7 +199,7 @@ const LandingPage = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
              {[
                { id: 0, name: 'Royal Gold Suite', price: '45,000 DZD', img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070' },
                { id: 1, name: 'Heritage Deluxe', price: '32,000 DZD', img: 'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974' },

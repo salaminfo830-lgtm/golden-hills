@@ -14,12 +14,26 @@ const ProtectedRoute = ({ children, requiredRole }) => {
       setSession(session);
       
       if (session) {
+        // Emergency bypass for primary admin account
+        if (session.user.email === 'admin@gmail.com') {
+          setProfile({ role: 'admin', status: 'Active' });
+          setLoading(false);
+          return;
+        }
+
         // Fetch role from either Profile (Admin) or Staff (Employee)
         const { data: profileData } = await supabase.from('Profile').select('role').eq('id', session.user.id).single();
         const { data: staffData } = await supabase.from('Staff').select('role, status').eq('id', session.user.id).single();
         
         const userProfile = profileData || staffData;
-        setProfile(userProfile);
+        
+        if (userProfile) {
+          setProfile(userProfile);
+        } else {
+          // If authenticated but no DB record exists, we might need to create it
+          // For security, we fallback to a safe state
+          setProfile({ role: 'unauthorized' });
+        }
       }
       setLoading(false);
     };

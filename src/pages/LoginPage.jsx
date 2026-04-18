@@ -65,10 +65,10 @@ const LoginPage = () => {
       </div>
 
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-10">
-          <img src="/logo.jpg" alt="Golden Hills" className="w-24 h-24 mx-auto mb-6 object-contain rounded-2xl drop-shadow-xl" />
-          <h1 className="text-3xl font-elegant font-bold text-luxury-black tracking-tight">System Access</h1>
-          <p className="text-gray-400 font-medium text-sm mt-2 uppercase tracking-widest">Authorized Personnel</p>
+        <div className="text-center mb-6 md:mb-10">
+          <Logo className="justify-center mb-6 scale-90 md:scale-110" textVisible={false} />
+          <h1 className="text-2xl md:text-4xl font-elegant font-bold text-luxury-black tracking-tight mt-2">System Access</h1>
+          <p className="text-gray-400 font-medium text-[8px] md:text-[10px] mt-1 uppercase tracking-[0.3em]">Authorized Personnel Only</p>
         </div>
 
         <GlassCard className="bg-white/80 border-luxury-gold/20 p-8 md:p-10 shadow-2xl">

@@ -16,8 +16,8 @@ const StaffDashboard = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10">
            <div>
               <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-[0.3em] mb-3">Service Excellence Portal</p>
-              <h1 className="text-5xl font-elegant font-bold text-luxury-black">Bonjour, Salim</h1>
-              <p className="text-gray-400 font-medium mt-2">Personalized Operations Dashboard • <span className="text-luxury-gold italic">Morning Shift</span></p>
+              <h1 className="text-3xl md:text-5xl font-elegant font-bold text-luxury-black leading-tight">Bonjour, Salim</h1>
+              <p className="text-[10px] md:text-base text-gray-400 font-medium mt-2">Personalized Operations Dashboard • <span className="text-luxury-gold italic text-[10px] md:text-sm">Morning Shift</span></p>
            </div>
            <div className="flex gap-4">
               <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm text-center min-w-[120px]">

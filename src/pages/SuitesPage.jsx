@@ -34,7 +34,7 @@ const SuitesPage = () => {
            <p className="text-gray-500 text-lg">Every room at Golden Hills is a masterpiece of design, offering a unique blend of heritage craftsmanship and cutting-edge comfort.</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
            {allSuites.map((suite, i) => (
              <motion.div 
                key={i}

@@ -48,7 +48,7 @@ const DiningPage = () => {
           className="text-center mb-24"
         >
            <h4 className="text-luxury-gold font-serif italic text-xl mb-4">Epicurean Journeys</h4>
-           <h1 className="text-5xl md:text-7xl font-serif font-bold tracking-tight mb-8">Setif&apos;s Finest Flavors</h1>
+           <h1 className="text-4xl md:text-7xl font-serif font-bold tracking-tight mb-8">Setif&apos;s Finest Flavors</h1>
            <p className="max-w-2xl mx-auto text-gray-500 text-lg">From traditional Saffron-infused masterpieces to contemporary Mediterranean delights, our culinary offerings define luxury dining in Algeria.</p>
         </motion.div>
 

@@ -56,7 +56,10 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
   const handleAddRoom = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.from('Room').insert([newRoom]);
+    const { error } = await supabase.from('Room').insert([{ 
+      ...newRoom, 
+      updated_at: new Date().toISOString() 
+    }]);
     if (!error) {
       setShowAddModal(false);
       setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '' });

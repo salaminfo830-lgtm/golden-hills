@@ -9,105 +9,105 @@ datasource db {
 }
 
 model Profile {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  full_name String?
-  role      String   @default("staff") // admin, staff
+  id         String   @id @default(uuid())
+  email      String   @unique
+  full_name  String?
+  role       String   @default("staff")
   avatar_url String?
   created_at DateTime @default(now())
 }
 
 model Room {
-  id          Int      @id @default(autoincrement())
-  number      String   @unique
-  type        String   // Royal, Heritage, Executive, etc.
-  price       Float
-  status      String   @default("Vacant") // Vacant, Occupied, Maintenance, Cleaning
-  occupancy   String   @default("Clean") // Clean, Dirty, In-Progress
-  housekeeper String?
-  image_url   String?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  id           Int           @id @default(autoincrement())
+  number       String        @unique
+  type         String
+  price        Float
+  status       String        @default("Vacant")
+  occupancy    String        @default("Clean")
+  housekeeper  String?
+  image_url    String?
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
   reservations Reservation[]
 }
 
 model Reservation {
-  id          String   @id @default(uuid())
-  guest_name  String
-  guests_count Int     @default(1)
-  nights      Int
-  room_id     Int?
-  room        Room?    @relation(fields: [room_id], references: [id])
-  room_type   String   // Added for cases where room isn't assigned yet
-  start_date  DateTime
-  end_date    DateTime
-  status      String   @default("Pending Approval") // Pending, Confirmed, Checked-in, Checked-out, Cancelled
-  source      String   @default("Direct Site") // Direct, Booking.com, Expedia
-  created_at  DateTime @default(now())
+  id           String   @id @default(uuid())
+  guest_name   String
+  guests_count Int      @default(1)
+  nights       Int
+  room_id      Int?
+  room_type    String
+  start_date   DateTime
+  end_date     DateTime
+  status       String   @default("Pending Approval")
+  source       String   @default("Direct Site")
+  created_at   DateTime @default(now())
+  room         Room?    @relation(fields: [room_id], references: [id])
 }
 
 model Staff {
   id          String   @id @default(uuid())
   name        String
   role        String
-  department  String   // HR, Kitchen, Security, Housekeeping, Finance
-  status      String   @default("Off Shift") // On Shift, Off Shift, Vacation
+  department  String
+  status      String   @default("Off Shift")
   phone       String?
   email       String?
   avatar_url  String?
-  permissions Json?    // Array of allowed modules e.g. ["rooms", "kitchen"]
   created_at  DateTime @default(now())
+  permissions Json?
   tasks       Task[]
 }
 
 model Task {
-  id          String   @id @default(uuid())
-  title       String
-  area        String   // Lobby, Room 405, Kitchen, etc.
-  time        String?  // Time of task
-  priority    String   @default("Normal") // High, Normal, Low
-  type        String   // Cleaning, Maintenance, Delivery
-  completed   Boolean  @default(false)
-  staff_id    String?
-  staff       Staff?   @relation(fields: [staff_id], references: [id])
-  created_at  DateTime @default(now())
+  id         String   @id @default(uuid())
+  title      String
+  area       String
+  time       String?
+  priority   String   @default("Normal")
+  type       String
+  completed  Boolean  @default(false)
+  staff_id   String?
+  created_at DateTime @default(now())
+  staff      Staff?   @relation(fields: [staff_id], references: [id])
 }
 
 model KitchenOrder {
-  id          String   @id @default(uuid())
-  table_id    String
-  items       Json     // Array of items
-  status      String   @default("Pending") // Pending, Preparing, Cooking, Ready, Served
-  time        DateTime @default(now())
-  priority    String   @default("Normal")
-  created_at  DateTime @default(now())
+  id         String   @id @default(uuid())
+  table_id   String
+  items      Json
+  status     String   @default("Pending")
+  time       DateTime @default(now())
+  priority   String   @default("Normal")
+  created_at DateTime @default(now())
 }
 
 model StockItem {
-  id          String   @id @default(uuid())
-  name        String
-  level       String   // e.g., "85%", "12kg"
-  status      String   @default("Regular") // Regular, Low, Critical
-  category    String   @default("General")
-  created_at  DateTime @default(now())
+  id         String   @id @default(uuid())
+  name       String
+  level      String
+  status     String   @default("Regular")
+  category   String   @default("General")
+  created_at DateTime @default(now())
 }
 
 model SecurityLog {
-  id          String   @id @default(uuid())
-  event       String
-  status      String   @default("Info") // Info, Warning, Critical
-  time        DateTime @default(now())
-  location    String?
-  created_at  DateTime @default(now())
+  id         String   @id @default(uuid())
+  event      String
+  status     String   @default("Info")
+  time       DateTime @default(now())
+  location   String?
+  created_at DateTime @default(now())
 }
 
 model FinanceTransaction {
-  id          String   @id @default(uuid())
-  label       String
-  value       Float
-  type        String   // Revenue, Expense
-  category    String   // Room Booking, F&B, Spa, Maintenance
-  is_up       Boolean  @default(true)
-  trend       String?  // e.g. "+12%"
-  date        DateTime @default(now())
+  id       String   @id @default(uuid())
+  label    String
+  value    Float
+  type     String
+  category String
+  is_up    Boolean  @default(true)
+  trend    String?
+  date     DateTime @default(now())
 }

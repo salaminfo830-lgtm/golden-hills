@@ -123,7 +123,7 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative bg-[#fafafa]">
         {/* Topbar */}
-        <header className="sticky top-0 bg-white/90 backdrop-blur-3xl border-b border-gray-200/50 z-20 px-3 md:px-8 py-3 md:py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm min-h-[70px] gap-3 md:gap-0">
+        <header className="sticky top-0 bg-white/95 backdrop-blur-3xl border-b border-gray-100/50 z-20 px-4 md:px-8 py-3 md:py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm min-h-[60px] md:min-h-[70px] gap-2 md:gap-0">
             <div className="flex items-center justify-between w-full md:w-auto">
              <div className="flex items-center gap-3 md:gap-5">
                <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-2.5 glass-vapor hover:bg-gray-100 rounded-xl transition-all text-gray-700 shadow-sm active:scale-95 border border-gray-100">

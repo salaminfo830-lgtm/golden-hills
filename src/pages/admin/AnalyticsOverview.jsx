@@ -85,8 +85,8 @@ const AnalyticsOverview = () => {
   return (
     <div className="space-y-10">
       <div className="border-b border-gray-100 pb-8">
-        <h1 className="text-4xl font-elegant font-bold text-luxury-black">Platform Overview</h1>
-        <p className="text-gray-400 font-medium mt-1">Real-time hospitality metrics and operational intelligence</p>
+        <h1 className="text-2xl md:text-4xl font-elegant font-bold text-luxury-black">Platform Overview</h1>
+        <p className="text-[10px] md:text-sm text-gray-400 font-medium mt-1">Real-time hospitality metrics and operational intelligence</p>
       </div>
 
       {/* Top Stats */}
