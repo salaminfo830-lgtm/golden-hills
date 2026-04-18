@@ -36,8 +36,8 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
         animate={{ width: isSidebarOpen ? 300 : 100 }}
         className="hidden lg:flex bg-white border-r border-gray-100 flex-col z-30 transition-all duration-500 relative"
       >
-        <div className="p-8 mb-4 h-32 flex items-center justify-center">
-             <img src="/logo.jpg" alt="Golden Hills" className={`object-contain transition-all duration-500 ${isSidebarOpen ? 'w-32 h-32' : 'w-12 h-12'}`} />
+        <div className="p-8 mb-4 h-32 flex items-center justify-center border-b border-gray-50">
+             <Logo textVisible={isSidebarOpen} className={isSidebarOpen ? '' : 'justify-center'} />
         </div>
 
         <nav className="flex-1 px-4 space-y-1">
@@ -90,8 +90,8 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
         className="fixed inset-y-0 left-0 w-[280px] bg-white z-50 lg:hidden flex flex-col border-r border-gray-100"
       >
-        <div className="p-8 flex justify-center">
-            <img src="/logo.jpg" alt="Golden Hills" className="w-24 h-24 object-contain" />
+        <div className="p-8 flex justify-center border-b border-gray-50">
+            <Logo />
         </div>
         <nav className="flex-1 px-4 space-y-2 mt-8">
            {(userType === 'Admin' ? sidebarItems : [
@@ -124,14 +124,14 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
       <main className="flex-1 overflow-y-auto relative bg-[#fafafa]">
         {/* Topbar */}
         <header className="sticky top-0 bg-white/90 backdrop-blur-3xl border-b border-gray-200/50 z-20 px-3 md:px-8 py-3 md:py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm min-h-[70px] gap-3 md:gap-0">
-           <div className="flex items-center justify-between w-full md:w-auto">
-             <div className="flex items-center gap-3 md:gap-4">
-               <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-2 md:p-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700 shadow-sm active:scale-95">
+            <div className="flex items-center justify-between w-full md:w-auto">
+             <div className="flex items-center gap-3 md:gap-5">
+               <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-2.5 glass-vapor hover:bg-gray-100 rounded-xl transition-all text-gray-700 shadow-sm active:scale-95 border border-gray-100">
                  <MenuIcon />
                </button>
                <div className="flex flex-col">
-                 <h2 className="text-sm md:text-lg font-serif font-bold text-gray-800 tracking-tight">Golden Hills <span className="text-luxury-gold inline">Systems</span></h2>
-                 <p className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">Integrated v2.0</p>
+                 <h2 className="text-sm md:text-lg font-elegant font-bold text-gray-800 tracking-tight leading-none mb-1">Golden Hills <span className="text-luxury-gold inline italic">Sanctuary</span></h2>
+                 <p className="text-[8px] md:text-[9px] uppercase tracking-[0.3em] font-bold text-gray-400">Integrated Control Panel</p>
                </div>
              </div>
              

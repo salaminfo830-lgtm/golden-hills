@@ -3,9 +3,9 @@ import { twMerge } from 'tailwind-merge';
 
 const GlassCard = ({ children, className, variant = 'light', delay = 0 }) => {
   const variants = {
-    light: 'bg-white/10 border-white/20 backdrop-blur-md',
-    dark: 'bg-black/40 border-white/5 backdrop-blur-lg',
-    gold: 'bg-luxury-gold/5 border-luxury-gold/20 backdrop-blur-md',
+    light: 'glass',
+    dark: 'glass-dark',
+    gold: 'glass-gold',
   };
 
   return (
@@ -15,7 +15,7 @@ const GlassCard = ({ children, className, variant = 'light', delay = 0 }) => {
       viewport={{ once: true }}
       transition={{ duration: 0.8, delay }}
       className={twMerge(
-        'rounded-2xl border p-6 shadow-xl',
+        'rounded-[2rem] p-8',
         variants[variant],
         className
       )}

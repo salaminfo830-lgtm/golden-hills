@@ -28,18 +28,18 @@ const LandingPage = () => {
       <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'glass py-4 shadow-lg' : 'bg-transparent py-6'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
           <Link to="/" className="flex items-center gap-4">
-            <img src="/logo.jpg" alt="Golden Hills Logo" className={`transition-all duration-500 rounded-lg drop-shadow-md ${isScrolled ? 'w-16 h-16' : 'w-24 h-24 brightness-0 invert'}`} />
+            <img src="/logo.jpg" alt="Golden Hills Logo" className={`transition-all duration-500 rounded-lg drop-shadow-md ${isScrolled ? 'w-12 h-12' : 'w-20 h-20 brightness-0 invert'}`} />
           </Link>
           
-          <div className="hidden lg:flex items-center gap-10 font-bold tracking-widest text-xs uppercase">
+          <div className="hidden lg:flex items-center gap-10 font-bold tracking-widest text-[10px] uppercase">
             <a href="#about" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>About</a>
             <a href="#suites" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Suites</a>
             <a href="#services" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Services</a>
             <a href="#contact" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Contact</a>
-            <GoldButton className="px-8 py-2 text-xs" onClick={() => navigate('/admin')}>MANAGEMENT</GoldButton>
+            <GoldButton className="px-8 py-2 text-[10px]" onClick={() => navigate('/admin')}>MANAGEMENT</GoldButton>
           </div>
 
-          <button className="lg:hidden p-2 rounded-lg glass" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <button className="lg:hidden p-2 rounded-xl glass" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X className={isScrolled ? 'text-black' : 'text-white'} /> : <Menu className={isScrolled ? 'text-black' : 'text-white'} />}
           </button>
         </div>
@@ -87,53 +87,56 @@ const LandingPage = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1 }}
-            className="flex flex-col items-center"
+            className="flex flex-col items-center max-w-4xl mx-auto pt-20"
           >
-            <img src="/logo.jpg" alt="Golden Hills Hotel" className="w-40 h-40 md:w-56 md:h-56 object-contain mb-8 brightness-0 invert drop-shadow-[0_0_15px_rgba(255,255,255,0.4)]" />
-            <h4 className="text-luxury-gold font-serif italic text-sm md:text-xl mb-4 tracking-[0.4em] uppercase">Setif&apos;s Gilded Sanctuary</h4>
-            <h1 className="text-4xl sm:text-6xl md:text-8xl font-elegant font-bold mb-6 md:mb-8 leading-[1.1] tracking-tight">
+            <img src="/logo.jpg" alt="Golden Hills Hotel" className="w-32 h-32 md:w-44 md:h-44 object-contain mb-8 brightness-0 invert drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]" />
+            <h4 className="text-luxury-gold font-elegant italic text-sm md:text-lg mb-4 tracking-[0.4em] uppercase">Setif&apos;s Gilded Sanctuary</h4>
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-elegant font-bold mb-6 md:mb-8 leading-tight tracking-tight">
               A Symphony of <br className="hidden md:block" /> Luxury & Light
             </h1>
-            <p className="text-xs sm:text-lg md:text-xl text-white/70 max-w-xl md:max-w-2xl mx-auto mb-8 md:mb-14 font-medium leading-relaxed px-4 md:px-0">
+            <p className="text-sm md:text-lg text-white/70 max-w-xl mx-auto mb-10 md:mb-16 font-medium leading-relaxed px-4 md:px-0">
               Experience the pinnacle of Algerian hospitality at Golden Hills Hotel, where every moment is a masterpiece of gold and light.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <GoldButton className="w-full sm:w-auto text-sm md:text-lg px-8 md:px-12 py-4 md:py-5 shadow-2xl">RESERVE YOUR MOMENT</GoldButton>
-              <button className="flex items-center gap-3 text-sm md:text-lg font-bold tracking-widest uppercase hover:text-luxury-gold transition-colors group">
-                <PlayCircle className="w-8 h-8 md:w-10 md:h-10 group-hover:scale-110 transition-transform" /> THE EXPERIENCE
+              <GoldButton className="w-full sm:w-auto text-xs md:text-sm px-10 md:px-14 py-4 md:py-5 shadow-2xl">RESERVE YOUR MOMENT</GoldButton>
+              <button className="flex items-center gap-4 text-xs md:text-sm font-bold tracking-widest uppercase hover:text-luxury-gold transition-colors group">
+                <div className="w-12 h-12 rounded-full glass flex items-center justify-center group-hover:scale-110 transition-transform">
+                  <PlayCircle className="w-6 h-6" />
+                </div>
+                THE EXPERIENCE
               </button>
             </div>
           </motion.div>
         </div>
 
         {/* Floating Booking Widget */}
-        <div className="hidden md:block absolute -bottom-16 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6">
-          <GlassCard className="flex flex-row gap-8 p-10 shadow-2xl border-white/40 ring-1 ring-white/10">
+        <div className="hidden lg:block absolute -bottom-20 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6 z-20">
+          <div className="glass p-10 rounded-[2.5rem] flex flex-row gap-8 shadow-2xl ring-1 ring-white/10">
             <div className="flex-1 space-y-3">
               <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Check-in <div className="w-1 h-1 rounded-full bg-luxury-gold" /></label>
-              <div className="flex items-center gap-4 border-b border-luxury-gold/20 pb-3">
+              <div className="flex items-center gap-4 border-b border-white/10 pb-3">
                 <Calendar className="text-luxury-gold w-5 h-5 opacity-60" />
-                <span className="font-bold text-luxury-black">12 Oct 2026</span>
+                <span className="font-bold text-white">12 Oct 2026</span>
               </div>
             </div>
             <div className="flex-1 space-y-3">
               <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Check-out <div className="w-1 h-1 rounded-full bg-orange-400" /></label>
-              <div className="flex items-center gap-4 border-b border-luxury-gold/20 pb-3">
+              <div className="flex items-center gap-4 border-b border-white/10 pb-3">
                 <Calendar className="text-luxury-gold w-5 h-5 opacity-60" />
-                <span className="font-bold text-luxury-black">18 Oct 2026</span>
+                <span className="font-bold text-white">18 Oct 2026</span>
               </div>
             </div>
             <div className="flex-1 space-y-3">
               <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Guests <div className="w-1 h-1 rounded-full bg-blue-400" /></label>
-              <div className="flex items-center gap-4 border-b border-luxury-gold/20 pb-3">
+              <div className="flex items-center gap-4 border-b border-white/10 pb-3">
                 <Users className="text-luxury-gold w-5 h-5 opacity-60" />
-                <span className="font-bold text-luxury-black">2 Adults, 0 Children</span>
+                <span className="font-bold text-white">2 Adults, 0 Children</span>
               </div>
             </div>
             <div className="flex items-center pt-5">
-              <GoldButton className="px-12 py-4 shadow-gold">PROCEED</GoldButton>
+              <GoldButton className="px-12 py-4 shadow-lg">PROCEED</GoldButton>
             </div>
-          </GlassCard>
+          </div>
         </div>
       </section>
 
@@ -209,11 +212,11 @@ const LandingPage = () => {
                  className="group cursor-pointer"
                  onClick={() => navigate(`/room/${suite.id}`)}
                >
-                 <div className="relative aspect-[3/4] rounded-2xl overflow-hidden mb-6">
-                   <img src={suite.img} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-700" alt={suite.name} />
-                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex flex-col justify-end p-8 text-white">
-                      <p className="text-luxury-gold font-bold mb-1">Starting from {suite.price}</p>
-                      <h3 className="text-2xl font-serif font-bold">{suite.name}</h3>
+                 <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden mb-6 shadow-xl border border-white/10 group-hover:shadow-2xl transition-all duration-700">
+                   <img src={suite.img} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-[1.5s]" alt={suite.name} />
+                   <div className="absolute inset-x-0 bottom-0 p-8 pt-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end text-white">
+                      <p className="text-luxury-gold font-bold text-xs mb-1 uppercase tracking-widest">Starting from {suite.price}</p>
+                      <h3 className="text-3xl font-elegant font-bold">{suite.name}</h3>
                    </div>
                  </div>
                  <div className="flex justify-between items-center px-2">
@@ -264,27 +267,28 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-luxury-black text-white pt-20 pb-10">
+      <footer className="bg-[#050505] text-white pt-32 pb-20 relative overflow-hidden">
+        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-luxury-gold/30 to-transparent" />
         <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-20">
+          <div className="grid md:grid-cols-4 gap-16 mb-24 font-sans">
             <div className="col-span-2">
-              <div className="mb-8">
-                <img src="/logo.jpg" alt="Golden Hills" className="w-32 h-32 brightness-0 invert" />
+              <div className="mb-12">
+                <Logo inverse />
               </div>
-              <p className="text-white/60 max-w-sm mb-8 leading-relaxed font-medium">
+              <p className="text-white/40 max-w-sm mb-12 leading-relaxed font-normal text-sm">
                 The premier luxury destination in Setif, offering a perfect blend of modern comfort and traditional Algerian hospitality. Crafted for the discerning traveler.
               </p>
-              <div className="flex gap-4">
+              <div className="flex gap-6">
                  {[1,2,3,4].map(i => (
-                   <div key={i} className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-luxury-gold transition-colors cursor-pointer text-white">
+                   <div key={i} className="w-12 h-12 rounded-full glass border border-white/5 flex items-center justify-center hover:bg-luxury-gold/20 hover:border-luxury-gold transition-all cursor-pointer text-white/40 hover:text-white">
                       {/* Social Icons Placeholder */}
                    </div>
                  ))}
               </div>
             </div>
             <div>
-              <h5 className="font-bold mb-6 text-luxury-gold text-lg">Quick Links</h5>
-              <ul className="space-y-4 text-white/50">
+              <h5 className="font-bold mb-8 text-luxury-gold text-xs uppercase tracking-widest">Quick Links</h5>
+              <ul className="space-y-4 text-white/40 text-sm">
                 <li className="hover:text-white transition-colors cursor-pointer"><Link to="/about">About Us</Link></li>
                 <li className="hover:text-white transition-colors cursor-pointer"><Link to="/suites">Our Rooms</Link></li>
                 <li className="hover:text-white transition-colors cursor-pointer"><Link to="/spa">Spa & Wellness</Link></li>
@@ -292,19 +296,22 @@ const LandingPage = () => {
               </ul>
             </div>
             <div>
-              <h5 className="font-bold mb-6 text-luxury-gold text-lg">Contact Us</h5>
-              <ul className="space-y-4 text-white/50">
-                <li className="flex items-center gap-3"><MapPin className="w-5 h-5 text-luxury-gold" /> Blvd des Orangers, Setif, Algeria</li>
-                <li className="flex items-center gap-3">+213 36 00 00 00</li>
-                <li className="flex items-center gap-3">contact@goldenhills.dz</li>
+              <h5 className="font-bold mb-8 text-luxury-gold text-xs uppercase tracking-widest">Contact Us</h5>
+              <ul className="space-y-6 text-white/40 text-sm">
+                <li className="flex items-start gap-4">
+                  <MapPin className="w-5 h-5 text-luxury-gold shrink-0 mt-1" />
+                  <span>Blvd des Orangers, Setif, Algeria</span>
+                </li>
+                <li className="flex items-center gap-4">+213 36 00 00 00</li>
+                <li className="flex items-center gap-4">contact@goldenhills.dz</li>
               </ul>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-10 flex flex-col md:flex-row justify-between items-center gap-6 text-white/30 text-sm">
-            <p>© 2026 Golden Hills Hotel Setif. All rights reserved.</p>
-            <div className="flex gap-10">
-              <Link to="/privacy" className="hover:text-white cursor-pointer">Privacy Policy</Link>
-              <Link to="/terms" className="hover:text-white cursor-pointer">Terms of Service</Link>
+          <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-white/20 text-[10px] uppercase font-bold tracking-widest">
+            <p>© 2026 Golden Hills Hotel Setif. Crafted with Excellence.</p>
+            <div className="flex gap-12">
+              <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>

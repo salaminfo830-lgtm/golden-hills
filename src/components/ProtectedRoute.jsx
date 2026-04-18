@@ -48,14 +48,19 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   }
 
   if (!session) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to="/login" replace state={{ from: window.location.pathname }} />;
   }
 
   if (profile?.status === 'Pending Approval') {
-    return <Navigate to="/login" state={{ error: 'Approval Pending' }} replace />;
+    return <Navigate to="/login" state={{ error: 'Your account is currently awaiting administrative approval.' }} replace />;
   }
 
   if (requiredRole && profile?.role !== requiredRole) {
+    // If they are a staff member trying to access /admin, send them to their dashboard
+    if (profile?.role === 'staff') {
+      return <Navigate to="/staff" replace />;
+    }
+    // Otherwise fallback to home
     return <Navigate to="/" replace />;
   }
 
