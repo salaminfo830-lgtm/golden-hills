@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { 
   Plus, Search, MoreVertical, 
   Bed, CheckCircle2,
-  Loader2, User, Droplets, Hammer
+  Loader2, User, Droplets, Hammer,
+  X, Trash2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -12,6 +13,17 @@ const RoomsSystem = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
+  const [showAddModal, setShowAddModal] = useState(false);
+  
+  // Add Room Form State
+  const [newRoom, setNewRoom] = useState({
+    number: '',
+    type: 'Heritage Deluxe',
+    price: 320,
+    status: 'Vacant',
+    occupancy: 'Clean',
+    housekeeper: ''
+  });
 
   useEffect(() => {
     fetchRooms();
@@ -36,9 +48,38 @@ const RoomsSystem = () => {
       .order('number', { ascending: true });
     
     if (!error) {
-      setRooms(data);
+      setRooms(data || []);
     }
     setLoading(false);
+  };
+
+  const handleAddRoom = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.from('Room').insert([newRoom]);
+    if (!error) {
+      setShowAddModal(false);
+      setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '' });
+      fetchRooms();
+    } else {
+      alert("Error adding room: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteRoom = async (id) => {
+    if(window.confirm("Are you sure you want to delete this room?")) {
+       setLoading(true);
+       await supabase.from('Room').delete().eq('id', id);
+       fetchRooms();
+    }
+  };
+
+  const handleStatusChange = async (id, currentStatus) => {
+    const statuses = ['Vacant', 'Occupied', 'Cleaning', 'Maintenance'];
+    const nextIdx = (statuses.indexOf(currentStatus) + 1) % statuses.length;
+    await supabase.from('Room').update({ status: statuses[nextIdx] }).eq('id', id);
+    fetchRooms(); // or rely on realtime
   };
 
   const filteredRooms = filter === 'All' 
@@ -53,15 +94,15 @@ const RoomsSystem = () => {
   };
 
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-8 font-sans relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h2 className="text-3xl font-serif font-bold tracking-tight">Rooms & Housekeeping</h2>
           <p className="text-gray-400 font-medium tracking-wide">Live occupancy & inventory management</p>
         </div>
         <div className="flex gap-4 w-full md:w-auto">
-           <GoldButton outline className="flex-1 md:flex-none py-3 px-6 text-[10px] cursor-not-allowed opacity-50">EXPORT DATA</GoldButton>
-           <GoldButton className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2 cursor-not-allowed opacity-50">
+           <GoldButton outline onClick={fetchRooms} className="flex-1 md:flex-none py-3 px-6 text-[10px]">REFRESH</GoldButton>
+           <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
              <Plus className="w-4 h-4" /> ADD ROOM
            </GoldButton>
         </div>
@@ -100,10 +141,6 @@ const RoomsSystem = () => {
               </button>
             ))}
          </div>
-         <div className="relative w-full md:w-64 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-luxury-gold transition-colors" />
-            <input type="text" placeholder="Search parameters..." className="w-full bg-white border border-gray-100 rounded-2xl py-2.5 pl-10 pr-4 text-xs font-medium outline-none focus:border-luxury-gold transition-all" />
-         </div>
       </div>
 
       <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden overflow-x-auto hidden lg:block">
@@ -139,9 +176,11 @@ const RoomsSystem = () => {
                    </div>
                 </td>
                 <td className="px-8 py-6">
-                   <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase border ${statusColors[room.status] || 'bg-gray-100'}`}>
+                   <button 
+                     onClick={() => handleStatusChange(room.id, room.status)}
+                     className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase border hover:opacity-80 transition-opacity ${statusColors[room.status] || 'bg-gray-100'}`}>
                      {room.status}
-                   </span>
+                   </button>
                 </td>
                 <td className="px-8 py-6">
                    <p className={`text-sm font-bold ${room.status === 'Occupied' ? 'text-luxury-gold' : 'text-gray-400'}`}>
@@ -157,8 +196,8 @@ const RoomsSystem = () => {
                    </div>
                 </td>
                 <td className="px-8 py-6">
-                   <button className="p-2 hover:bg-white rounded-lg transition-colors text-gray-400 hover:text-luxury-black">
-                     <MoreVertical className="w-4 h-4" />
+                   <button onClick={() => handleDeleteRoom(room.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors text-gray-400 hover:text-red-500">
+                     <Trash2 className="w-4 h-4" />
                    </button>
                 </td>
               </tr>
@@ -167,7 +206,6 @@ const RoomsSystem = () => {
         </table>
       </GlassCard>
 
-      {/* Grid View for Tablet/Mobile or alternative layout */}
       <div className="lg:hidden grid grid-cols-1 md:grid-cols-2 gap-6">
          {filteredRooms.map((room) => (
            <GlassCard key={room.id} className="bg-white border-gray-100 p-6 space-y-4">
@@ -181,20 +219,59 @@ const RoomsSystem = () => {
                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Floor {room.number[0]}</p>
                     </div>
                  </div>
-                 <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase border ${statusColors[room.status] || 'bg-gray-100'}`}>
+                 <button 
+                   onClick={() => handleStatusChange(room.id, room.status)}
+                   className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase border hover:opacity-80 transition-opacity ${statusColors[room.status] || 'bg-gray-100'}`}>
                     {room.status}
-                 </span>
+                 </button>
               </div>
               <div className="flex justify-between items-center pt-4 border-t border-gray-50">
                  <div className="flex items-center gap-2">
                     <User className="w-3 h-3 text-gray-400" />
                     <span className="text-xs font-medium text-gray-600">{room.housekeeper || 'Unassigned'}</span>
                  </div>
-                 <GoldButton outline className="px-4 py-1.5 text-[10px]">DETAILS</GoldButton>
+                 <button onClick={() => handleDeleteRoom(room.id)} className="text-red-500 p-2"><Trash2 className="w-4 h-4"/></button>
               </div>
            </GlassCard>
          ))}
       </div>
+
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <GlassCard className="bg-white w-full max-w-md p-6 relative">
+              <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+                <X className="w-5 h-5"/>
+              </button>
+              <h3 className="text-xl font-bold font-serif mb-6">Add New Room</h3>
+              <form onSubmit={handleAddRoom} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Room Number</label>
+                  <input required value={newRoom.number} onChange={e=>setNewRoom({...newRoom, number: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none focus:border-luxury-gold" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Room Type</label>
+                  <select value={newRoom.type} onChange={e=>setNewRoom({...newRoom, type: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none focus:border-luxury-gold">
+                    <option>Heritage Deluxe</option>
+                    <option>Royal Gold Suite</option>
+                    <option>Presidential Panorama</option>
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Nightly Rate</label>
+                    <input required type="number" value={newRoom.price} onChange={e=>setNewRoom({...newRoom, price: Number(e.target.value)})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Housekeeper</label>
+                    <input type="text" placeholder="e.g. Amina K." value={newRoom.housekeeper} onChange={e=>setNewRoom({...newRoom, housekeeper: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  </div>
+                </div>
+                <GoldButton type="submit" className="w-full mt-6 py-3">SAVE ROOM TO SYSTEM</GoldButton>
+              </form>
+           </GlassCard>
+        </div>
+      )}
+
     </div>
   );
 };

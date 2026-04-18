@@ -121,38 +121,58 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
       {/* Main Content */}
       <main className="flex-1 overflow-y-auto relative bg-[#fafafa]">
         {/* Topbar */}
-        <header className="sticky top-0 bg-white/60 backdrop-blur-2xl border-b border-gray-100/50 z-20 px-4 md:px-8 py-3 flex justify-between items-center shadow-sm">
-           <div className="flex items-center gap-4">
-             <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors text-gray-600">
-               <MenuIcon />
-             </button>
-             <div className="flex flex-col">
-               <h2 className="text-sm md:text-lg font-serif font-bold text-gray-800 tracking-tight">Golden Hills <span className="text-luxury-gold md:inline hidden">Systems</span></h2>
-               <p className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-gray-400">Integrated v2.0</p>
+        <header className="sticky top-0 bg-white/90 backdrop-blur-3xl border-b border-gray-200/50 z-20 px-3 md:px-8 py-3 md:py-4 flex flex-col md:flex-row justify-between items-start md:items-center shadow-sm min-h-[70px] gap-3 md:gap-0">
+           <div className="flex items-center justify-between w-full md:w-auto">
+             <div className="flex items-center gap-3 md:gap-4">
+               <button onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} className="p-2 md:p-2.5 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors text-gray-700 shadow-sm active:scale-95">
+                 <MenuIcon />
+               </button>
+               <div className="flex flex-col">
+                 <h2 className="text-sm md:text-lg font-serif font-bold text-gray-800 tracking-tight">Golden Hills <span className="text-luxury-gold inline">Systems</span></h2>
+                 <p className="text-[8px] md:text-[10px] uppercase tracking-[0.2em] font-bold text-gray-500">Integrated v2.0</p>
+               </div>
+             </div>
+             
+             {/* Mobile only Bell */}
+             <div className="relative cursor-pointer group md:hidden p-2 bg-gray-100/80 rounded-xl">
+               <Bell className="w-5 h-5 text-gray-600" />
+               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-luxury-gold rounded-full border-2 border-white animate-pulse" />
              </div>
            </div>
 
-           <div className="flex items-center gap-2 md:gap-6">
-             <div className="hidden lg:flex items-center bg-gray-100/50 px-5 py-2.5 rounded-2xl border border-gray-100 focus-within:border-luxury-gold transition-colors">
-               <Search className="w-4 h-4 text-gray-400 mr-3" />
-               <input type="text" placeholder="Global system search..." className="bg-transparent border-none outline-none text-xs w-64 font-medium" />
+           <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-6 w-full md:w-auto border-t md:border-t-0 border-gray-100 pt-3 md:pt-0">
+             <div className="flex items-center bg-gray-100/80 px-4 py-2.5 rounded-2xl border border-gray-200 focus-within:border-luxury-gold/50 transition-colors w-full md:w-auto">
+               <Search className="w-4 h-4 text-gray-500 mr-3 shrink-0" />
+               <input type="text" placeholder="Search systems..." className="bg-transparent border-none outline-none text-xs w-full min-w-0 md:w-48 font-medium text-gray-700 placeholder-gray-400 focus:ring-0" />
              </div>
-             <div className="flex items-center gap-4 border-l border-gray-100 pl-4 md:pl-6">
-                <div className="relative cursor-pointer group">
-                  <div className="p-2.5 bg-gray-100/50 rounded-xl group-hover:bg-luxury-gold/10 transition-colors">
-                    <Bell className="w-5 h-5 text-gray-500 group-hover:text-luxury-gold transition-colors" />
+             <div className="flex items-center justify-between md:justify-end gap-3 md:gap-4 md:border-l md:border-gray-200 md:pl-6 w-full md:w-auto bg-white md:bg-transparent rounded-2xl p-2 md:p-0 shadow-sm md:shadow-none border border-gray-100 md:border-none">
+                <div className="relative cursor-pointer group hidden md:block">
+                  <div className="p-2.5 bg-gray-100/80 rounded-xl group-hover:bg-luxury-gold/10 transition-colors">
+                    <Bell className="w-5 h-5 text-gray-600 group-hover:text-luxury-gold" />
                   </div>
-                  <span className="absolute top-0 right-0 w-3 h-3 bg-luxury-gold rounded-full border-4 border-white animate-pulse" />
+                  <span className="absolute top-0 right-0 w-3 h-3 bg-luxury-gold rounded-full border-[3px] border-white animate-pulse" />
                 </div>
-                <div className="flex items-center gap-3">
-                  <div className="hidden md:block text-right">
-                    <p className="text-xs font-bold text-gray-800 tracking-wide">Fares Ahmed</p>
-                    <p className="text-[10px] text-luxury-gold font-bold uppercase">{userType}</p>
-                  </div>
-                  <div className="w-10 md:w-11 h-10 md:h-11 rounded-2xl gold-gradient p-[2px]">
-                    <div className="w-full h-full bg-white rounded-[14px] overflow-hidden">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Fares" alt="User" />
+                
+                <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 md:w-11 h-10 md:h-11 shrink-0 rounded-2xl gold-gradient p-[2px] shadow-sm">
+                      <div className="w-full h-full bg-white rounded-[14px] overflow-hidden flex items-center justify-center">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Fares" alt="User" className="w-full h-full object-cover bg-gray-50" />
+                      </div>
                     </div>
+                    <div className="flex flex-col text-left md:text-right">
+                      <p className="text-xs md:text-sm font-bold text-gray-900 tracking-wide">Fares Ahmed</p>
+                      <div className="flex items-center gap-1 md:justify-end">
+                         <Mail className="w-3 h-3 text-gray-400 hidden md:block" />
+                         <p className="text-[10px] md:text-xs text-gray-500 font-medium truncate max-w-[120px] md:max-w-none">fares@goldenhills.dz</p>
+                      </div>
+                      <p className="text-[10px] md:text-[11px] text-gray-400 font-medium hidden md:block">+213 36 00 00 00</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end">
+                     <p className="text-[10px] md:text-xs text-luxury-gold font-bold uppercase tracking-wider bg-luxury-gold/10 px-2 py-1 rounded-lg">{userType}</p>
+                     <p className="text-[9px] text-gray-400 font-medium md:hidden mt-1">+213 36 00 00 00</p>
                   </div>
                 </div>
              </div>
@@ -160,7 +180,7 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
         </header>
 
         {/* Page Content */}
-        <div className="p-4 md:p-10 max-w-[1600px] mx-auto">
+        <div className="p-3 md:p-8 lg:p-10 max-w-[1600px] mx-auto w-full overflow-x-hidden">
            {children}
         </div>
       </main>

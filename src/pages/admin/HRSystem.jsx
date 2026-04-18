@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   UserPlus, Search, 
   Mail, Phone, MoreVertical, 
-  Clock, Loader2
+  Clock, Loader2, X, Trash2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -13,6 +13,11 @@ const HRSystem = () => {
   const [staff, setStaff] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
+  const [showAddModal, setShowAddModal] = useState(false);
+
+  const [newStaff, setNewStaff] = useState({
+    name: '', role: '', department: 'Housekeeping', phone: '', email: ''
+  });
 
   useEffect(() => {
     fetchStaff();
@@ -34,9 +39,41 @@ const HRSystem = () => {
       .order('name', { ascending: true });
     
     if (!error) {
-      setStaff(data);
+      setStaff(data || []);
     }
     setLoading(false);
+  };
+
+  const handleAddStaff = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.from('Staff').insert([{
+      ...newStaff,
+      status: 'Off Shift'
+    }]);
+
+    if (!error) {
+      setShowAddModal(false);
+      setNewStaff({ name: '', role: '', department: 'Housekeeping', phone: '', email: '' });
+      fetchStaff();
+    } else {
+      alert("Error: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteStaff = async (id) => {
+    if(window.confirm("Are you sure you want to dismiss this personnel?")) {
+      await supabase.from('Staff').delete().eq('id', id);
+      fetchStaff();
+    }
+  };
+
+  const handleStatusChange = async (id, currentStatus) => {
+    const statuses = ['On Shift', 'Off Shift', 'Vacation'];
+    const nextIdx = (statuses.indexOf(currentStatus) + 1) % statuses.length;
+    await supabase.from('Staff').update({ status: statuses[nextIdx] }).eq('id', id);
+    fetchStaff();
   };
 
   const filteredStaff = filter === 'All' 
@@ -44,7 +81,7 @@ const HRSystem = () => {
     : staff.filter(s => s.department === filter);
 
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-8 font-sans relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h2 className="text-3xl font-serif font-bold tracking-tight">Human Resources</h2>
@@ -52,7 +89,7 @@ const HRSystem = () => {
         </div>
         <div className="flex gap-4 w-full md:w-auto">
            <GoldButton outline className="flex-1 md:flex-none py-3 px-6 text-[10px] cursor-not-allowed opacity-50">VIEW SCHEDULES</GoldButton>
-           <GoldButton className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2 cursor-not-allowed opacity-50">
+           <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
              <UserPlus className="w-4 h-4" /> RECRUIT NEW
            </GoldButton>
         </div>
@@ -71,10 +108,6 @@ const HRSystem = () => {
                 {dept}
               </button>
             ))}
-         </div>
-         <div className="relative w-full md:w-80 group">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 group-focus-within:text-luxury-gold transition-colors" />
-            <input type="text" placeholder="Search departments, names, roles..." className="w-full bg-white border border-gray-100 rounded-2xl py-3 pl-10 pr-4 text-xs font-medium outline-none focus:border-luxury-gold transition-all" />
          </div>
       </div>
 
@@ -128,16 +161,13 @@ const HRSystem = () => {
                    </div>
 
                    <div className="flex justify-between items-center pt-6 border-t border-gray-50 relative z-10">
-                      <div className="flex items-center gap-2">
-                         <div className={`w-2 h-2 rounded-full ${person.status === 'On Shift' ? 'bg-green-500 animate-pulse' : 'bg-gray-300'}`} />
-                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{person.status}</span>
+                      <div className="flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={() => handleStatusChange(person.id, person.status)}>
+                         <div className={`w-2 h-2 rounded-full ${person.status === 'On Shift' ? 'bg-green-500 animate-pulse' : person.status === 'Off Shift' ? 'bg-gray-400' : 'bg-orange-400'}`} />
+                         <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{person.status}</span>
                       </div>
                       <div className="flex gap-2">
-                         <button className="p-2.5 bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 rounded-xl transition-all text-gray-400 hover:text-luxury-gold">
-                            <Clock className="w-4 h-4" />
-                         </button>
-                         <button className="p-2.5 bg-gray-50 hover:bg-white border border-transparent hover:border-gray-100 rounded-xl transition-all text-gray-400 hover:text-luxury-gold">
-                            <MoreVertical className="w-4 h-4" />
+                         <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-xl transition-all text-gray-400 hover:text-red-500">
+                            <Trash2 className="w-4 h-4" />
                          </button>
                       </div>
                    </div>
@@ -146,6 +176,49 @@ const HRSystem = () => {
            ))}
          </AnimatePresence>
       </div>
+
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <GlassCard className="bg-white w-full max-w-md p-6 relative">
+              <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+                <X className="w-5 h-5"/>
+              </button>
+              <h3 className="text-xl font-bold font-serif mb-6">Recruit Personnel</h3>
+              <form onSubmit={handleAddStaff} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Full Name</label>
+                  <input required value={newStaff.name} onChange={e=>setNewStaff({...newStaff, name: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Role</label>
+                    <input required placeholder="e.g. Concierge" type="text" value={newStaff.role} onChange={e=>setNewStaff({...newStaff, role: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Department</label>
+                    <select value={newStaff.department} onChange={e=>setNewStaff({...newStaff, department: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
+                      <option>Housekeeping</option>
+                      <option>Administration</option>
+                      <option>Kitchen</option>
+                      <option>Security</option>
+                      <option>Finance</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Phone</label>
+                  <input required type="text" value={newStaff.phone} onChange={e=>setNewStaff({...newStaff, phone: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Email</label>
+                  <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <GoldButton type="submit" className="w-full mt-6 py-3">ONBOARD PERSONNEL</GoldButton>
+              </form>
+           </GlassCard>
+        </div>
+      )}
+
     </div>
   );
 };

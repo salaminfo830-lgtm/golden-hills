@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Clock, AlertCircle, CheckCircle2, 
-  Flame, Inbox, Timer, Loader2
+  Flame, Inbox, Timer, Loader2, X, Plus, Trash2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -12,6 +12,12 @@ const KitchenSystem = () => {
   const [activeOrders, setActiveOrders] = useState([]);
   const [stockAlerts, setStockAlerts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const [showOrderModal, setShowOrderModal] = useState(false);
+  const [showStockModal, setShowStockModal] = useState(false);
+
+  const [newOrder, setNewOrder] = useState({ table_id: '', items: '', priority: 'Normal' });
+  const [newStock, setNewStock] = useState({ name: '', level: '', status: 'Regular', category: 'General' });
 
   useEffect(() => {
     fetchData();
@@ -33,8 +39,8 @@ const KitchenSystem = () => {
   }, []);
 
   const fetchData = async () => {
-    const { data: orders } = await supabase.from('KitchenOrder').select('*').order('created_at', { ascending: false });
-    const { data: stock } = await supabase.from('StockItem').select('*');
+    const { data: orders } = await supabase.from('KitchenOrder').select('*').in('status', ['Pending', 'Preparing']).order('created_at', { ascending: false });
+    const { data: stock } = await supabase.from('StockItem').select('*').order('created_at', { ascending: false });
     
     if (orders) setActiveOrders(orders);
     if (stock) setStockAlerts(stock);
@@ -47,17 +53,62 @@ const KitchenSystem = () => {
     return 'text-gray-400 bg-gray-50 border-gray-100';
   };
 
+  const handleAddOrder = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const itemsArray = newOrder.items.split(',').map(s => s.trim()).filter(Boolean);
+    const { error } = await supabase.from('KitchenOrder').insert([{
+      table_id: newOrder.table_id,
+      items: itemsArray,
+      priority: newOrder.priority,
+      status: 'Pending'
+    }]);
+    
+    if (!error) {
+      setShowOrderModal(false);
+      setNewOrder({ table_id: '', items: '', priority: 'Normal' });
+      fetchData();
+    } else {
+      alert("Error: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleAddStock = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.from('StockItem').insert([newStock]);
+    if (!error) {
+      setShowStockModal(false);
+      setNewStock({ name: '', level: '', status: 'Regular', category: 'General' });
+      fetchData();
+    } else {
+      alert("Error: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleMarkReady = async (id) => {
+    await supabase.from('KitchenOrder').update({ status: 'Ready' }).eq('id', id);
+    fetchData();
+  };
+
+  const handleDeleteStock = async (id) => {
+    await supabase.from('StockItem').delete().eq('id', id);
+    fetchData();
+  };
+
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-8 font-sans relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h2 className="text-3xl font-serif font-bold tracking-tight">Kitchen Operations</h2>
           <p className="text-gray-400 font-medium tracking-wide">Live order flow & pantry synchronization</p>
         </div>
         <div className="flex gap-4 w-full md:w-auto">
-           <GoldButton outline className="flex-1 md:flex-none py-3 px-6 text-[10px] cursor-not-allowed opacity-50">STATION VIEW</GoldButton>
-           <GoldButton className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2 cursor-not-allowed opacity-50">
-             <Flame className="w-4 h-4" /> BUMP ALL
+           <GoldButton outline onClick={() => setShowStockModal(true)} className="flex-1 md:flex-none py-3 px-6 text-[10px]"><Plus className="w-4 h-4 inline mr-1" /> STOCK</GoldButton>
+           <GoldButton onClick={() => setShowOrderModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
+             <Inbox className="w-4 h-4" /> NEW ORDER
            </GoldButton>
         </div>
       </div>
@@ -112,7 +163,7 @@ const KitchenSystem = () => {
                              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
                                 <Clock className="w-3.5 h-3.5" /> {new Date(order.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                              </span>
-                             <button className="text-[10px] font-bold text-luxury-gold uppercase tracking-tighter hover:underline">Mark Ready</button>
+                             <button onClick={() => handleMarkReady(order.id)} className="text-[10px] font-bold text-luxury-gold uppercase tracking-tighter hover:underline">Mark Ready</button>
                           </div>
                        </GlassCard>
                     </motion.div>
@@ -128,8 +179,8 @@ const KitchenSystem = () => {
                   <Flame className="w-5 h-5 text-orange-500" /> Stock Monitor
                </h3>
                <div className="space-y-6">
-                  {stockAlerts.map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100">
+                  {stockAlerts.slice(0,6).map((item, i) => (
+                    <div key={i} className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100 group relative">
                        <div className="flex items-center gap-4">
                           <div className={`w-2 h-2 rounded-full ${
                             item.status === 'Critical' ? 'bg-red-500 animate-pulse' :
@@ -140,11 +191,14 @@ const KitchenSystem = () => {
                              <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{item.category}</p>
                           </div>
                        </div>
-                       <span className="font-serif font-bold text-luxury-gold">{item.level}</span>
+                       <div className="flex items-center gap-4">
+                         <span className="font-serif font-bold text-luxury-gold">{item.level}</span>
+                         <button onClick={() => handleDeleteStock(item.id)} className="hidden group-hover:block text-red-500 hover:text-red-600"><Trash2 className="w-4 h-4"/></button>
+                       </div>
                     </div>
                   ))}
                </div>
-               <GoldButton outline className="w-full mt-8 py-3 text-[10px] cursor-not-allowed opacity-50">ORDER SUPPLIES</GoldButton>
+               <GoldButton outline onClick={() => setShowStockModal(true)} className="w-full mt-8 py-3 text-[10px]">ADD STOCK ITEM</GoldButton>
             </GlassCard>
 
             <GlassCard className="gold-gradient text-white p-8">
@@ -159,6 +213,72 @@ const KitchenSystem = () => {
             </GlassCard>
          </div>
       </div>
+
+      {showOrderModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <GlassCard className="bg-white w-full max-w-md p-6 relative">
+              <button onClick={() => setShowOrderModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+                <X className="w-5 h-5"/>
+              </button>
+              <h3 className="text-xl font-bold font-serif mb-6">Add Kitchen Order</h3>
+              <form onSubmit={handleAddOrder} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Table / Room ID</label>
+                  <input required value={newOrder.table_id} onChange={e=>setNewOrder({...newOrder, table_id: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Items (comma separated)</label>
+                  <input required placeholder="e.g. 2x Wagyu Steak, 1x Cesar Salad" value={newOrder.items} onChange={e=>setNewOrder({...newOrder, items: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Priority</label>
+                  <select value={newOrder.priority} onChange={e=>setNewOrder({...newOrder, priority: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
+                    <option>Normal</option>
+                    <option>High</option>
+                  </select>
+                </div>
+                <GoldButton type="submit" className="w-full mt-6 py-3">SEND TO KITCHEN</GoldButton>
+              </form>
+           </GlassCard>
+        </div>
+      )}
+
+      {showStockModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <GlassCard className="bg-white w-full max-w-md p-6 relative">
+              <button onClick={() => setShowStockModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+                <X className="w-5 h-5"/>
+              </button>
+              <h3 className="text-xl font-bold font-serif mb-6">Add Stock Item</h3>
+              <form onSubmit={handleAddStock} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Item Name</label>
+                  <input required value={newStock.name} onChange={e=>setNewStock({...newStock, name: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Level</label>
+                    <input required placeholder="e.g. 50kg" type="text" value={newStock.level} onChange={e=>setNewStock({...newStock, level: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Status</label>
+                    <select value={newStock.status} onChange={e=>setNewStock({...newStock, status: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
+                      <option>Regular</option>
+                      <option>Low</option>
+                      <option>Critical</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Category</label>
+                  <input required type="text" value={newStock.category} onChange={e=>setNewStock({...newStock, category: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <GoldButton type="submit" className="w-full mt-6 py-3">SAVE ALERTS</GoldButton>
+              </form>
+           </GlassCard>
+        </div>
+      )}
+
     </div>
   );
 };

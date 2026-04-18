@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, ChevronLeft, ChevronRight, User, Star, Loader2 } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, User, Star, Loader2, X, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -8,6 +8,16 @@ import GoldButton from '../../components/GoldButton';
 const ReservationsSystem = () => {
   const [reservations, setReservations] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newRes, setNewRes] = useState({
+    guest_name: '',
+    guests_count: 1,
+    nights: 1,
+    room_type: 'Heritage Deluxe',
+    start_date: new Date().toISOString().split('T')[0],
+    end_date: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    source: 'Direct Site'
+  });
 
   useEffect(() => {
     fetchReservations();
@@ -32,19 +42,55 @@ const ReservationsSystem = () => {
       .order('created_at', { ascending: false });
     
     if (!error) {
-      setReservations(data);
+      setReservations(data || []);
     }
     setLoading(false);
   };
 
+  const handleCreateBooking = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.from('Reservation').insert([{
+      ...newRes,
+      start_date: new Date(newRes.start_date).toISOString(),
+      end_date: new Date(newRes.end_date).toISOString()
+    }]);
+    
+    if (!error) {
+      setShowAddModal(false);
+      setNewRes({
+        guest_name: '', guests_count: 1, nights: 1, room_type: 'Heritage Deluxe',
+        start_date: new Date().toISOString().split('T')[0], end_date: new Date(Date.now() + 86400000).toISOString().split('T')[0], source: 'Direct Site'
+      });
+      fetchReservations();
+    } else {
+      alert("Error: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if(window.confirm("Are you sure you want to delete this booking?")) {
+      await supabase.from('Reservation').delete().eq('id', id);
+      fetchReservations();
+    }
+  };
+
+  const handleProcessStatus = async (id, currentStatus) => {
+    const flow = ['Pending Approval', 'Confirmed', 'Checked-in', 'Checked-out', 'Cancelled'];
+    const nextIdx = (flow.indexOf(currentStatus) + 1) % flow.length;
+    await supabase.from('Reservation').update({ status: flow[nextIdx] }).eq('id', id);
+    fetchReservations();
+  };
+
   return (
-    <div className="space-y-8 font-sans">
+    <div className="space-y-8 font-sans relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h2 className="text-3xl font-serif font-bold tracking-tight">Reservation Hub</h2>
           <p className="text-gray-400 font-medium">Global booking synchronization</p>
         </div>
-        <GoldButton className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 md:py-3 cursor-not-allowed opacity-50">
+        <GoldButton onClick={() => setShowAddModal(true)} className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 md:py-3">
           <Plus className="w-4 h-4" /> NEW BOOKING
         </GoldButton>
       </div>
@@ -113,7 +159,7 @@ const ReservationsSystem = () => {
             <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden min-h-[400px]">
                <div className="p-8 border-b border-gray-50 flex justify-between items-center">
                   <h3 className="font-bold font-serif text-lg">Active Requests</h3>
-                  <div className="flex gap-2 text-[10px] uppercase font-bold text-gray-400 cursor-pointer hover:text-luxury-gold transition-all">
+                  <div onClick={fetchReservations} className="flex gap-2 text-[10px] uppercase font-bold text-gray-400 cursor-pointer hover:text-luxury-gold transition-all">
                      Syncing Real-time <Loader2 className={`w-4 h-4 translate-y-[1px] ${loading ? 'animate-spin' : ''}`} />
                   </div>
                </div>
@@ -137,13 +183,14 @@ const ReservationsSystem = () => {
                              <p className="text-luxury-gold">{new Date(req.start_date).toLocaleDateString()}</p>
                           </div>
                        </div>
-                       <div className="flex items-center justify-between w-full md:w-auto gap-6 sm:pl-[72px] md:pl-0">
+                       <div className="flex items-center justify-between w-full md:w-auto gap-3 sm:pl-[72px] md:pl-0">
                           <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border transition-all ${
                             req.status === 'Confirmed' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-white border-gray-100 text-gray-400'
                           }`}>
                              {req.status}
                           </span>
-                          <GoldButton outline className="px-6 py-2 text-[10px]">PROCESS</GoldButton>
+                          <GoldButton onClick={() => handleProcessStatus(req.id, req.status)} outline className="px-6 py-2 text-[10px]">PROCESS</GoldButton>
+                          <button onClick={() => handleDelete(req.id)} className="text-gray-400 hover:text-red-500 p-2"><Trash2 className="w-4 h-4"/></button>
                        </div>
                     </div>
                   ))}
@@ -190,6 +237,53 @@ const ReservationsSystem = () => {
             </GlassCard>
          </div>
       </div>
+
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <GlassCard className="bg-white w-full max-w-md p-6 relative">
+              <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+                <X className="w-5 h-5"/>
+              </button>
+              <h3 className="text-xl font-bold font-serif mb-6">New Reservation</h3>
+              <form onSubmit={handleCreateBooking} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Guest Name</label>
+                  <input required value={newRes.guest_name} onChange={e=>setNewRes({...newRes, guest_name: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Guests</label>
+                    <input required type="number" value={newRes.guests_count} onChange={e=>setNewRes({...newRes, guests_count: Number(e.target.value)})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Nights</label>
+                    <input required type="number" value={newRes.nights} onChange={e=>setNewRes({...newRes, nights: Number(e.target.value)})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Room Type</label>
+                  <select value={newRes.room_type} onChange={e=>setNewRes({...newRes, room_type: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
+                    <option>Heritage Deluxe</option>
+                    <option>Royal Gold Suite</option>
+                    <option>Presidential Panorama</option>
+                  </select>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Check-in</label>
+                    <input required type="date" value={newRes.start_date} onChange={e=>setNewRes({...newRes, start_date: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none text-xs" />
+                  </div>
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Check-out</label>
+                    <input required type="date" value={newRes.end_date} onChange={e=>setNewRes({...newRes, end_date: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none text-xs" />
+                  </div>
+                </div>
+                <GoldButton type="submit" className="w-full mt-6 py-3">CONFIRM BOOKING</GoldButton>
+              </form>
+           </GlassCard>
+        </div>
+      )}
+
     </div>
   );
 };

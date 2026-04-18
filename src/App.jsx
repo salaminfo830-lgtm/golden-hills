@@ -24,17 +24,9 @@ function App() {
       <Route path="/privacy" element={<LegalPages type="privacy" />} />
       <Route path="/terms" element={<LegalPages type="terms" />} />
       
-      <Route path="/admin/*" element={
-        <ProtectedRoute>
-          <AdminPanel />
-        </ProtectedRoute>
-      } />
+      <Route path="/admin/*" element={<AdminPanel />} />
       
-      <Route path="/staff/*" element={
-        <ProtectedRoute>
-          <EmployeePanel />
-        </ProtectedRoute>
-      } />
+      <Route path="/staff/*" element={<EmployeePanel />} />
 
       {/* Catch-all redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
