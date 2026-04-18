@@ -140,6 +140,7 @@ const RegisterPage = () => {
               <div className="relative">
                 <Briefcase className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <select required value={formData.department} onChange={(e) => setFormData({...formData, department: e.target.value})} className="w-full bg-white border border-gray-200 rounded-2xl py-3.5 pl-11 pr-4 text-sm focus:border-luxury-gold focus:ring-1 focus:ring-luxury-gold outline-none transition-all shadow-sm appearance-none cursor-pointer">
+                  <option>Front Desk</option>
                   <option>Housekeeping</option>
                   <option>Kitchen</option>
                   <option>Security</option>

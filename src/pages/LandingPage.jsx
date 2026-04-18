@@ -25,10 +25,10 @@ const LandingPage = () => {
   return (
     <div className="min-h-screen bg-luxury-white-warm overflow-x-hidden">
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${isScrolled ? 'glass py-4 shadow-lg' : 'bg-transparent py-6'}`}>
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-700 ${isScrolled ? 'bg-white/90 backdrop-blur-xl py-3 shadow-2xl border-b border-luxury-gold/10' : 'bg-transparent py-8'}`}>
         <div className="container mx-auto px-6 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-4">
-            <img src="/logo.jpg" alt="Golden Hills Logo" className={`transition-all duration-500 rounded-lg drop-shadow-md ${isScrolled ? 'w-12 h-12' : 'w-20 h-20 brightness-0 invert'}`} />
+          <Link to="/" className="flex items-center gap-4 group">
+            <Logo inverse={!isScrolled} className={`transition-all duration-500 transform ${isScrolled ? 'scale-90' : 'scale-110'}`} />
           </Link>
           
           <div className="hidden lg:flex items-center gap-10 font-bold tracking-widest text-[10px] uppercase">
@@ -109,33 +109,49 @@ const LandingPage = () => {
         </div>
 
         {/* Floating Booking Widget */}
-        <div className="hidden lg:block absolute -bottom-20 left-1/2 -translate-x-1/2 w-full max-w-5xl px-6 z-20">
-          <div className="glass p-10 rounded-[2.5rem] flex flex-row gap-8 shadow-2xl ring-1 ring-white/10">
-            <div className="flex-1 space-y-3">
-              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Check-in <div className="w-1 h-1 rounded-full bg-luxury-gold" /></label>
-              <div className="flex items-center gap-4 border-b border-white/10 pb-3">
-                <Calendar className="text-luxury-gold w-5 h-5 opacity-60" />
-                <span className="font-bold text-white">12 Oct 2026</span>
+        <div className="hidden lg:block absolute -bottom-16 left-1/2 -translate-x-1/2 w-full max-w-6xl px-6 z-20">
+          <motion.div 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1, duration: 1 }}
+            className="bg-white/95 backdrop-blur-3xl p-8 rounded-[3rem] flex flex-row items-center gap-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border border-luxury-gold/10"
+          >
+            <div className="flex-1 space-y-2 border-r border-gray-100 pr-8">
+              <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold flex items-center gap-2 mb-1">Check-in <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold animate-pulse" /></label>
+              <div className="flex items-center gap-4">
+                <Calendar className="text-luxury-gold w-6 h-6 opacity-80" />
+                <div className="flex flex-col">
+                   <span className="font-bold text-luxury-black text-lg">12 Oct</span>
+                   <span className="text-[10px] text-gray-400 font-bold uppercase">Wednesday</span>
+                </div>
               </div>
             </div>
-            <div className="flex-1 space-y-3">
-              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Check-out <div className="w-1 h-1 rounded-full bg-orange-400" /></label>
-              <div className="flex items-center gap-4 border-b border-white/10 pb-3">
-                <Calendar className="text-luxury-gold w-5 h-5 opacity-60" />
-                <span className="font-bold text-white">18 Oct 2026</span>
+            <div className="flex-1 space-y-2 border-r border-gray-100 pr-8">
+              <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold flex items-center gap-2 mb-1">Check-out <div className="w-1.5 h-1.5 rounded-full bg-orange-400" /></label>
+              <div className="flex items-center gap-4">
+                <Calendar className="text-luxury-gold w-6 h-6 opacity-80" />
+                <div className="flex flex-col">
+                   <span className="font-bold text-luxury-black text-lg">18 Oct</span>
+                   <span className="text-[10px] text-gray-400 font-bold uppercase">Tuesday</span>
+                </div>
               </div>
             </div>
-            <div className="flex-1 space-y-3">
-              <label className="text-[10px] uppercase tracking-[0.3em] font-bold text-luxury-gold flex items-center gap-2">Guests <div className="w-1 h-1 rounded-full bg-blue-400" /></label>
-              <div className="flex items-center gap-4 border-b border-white/10 pb-3">
-                <Users className="text-luxury-gold w-5 h-5 opacity-60" />
-                <span className="font-bold text-white">2 Adults, 0 Children</span>
+            <div className="flex-1 space-y-2">
+              <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold flex items-center gap-2 mb-1">Guests <div className="w-1.5 h-1.5 rounded-full bg-blue-400" /></label>
+              <div className="flex items-center gap-4">
+                <Users className="text-luxury-gold w-6 h-6 opacity-80" />
+                <div className="flex flex-col">
+                   <span className="font-bold text-luxury-black text-lg">2 Adults</span>
+                   <span className="text-[10px] text-gray-400 font-bold uppercase">Superior Suite</span>
+                </div>
               </div>
             </div>
-            <div className="flex items-center pt-5">
-              <GoldButton className="px-12 py-4 shadow-lg">PROCEED</GoldButton>
+            <div className="flex items-center">
+              <GoldButton className="px-14 py-5 shadow-2xl hover:scale-105 transition-transform">
+                CHECK AVAILABILITY
+              </GoldButton>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

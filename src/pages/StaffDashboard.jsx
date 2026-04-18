@@ -1,23 +1,55 @@
-import DashboardLayout from '../components/DashboardLayout';
-import GlassCard from '../components/GlassCard';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { 
   CheckCircle2, Clock, MapPin, 
-  Utensils, Bed, Wind, AlertCircle
+  Utensils, Bed, Wind, AlertCircle,
+  Loader2
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabase';
+import DashboardLayout from '../components/DashboardLayout';
+import GlassCard from '../components/GlassCard';
 import GoldButton from '../components/GoldButton';
 
 const StaffDashboard = () => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const { data: staffData } = await supabase
+          .from('Staff')
+          .select('*')
+          .eq('id', authUser.id)
+          .single();
+        
+        setUser(staffData || { name: authUser.user_metadata.full_name || 'Staff Member' });
+      }
+      setLoading(false);
+    };
+    fetchUser();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-[60vh] flex flex-col items-center justify-center opacity-40">
+        <Loader2 className="w-10 h-10 text-luxury-gold animate-spin mb-4" />
+        <p className="text-[10px] font-bold uppercase tracking-widest">Identifying Personnel...</p>
+      </div>
+    );
+  }
+
   return (
-    <DashboardLayout userType="Employee">
+    <DashboardLayout userType={user?.role?.toUpperCase() || 'EMPLOYEE'}>
       <div className="space-y-10 max-w-6xl mx-auto">
         
         {/* Elite Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-gray-100 pb-10">
            <div>
               <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-[0.3em] mb-3">Service Excellence Portal</p>
-              <h1 className="text-3xl md:text-5xl font-elegant font-bold text-luxury-black leading-tight">Bonjour, Salim</h1>
-              <p className="text-[10px] md:text-base text-gray-400 font-medium mt-2">Personalized Operations Dashboard • <span className="text-luxury-gold italic text-[10px] md:text-sm">Morning Shift</span></p>
+              <h1 className="text-3xl md:text-5xl font-elegant font-bold text-luxury-black leading-tight">Bonjour, {user?.name?.split(' ')[0] || 'Member'}</h1>
+              <p className="text-[10px] md:text-base text-gray-400 font-medium mt-2">Personalized Operations Dashboard • <span className="text-luxury-gold italic text-[10px] md:text-sm">{user?.department || 'General'} Sector</span></p>
            </div>
            <div className="flex gap-4">
               <div className="bg-white border border-gray-100 p-6 rounded-2xl shadow-sm text-center min-w-[120px]">
@@ -152,3 +184,4 @@ const StaffDashboard = () => {
 };
 
 export default StaffDashboard;
+board;

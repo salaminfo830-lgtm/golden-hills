@@ -5,6 +5,8 @@ import { supabase } from '../lib/supabase';
 import DashboardLayout from '../components/DashboardLayout';
 
 import StaffDashboard from './StaffDashboard';
+import HousekeepingDashboard from './staff/HousekeepingDashboard';
+import FrontDeskDashboard from './staff/FrontDeskDashboard';
 import RoomsSystem from './admin/RoomsSystem';
 import KitchenSystem from './admin/KitchenSystem';
 import ReservationsSystem from './admin/ReservationsSystem';
@@ -21,7 +23,7 @@ const ProtectedModule = ({ id, children }) => {
             setPermissions(data?.permissions || []);
          }
          setLoading(false);
-      };
+       };
       fetchPermissions();
    }, []);
 
@@ -43,10 +45,54 @@ const ProtectedModule = ({ id, children }) => {
 };
 
 const StaffPanel = () => {
+  const [staffInfo, setStaffInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStaff = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data } = await supabase
+          .from('Staff')
+          .select('*')
+          .eq('id', user.id)
+          .single();
+        setStaffInfo(data);
+      }
+      setLoading(false);
+    };
+    fetchStaff();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-[#fafafa]">
+         <Loader2 className="w-10 h-10 text-luxury-gold animate-spin" />
+      </div>
+    );
+  }
+
+  // Determine dashboard based on department
+  const renderDashboard = () => {
+    if (!staffInfo) return <StaffDashboard />;
+    
+    switch (staffInfo.department) {
+      case 'Housekeeping':
+        return <HousekeepingDashboard />;
+      case 'Front Desk':
+      case 'Administration':
+        return <FrontDeskDashboard />;
+      case 'Kitchen':
+        return <KitchenSystem userType="Employee" />;
+      default:
+        return <StaffDashboard staff={staffInfo} />;
+    }
+  };
+
   return (
-    <DashboardLayout userType="Employee">
+    <DashboardLayout userType={staffInfo?.role?.toUpperCase() || 'STAFF'}>
       <Routes>
-        <Route path="/" element={<StaffDashboard />} />
+        <Route path="/" element={renderDashboard()} />
         <Route path="/rooms" element={
            <ProtectedModule id="rooms">
               <RoomsSystem userType="Employee" />
@@ -62,7 +108,6 @@ const StaffPanel = () => {
               <ReservationsSystem userType="Employee" />
            </ProtectedModule>
         } />
-        {/* We can route other things but deny them or simply catchall */}
         <Route path="*" element={<Navigate to="/staff" replace />} />
       </Routes>
     </DashboardLayout>
@@ -70,3 +115,4 @@ const StaffPanel = () => {
 };
 
 export default StaffPanel;
+

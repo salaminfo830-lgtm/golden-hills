@@ -3,7 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   UserPlus, Search, 
   Mail, Phone, MoreVertical, 
-  Clock, Loader2, X, Trash2
+  Clock, Loader2, X, Trash2,
+  CheckCircle2, Shield, UserCog,
+  Briefcase, Edit2
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -14,16 +16,17 @@ const HRSystem = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingStaff, setEditingStaff] = useState(null);
 
   const [newStaff, setNewStaff] = useState({
-    name: '', role: '', department: 'Housekeeping', phone: '', email: ''
+    name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: ''
   });
 
   useEffect(() => {
     fetchStaff();
 
     const subscription = supabase
-      .channel('public:Staff')
+      .channel('hr_updates')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'Staff' }, () => fetchStaff())
       .subscribe();
 
@@ -54,7 +57,30 @@ const HRSystem = () => {
 
     if (!error) {
       setShowAddModal(false);
-      setNewStaff({ name: '', role: '', department: 'Housekeeping', phone: '', email: '' });
+      setNewStaff({ name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: '' });
+      fetchStaff();
+    } else {
+      alert("Error: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleUpdateStaff = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase
+      .from('Staff')
+      .update({
+        name: editingStaff.name,
+        role: editingStaff.role,
+        department: editingStaff.department,
+        phone: editingStaff.phone,
+        email: editingStaff.email
+      })
+      .eq('id', editingStaff.id);
+
+    if (!error) {
+      setEditingStaff(null);
       fetchStaff();
     } else {
       alert("Error: " + error.message);
@@ -69,11 +95,17 @@ const HRSystem = () => {
     }
   };
 
-  const handleStatusChange = async (id, currentStatus) => {
-    const statuses = ['On Shift', 'Off Shift', 'Vacation'];
-    const nextIdx = (statuses.indexOf(currentStatus) + 1) % statuses.length;
-    await supabase.from('Staff').update({ status: statuses[nextIdx] }).eq('id', id);
-    fetchStaff();
+  const confirmApproval = async (id) => {
+    setLoading(true);
+    const { error } = await supabase
+      .from('Staff')
+      .update({ status: 'Off Shift' })
+      .eq('id', id);
+    
+    if (!error) {
+       await supabase.from('Profile').update({ role: 'staff' }).eq('id', id);
+       fetchStaff();
+    }
   };
 
    const ALL_MODULES = [
@@ -111,12 +143,6 @@ const HRSystem = () => {
       fetchStaff();
    };
 
-   const confirmApproval = async (id) => {
-      setLoading(true);
-      await supabase.from('Staff').update({ status: 'Off Shift' }).eq('id', id);
-      fetchStaff();
-   };
-
    const filteredStaff = filter === 'All' 
     ? staff.filter(s => s.status !== 'Pending Approval')
     : filter === 'Approvals'
@@ -127,29 +153,33 @@ const HRSystem = () => {
     <div className="space-y-8 font-sans relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight">Human Resources</h2>
-          <p className="text-gray-400 font-medium tracking-wide">Live personnel management & shift monitoring</p>
+          <h2 className="text-3xl font-serif font-bold tracking-tight text-luxury-black">Personnel Command</h2>
+          <p className="text-gray-400 font-medium tracking-wide text-sm font-semibold uppercase tracking-[0.2em]">Employee Directory & Access Control</p>
         </div>
         <div className="flex gap-4 w-full md:w-auto">
-           <GoldButton outline className="flex-1 md:flex-none py-3 px-6 text-[10px] cursor-not-allowed opacity-50">VIEW SCHEDULES</GoldButton>
-           <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
-             <UserPlus className="w-4 h-4" /> RECRUIT NEW
+           <GoldButton outline className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2" onClick={() => setFilter('Approvals')}>
+              <Shield className="w-4 h-4" /> REVIEW REQUESTS {staff.filter(s => s.status === 'Pending Approval').length > 0 && `(${staff.filter(s => s.status === 'Pending Approval').length})`}
+           </GoldButton>
+           <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-10 text-[10px] flex items-center justify-center gap-2 shadow-lg">
+             <UserPlus className="w-4 h-4" /> ADD PERSONNEL
            </GoldButton>
         </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-         <div className="flex gap-2 bg-gray-100/50 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto no-scrollbar">
-            {['All', 'Approvals', 'Administration', 'Housekeeping', 'Kitchen', 'Security', 'Finance'].map((dept) => (
+         <div className="flex gap-2 bg-gray-100/50 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto no-scrollbar border border-gray-100">
+            {['All', 'Approvals', 'Administration', 'Front Desk', 'Housekeeping', 'Kitchen', 'Security', 'Finance'].map((dept) => (
               <button 
                 key={dept}
                 onClick={() => setFilter(dept)}
-                className={`px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all whitespace-nowrap ${
-                  filter === dept ? 'bg-white text-luxury-gold shadow-sm' : 'text-gray-400 hover:text-gray-600'
+                className={`px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all whitespace-nowrap ${
+                  filter === dept ? 'bg-white text-luxury-gold shadow-sm ring-1 ring-luxury-gold/10' : 'text-gray-400 hover:text-gray-600'
                 }`}
               >
                 {dept} {dept === 'Approvals' && staff.filter(s => s.status === 'Pending Approval').length > 0 && (
-                  <span className="ml-2 w-2 h-2 rounded-full bg-red-500 inline-block animate-pulse" />
+                  <span className="ml-2 px-1.5 py-0.5 rounded-md bg-red-500 text-white text-[8px] animate-pulse">
+                    {staff.filter(s => s.status === 'Pending Approval').length}
+                  </span>
                 )}
               </button>
             ))}
@@ -160,119 +190,129 @@ const HRSystem = () => {
          <AnimatePresence mode="popLayout">
            {loading && staff.length === 0 ? (
              <div className="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-[2.5rem] border border-gray-50 shadow-sm">
-                <Loader2 className="w-8 h-8 text-luxury-gold animate-spin mb-4" />
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Accessing Personnel Files</p>
+                <Loader2 className="w-10 h-10 text-luxury-gold animate-spin mb-4" />
+                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Accessing Biometric Records</p>
              </div>
            ) : filteredStaff.length === 0 ? (
-             <div className="col-span-full py-20 text-center">
-                <p className="text-gray-400 font-medium">No personnel found in {filter} department.</p>
-             </div>
+             <GlassCard className="col-span-full py-24 text-center bg-white border-dashed border-2 border-gray-100">
+                <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No personnel entries found in {filter} sector.</p>
+             </GlassCard>
            ) : filteredStaff.map((person) => (
-             <motion.div
-               layout
-               initial={{ opacity: 0, scale: 0.95 }}
-               animate={{ opacity: 1, scale: 1 }}
-               exit={{ opacity: 0, scale: 0.95 }}
-               key={person.id}
-             >
-                <GlassCard className="bg-white border-gray-100 p-8 hover:border-luxury-gold/30 transition-all group overflow-hidden relative">
-                   <div className="absolute top-0 right-0 w-32 h-32 bg-luxury-gold/5 rounded-full -translate-y-16 translate-x-16 blur-2xl group-hover:bg-luxury-gold/10 transition-colors" />
-                   
-                   <div className="flex gap-6 items-center mb-10 relative z-10">
-                      <div className="w-16 h-16 rounded-[1.5rem] gold-gradient p-[2px] shrink-0">
-                         <div className="w-full h-full bg-white rounded-[1.3rem] overflow-hidden">
-                            <img src={person.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${person.name}`} alt={person.name} />
-                         </div>
-                      </div>
-                      <div>
-                         <h3 className="text-xl font-serif font-bold text-gray-800 tracking-tight group-hover:text-luxury-gold transition-colors">{person.name}</h3>
-                         <span className="text-[10px] font-bold text-luxury-gold uppercase tracking-[0.2em]">{person.role}</span>
-                      </div>
-                   </div>
+              <motion.div
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.95 }}
+                key={person.id}
+              >
+                 <GlassCard className="bg-white border-gray-100 p-8 hover:border-luxury-gold/40 transition-all group relative overflow-hidden">
+                    {person.status === 'Pending Approval' && <div className="absolute top-0 left-0 w-full h-1 bg-luxury-gold animate-pulse" />}
+                    
+                    <div className="flex gap-6 items-center mb-10">
+                       <div className="relative">
+                          <div className="w-20 h-20 rounded-[1.8rem] gold-gradient p-[2px] transition-transform group-hover:scale-105 duration-500">
+                             <div className="w-full h-full bg-white rounded-[1.6rem] overflow-hidden">
+                                <img src={person.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${person.name}`} alt={person.name} />
+                             </div>
+                          </div>
+                          <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-lg border-4 border-white flex items-center justify-center ${person.status === 'On Shift' ? 'bg-green-500' : 'bg-gray-300'}`}>
+                             <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                          </div>
+                       </div>
+                       <div>
+                          <h3 className="text-xl font-serif font-bold text-luxury-black tracking-tight">{person.name}</h3>
+                          <div className="flex items-center gap-2 mt-1">
+                             <span className="text-[9px] font-bold text-luxury-gold uppercase tracking-[0.2em]">{person.role}</span>
+                             <div className="w-1 h-1 rounded-full bg-gray-200" />
+                             <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{person.department}</span>
+                          </div>
+                       </div>
+                    </div>
 
-                   <div className="space-y-4 mb-6 relative z-10">
-                      <div className="flex items-center gap-4 text-xs">
-                         <div className="p-2 bg-gray-50 rounded-xl text-gray-400"><Mail className="w-4 h-4" /></div>
-                         <span className="font-medium text-gray-600">{person.email || 'internal@golden-hills.com'}</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs">
-                         <div className="p-2 bg-gray-50 rounded-xl text-gray-400"><Phone className="w-4 h-4" /></div>
-                         <span className="font-medium text-gray-600">{person.phone || '+213 XXX XXX XXX'}</span>
-                      </div>
-                      <div className="flex items-center gap-4 text-xs">
-                         <Clock className="w-4 h-4 text-gray-400 shrink-0" />
-                         <span className="font-medium text-gray-600 flex items-center justify-between w-full">
-                           {person.department} Department
-                           {Array.isArray(person.permissions) && person.permissions.length > 0 && (
-                             <span className="bg-blue-50 text-blue-600 px-2 py-0.5 rounded text-[8px] uppercase tracking-widest font-bold">
-                               {person.permissions.length} Module{person.permissions.length > 1 ? 's' : ''} Access
-                             </span>
-                           )}
-                         </span>
-                      </div>
-                   </div>
+                    <div className="space-y-4 mb-8">
+                       <div className="flex items-center gap-4 text-xs">
+                          <div className="p-2.5 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold transition-colors"><Mail className="w-4 h-4" /></div>
+                          <span className="font-bold text-gray-600 truncate">{person.email || 'internal@goldenhills.dz'}</span>
+                       </div>
+                       <div className="flex items-center gap-4 text-xs">
+                          <div className="p-2.5 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold transition-colors"><Phone className="w-4 h-4" /></div>
+                          <span className="font-bold text-gray-600">{person.phone || '+213 XXX XXX XXX'}</span>
+                       </div>
+                    </div>
 
-                   <div className="flex justify-between items-center pt-6 border-t border-gray-50 relative z-10">
-                      <div className="flex items-center gap-2 cursor-pointer hover:opacity-80" onClick={() => handleStatusChange(person.id, person.status)}>
-                         <div className={`w-2 h-2 rounded-full ${person.status === 'On Shift' ? 'bg-green-500 animate-pulse' : person.status === 'Off Shift' ? 'bg-gray-400' : 'bg-orange-400'}`} />
-                         <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{person.status}</span>
-                      </div>
-                      <div className="flex gap-2">
-                         {person.status === 'Pending Approval' ? (
-                           <button onClick={() => confirmApproval(person.id)} className="px-4 py-1 text-[10px] font-bold bg-green-500 text-white rounded-xl transition-all uppercase tracking-widest hover:bg-green-600">
-                             Confirm
-                           </button>
-                         ) : (
-                           <button onClick={() => openPermissions(person)} className="px-3 py-1 text-[10px] font-bold bg-luxury-gold/5 text-luxury-gold border border-luxury-gold/20 hover:bg-luxury-gold hover:text-white rounded-xl transition-all uppercase tracking-widest">
-                             Access
-                           </button>
-                         )}
-                         <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 border border-transparent hover:border-red-100 rounded-xl transition-all text-gray-400 hover:text-red-500">
-                            <Trash2 className="w-4 h-4" />
-                         </button>
-                      </div>
-                   </div>
-                </GlassCard>
-             </motion.div>
+                    <div className="flex justify-between items-center pt-8 border-t border-gray-50">
+                       <div className="flex items-center gap-3">
+                          <div className="flex flex-col">
+                             <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Status</span>
+                             <span className={`text-[10px] font-bold uppercase tracking-[0.1em] ${person.status === 'On Shift' ? 'text-green-500' : 'text-gray-400'}`}>{person.status}</span>
+                          </div>
+                       </div>
+                       <div className="flex gap-3">
+                          {person.status === 'Pending Approval' ? (
+                            <GoldButton onClick={() => confirmApproval(person.id)} className="px-6 py-2.5 text-[10px] shadow-lg flex items-center gap-2">
+                              <CheckCircle2 className="w-3.5 h-3.5" /> APPROVE
+                            </GoldButton>
+                          ) : (
+                             <>
+                                <button onClick={() => setEditingStaff(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
+                                   <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => openPermissions(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
+                                   <Shield className="w-4 h-4" />
+                                </button>
+                             </>
+                          )}
+                          <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-red-100">
+                             <Trash2 className="w-4 h-4" />
+                          </button>
+                       </div>
+                    </div>
+                 </GlassCard>
+              </motion.div>
            ))}
          </AnimatePresence>
       </div>
 
       <AnimatePresence>
-      {permissionsModal.show && (
-         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }}>
-               <GlassCard className="bg-white w-full max-w-md p-8 relative shadow-2xl">
-                  <button onClick={() => setPermissionsModal({show:false, staffId:null, permissions:[]})} className="absolute top-6 right-6 text-gray-400 hover:text-black">
-                    <X className="w-5 h-5"/>
-                  </button>
-                  <h3 className="text-xl font-bold font-serif text-luxury-black">System Preferences</h3>
-                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-6">Access Control Manager</p>
-                  
-                  <div className="space-y-3 mb-8">
-                     {ALL_MODULES.map(module => {
-                        const hasAccess = permissionsModal.permissions.includes(module.id);
-                        return (
-                           <div 
-                              key={module.id} 
-                              onClick={() => togglePermission(module.id)}
-                              className={`flex justify-between items-center p-4 rounded-xl cursor-pointer border transition-all ${
-                                hasAccess ? 'border-luxury-gold bg-luxury-gold/5' : 'border-gray-100 hover:border-gray-300'
-                              }`}
-                           >
-                              <span className={`font-bold text-sm ${hasAccess ? 'text-luxury-gold' : 'text-gray-500'}`}>{module.label}</span>
-                              <div className={`w-10 h-6 rounded-full p-1 transition-colors ${hasAccess ? 'bg-luxury-gold' : 'bg-gray-200'}`}>
-                                 <div className={`w-4 h-4 bg-white rounded-full transition-transform ${hasAccess ? 'translate-x-4' : 'translate-x-0'}`} />
-                              </div>
-                           </div>
-                        );
-                     })}
+      {editingStaff && (
+         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEditingStaff(null)} className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative bg-white w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-luxury-gold/5 rounded-full translate-x-16 -translate-y-16 blur-2xl" />
+               <button onClick={() => setEditingStaff(null)} className="absolute top-6 right-6 p-2 text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all"><X className="w-6 h-6"/></button>
+               
+               <h3 className="text-2xl font-serif font-bold text-luxury-black mb-1">Edit Personnel Info</h3>
+               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-10">Administrative Control Panel</p>
+               
+               <form onSubmit={handleUpdateStaff} className="space-y-6">
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Full Name</label>
+                     <input required value={editingStaff.name} onChange={e=>setEditingStaff({...editingStaff, name: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
                   </div>
-
-                  <GoldButton onClick={savePermissions} className="w-full py-3 shadow-lg text-xs">
-                     {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'SAVE PERMISSIONS'}
-                  </GoldButton>
-               </GlassCard>
+                  <div className="grid grid-cols-2 gap-6">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Role</label>
+                        <input required value={editingStaff.role} onChange={e=>setEditingStaff({...editingStaff, role: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Department</label>
+                        <select value={editingStaff.department} onChange={e=>setEditingStaff({...editingStaff, department: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all cursor-pointer">
+                           <option>Administration</option>
+                           <option>Front Desk</option>
+                           <option>Housekeeping</option>
+                           <option>Kitchen</option>
+                           <option>Security</option>
+                           <option>Finance</option>
+                        </select>
+                     </div>
+                  </div>
+                  <div className="space-y-2">
+                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email Liaison</label>
+                     <input required type="email" value={editingStaff.email || ''} onChange={e=>setEditingStaff({...editingStaff, email: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                  </div>
+                  
+                  <GoldButton type="submit" className="w-full py-4 shadow-xl mt-4">SAVE CHANGES</GoldButton>
+               </form>
             </motion.div>
          </div>
       )}
@@ -280,58 +320,95 @@ const HRSystem = () => {
 
       <AnimatePresence>
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-start justify-end">
+        <div className="fixed inset-0 z-[60] flex items-start justify-end">
            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddModal(false)} className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20">
               <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
                  <div>
-                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Recruit Personnel</h3>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">HR Management</p>
+                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Personnel Recruitment</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Strategic HR Integration</p>
                  </div>
                  <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
                    <X className="w-5 h-5"/>
                  </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
+              <div className="flex-1 overflow-y-auto p-10 no-scrollbar">
                  <form id="add-staff-form" onSubmit={handleAddStaff} className="space-y-6">
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Full Name</label>
-                      <input required value={newStaff.name} onChange={e=>setNewStaff({...newStaff, name: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Employee Name</label>
+                      <input required value={newStaff.name} onChange={e=>setNewStaff({...newStaff, name: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm" placeholder="Full Name" />
                     </div>
                     <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Role</label>
-                        <input required placeholder="e.g. Concierge" type="text" value={newStaff.role} onChange={e=>setNewStaff({...newStaff, role: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Target Role</label>
+                        <input required placeholder="e.g. Lead Concierge" type="text" value={newStaff.role} onChange={e=>setNewStaff({...newStaff, role: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" />
                       </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Department</label>
-                        <select value={newStaff.department} onChange={e=>setNewStaff({...newStaff, department: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
-                          <option>Housekeeping</option>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Department</label>
+                        <select value={newStaff.department} onChange={e=>setNewStaff({...newStaff, department: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm cursor-pointer appearance-none">
                           <option>Administration</option>
+                          <option>Front Desk</option>
+                          <option>Housekeeping</option>
                           <option>Kitchen</option>
                           <option>Security</option>
                           <option>Finance</option>
                         </select>
                       </div>
                     </div>
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Phone (DZD / Local)</label>
-                      <input required type="text" placeholder="+213 XX XX XX XX" value={newStaff.phone} onChange={e=>setNewStaff({...newStaff, phone: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
-                    </div>
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Email</label>
-                      <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email Interface</label>
+                      <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" placeholder="user@goldenhills.dz" />
                     </div>
                  </form>
               </div>
-              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
-                 <GoldButton form="add-staff-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'ONBOARD PERSONNEL'}
+              <div className="p-10 bg-white border-t border-gray-100 shrink-0">
+                 <GoldButton form="add-staff-form" type="submit" className="w-full py-5 shadow-[0_20px_50px_rgba(212,175,55,0.2)] text-xs font-bold flex items-center justify-center gap-3">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><UserPlus className="w-5 h-5" /> ONBOARD PERSONNEL</>}
                  </GoldButton>
               </div>
            </motion.div>
         </div>
+      )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+      {permissionsModal.show && (
+         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
+               <GlassCard className="bg-white w-full max-w-md p-10 relative shadow-2xl rounded-[3rem]">
+                  <button onClick={() => setPermissionsModal({show:false, staffId:null, permissions:[]})} className="absolute top-8 right-8 text-gray-400 hover:text-black hover:bg-gray-50 p-2 rounded-full transition-all">
+                    <X className="w-6 h-6"/>
+                  </button>
+                  <h3 className="text-2xl font-bold font-serif text-luxury-black mb-1">Access Control</h3>
+                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-10">System Level Permissions</p>
+                  
+                  <div className="space-y-3 mb-10">
+                     {ALL_MODULES.map(module => {
+                        const hasAccess = permissionsModal.permissions.includes(module.id);
+                        return (
+                           <div 
+                              key={module.id} 
+                              onClick={() => togglePermission(module.id)}
+                              className={`flex justify-between items-center p-5 rounded-[1.5rem] cursor-pointer border transition-all ${
+                                hasAccess ? 'border-luxury-gold bg-luxury-gold/5 shadow-sm shadow-luxury-gold/10' : 'border-gray-50 hover:bg-gray-50'
+                              }`}
+                           >
+                              <span className={`font-bold text-sm ${hasAccess ? 'text-luxury-gold' : 'text-gray-400'}`}>{module.label}</span>
+                              <div className={`w-12 h-7 rounded-full p-1.5 transition-colors ${hasAccess ? 'bg-luxury-gold' : 'bg-gray-100'}`}>
+                                 <div className={`w-4 h-4 bg-white rounded-full transition-transform shadow-md ${hasAccess ? 'translate-x-5' : 'translate-x-0'}`} />
+                              </div>
+                           </div>
+                        );
+                     })}
+                  </div>
+
+                  <GoldButton onClick={savePermissions} className="w-full py-4 shadow-xl text-xs font-bold">
+                     {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'CONFIRM ACCESS RIGHTS'}
+                  </GoldButton>
+               </GlassCard>
+            </motion.div>
+         </div>
       )}
       </AnimatePresence>
 

@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   BarChart3, Calendar, Users, Home, 
   Settings, LogOut, Bell, Search,
   ClipboardList, Utensils, 
-  Bed, ShieldCheck, Mail
+  Bed, ShieldCheck, Mail, User as UserIcon
 } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
-
+import { supabase } from '../lib/supabase';
 import Logo from './Logo';
+import NotificationMenu from './NotificationMenu';
 
 const sidebarItems = [
   { icon: <Home className="w-5 h-5" />, label: 'Overview', path: '/admin' },
@@ -25,6 +26,27 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
   const location = useLocation();
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isMobileOpen, setMobileOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { user: authUser } } = await supabase.auth.getUser();
+      if (authUser) {
+        const { data: profile } = await supabase
+          .from('Profile')
+          .select('*')
+          .eq('id', authUser.id)
+          .single();
+        
+        setUser(profile || { 
+          full_name: authUser.user_metadata.full_name || 'Staff Member',
+          email: authUser.email,
+          avatar_url: authUser.user_metadata.avatar_url
+        });
+      }
+    };
+    fetchUser();
+  }, []);
 
   const currentPath = location.pathname;
 
@@ -136,45 +158,47 @@ const DashboardLayout = ({ children, userType = 'Admin' }) => {
              </div>
              
              {/* Mobile only Bell */}
-             <div className="relative cursor-pointer group md:hidden p-2 bg-gray-100/80 rounded-xl">
-               <Bell className="w-5 h-5 text-gray-600" />
-               <span className="absolute top-1 right-1 w-2.5 h-2.5 bg-luxury-gold rounded-full border-2 border-white animate-pulse" />
+             <div className="md:hidden">
+               <NotificationMenu userId={user?.id} />
              </div>
            </div>
 
-           <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-6 w-full md:w-auto border-t md:border-t-0 border-gray-100 pt-3 md:pt-0">
+            <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3 md:gap-6 w-full md:w-auto border-t md:border-t-0 border-gray-100 pt-3 md:pt-0">
              <div className="flex items-center bg-gray-100/80 px-4 py-2.5 rounded-2xl border border-gray-200 focus-within:border-luxury-gold/50 transition-colors w-full md:w-auto">
                <Search className="w-4 h-4 text-gray-500 mr-3 shrink-0" />
                <input type="text" placeholder="Search systems..." className="bg-transparent border-none outline-none text-xs w-full min-w-0 md:w-48 font-medium text-gray-700 placeholder-gray-400 focus:ring-0" />
              </div>
              <div className="flex items-center justify-between md:justify-end gap-3 md:gap-4 md:border-l md:border-gray-200 md:pl-6 w-full md:w-auto bg-white md:bg-transparent rounded-2xl p-2 md:p-0 shadow-sm md:shadow-none border border-gray-100 md:border-none">
-                <div className="relative cursor-pointer group hidden md:block">
-                  <div className="p-2.5 bg-gray-100/80 rounded-xl group-hover:bg-luxury-gold/10 transition-colors">
-                    <Bell className="w-5 h-5 text-gray-600 group-hover:text-luxury-gold" />
-                  </div>
-                  <span className="absolute top-0 right-0 w-3 h-3 bg-luxury-gold rounded-full border-[3px] border-white animate-pulse" />
+                <div className="hidden md:block">
+                  <NotificationMenu userId={user?.id} />
                 </div>
                 
                 <div className="flex items-center gap-3 w-full md:w-auto justify-between md:justify-end">
                   <div className="flex items-center gap-3">
                     <div className="w-10 md:w-11 h-10 md:h-11 shrink-0 rounded-2xl gold-gradient p-[2px] shadow-sm">
                       <div className="w-full h-full bg-white rounded-[14px] overflow-hidden flex items-center justify-center">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Fares" alt="User" className="w-full h-full object-cover bg-gray-50" />
+                        {user?.avatar_url ? (
+                          <img src={user.avatar_url} alt="User" className="w-full h-full object-cover bg-gray-50" />
+                        ) : (
+                          <div className="w-full h-full bg-gray-50 flex items-center justify-center">
+                            <UserIcon className="w-5 h-5 text-gray-400" />
+                          </div>
+                        )}
                       </div>
                     </div>
                     <div className="flex flex-col text-left md:text-right">
-                      <p className="text-xs md:text-sm font-bold text-gray-900 tracking-wide">Fares Ahmed</p>
+                      <p className="text-xs md:text-sm font-bold text-gray-900 tracking-wide">{user?.full_name || 'Loding...'}</p>
                       <div className="flex items-center gap-1 md:justify-end">
                          <Mail className="w-3 h-3 text-gray-400 hidden md:block" />
-                         <p className="text-[10px] md:text-xs text-gray-500 font-medium truncate max-w-[120px] md:max-w-none">fares@goldenhills.dz</p>
+                         <p className="text-[10px] md:text-xs text-gray-500 font-medium truncate max-w-[120px] md:max-w-none">{user?.email || '...'}</p>
                       </div>
-                      <p className="text-[10px] md:text-[11px] text-gray-400 font-medium hidden md:block">+213 36 00 00 00</p>
+                      <p className="text-[10px] md:text-[11px] text-gray-400 font-medium hidden md:block">{user?.phone || '+213 36 00 00 00'}</p>
                     </div>
                   </div>
                   
                   <div className="flex flex-col items-end">
                      <p className="text-[10px] md:text-xs text-luxury-gold font-bold uppercase tracking-wider bg-luxury-gold/10 px-2 py-1 rounded-lg">{userType}</p>
-                     <p className="text-[9px] text-gray-400 font-medium md:hidden mt-1">+213 36 00 00 00</p>
+                     <p className="text-[9px] text-gray-400 font-medium md:hidden mt-1">{user?.phone || '+213 36 00 00 00'}</p>
                   </div>
                 </div>
              </div>
