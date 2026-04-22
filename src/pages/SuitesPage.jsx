@@ -235,5 +235,3 @@ const SuitesPage = () => {
 };
 
 export default SuitesPage;
-
-export default SuitesPage;

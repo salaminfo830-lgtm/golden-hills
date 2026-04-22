@@ -186,5 +186,3 @@ const DiningPage = () => {
 };
 
 export default DiningPage;
-
-export default DiningPage;
