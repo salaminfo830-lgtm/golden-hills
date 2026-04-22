@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { 
   ChevronLeft, CheckCircle2, CreditCard, 
   User, Mail, Phone, Calendar, 
-  MapPin, ShieldCheck, Loader2, ArrowRight
+  MapPin, ShieldCheck, Loader2, ArrowRight,
+  Shield, Sparkles, AlertCircle, Info,
+  MessageSquare, PlaneTakeoff, Bell
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
@@ -25,13 +27,28 @@ const BookingFlow = () => {
     fullName: '',
     email: '',
     phone: '',
-    requests: ''
+    requests: '',
+    paymentMethod: 'property'
   });
 
-  const checkIn = searchParams.get('checkIn') || '12 Oct 2026';
-  const checkOut = searchParams.get('checkOut') || '18 Oct 2026';
+  const checkInStr = searchParams.get('checkIn') || '12 Oct 2026';
+  const checkOutStr = searchParams.get('checkOut') || '18 Oct 2026';
   const guests = searchParams.get('guests') || '2';
-  const nights = 6; // Mock calculation for now
+
+  // Calculate nights
+  const getNights = (d1, d2) => {
+    try {
+      const date1 = new Date(d1);
+      const date2 = new Date(d2);
+      const diffTime = Math.abs(date2 - date1);
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return diffDays || 1;
+    } catch (e) {
+      return 1;
+    }
+  };
+
+  const nights = getNights(checkInStr, checkOutStr);
 
   useEffect(() => {
     const fetchRoom = async () => {
@@ -48,53 +65,58 @@ const BookingFlow = () => {
   }, [roomId]);
 
   const handleBooking = async (e) => {
-    e.preventDefault();
+    if (e) e.preventDefault();
     setSubmitting(true);
     
-    // 1. Find or Create Guest
-    let guestId = null;
-    const { data: existingGuest } = await supabase
-      .from('Guest')
-      .select('id')
-      .eq('email', formData.email)
-      .single();
-    
-    if (existingGuest) {
-      guestId = existingGuest.id;
-    } else {
-      const { data: newGuest } = await supabase
+    try {
+      // 1. Find or Create Guest
+      let guestId = null;
+      const { data: existingGuest } = await supabase
         .from('Guest')
-        .insert([{ 
-          full_name: formData.fullName, 
-          email: formData.email, 
-          phone: formData.phone 
-        }])
-        .select()
+        .select('id')
+        .eq('email', formData.email)
         .single();
-      guestId = newGuest?.id;
-    }
+      
+      if (existingGuest) {
+        guestId = existingGuest.id;
+      } else {
+        const { data: newGuest, error: guestError } = await supabase
+          .from('Guest')
+          .insert([{ 
+            full_name: formData.fullName, 
+            email: formData.email, 
+            phone: formData.phone 
+          }])
+          .select()
+          .single();
+        if (guestError) throw guestError;
+        guestId = newGuest?.id;
+      }
 
-    // 2. Create Reservation
-    const { error } = await supabase.from('Reservation').insert([{
-      guest_id: guestId,
-      guest_name: formData.fullName,
-      room_id: parseInt(roomId),
-      room_type: room.type,
-      start_date: new Date(checkIn).toISOString(),
-      end_date: new Date(checkOut).toISOString(),
-      guests_count: parseInt(guests),
-      nights: nights,
-      total_price: room.price * nights,
-      status: 'Confirmed',
-      source: 'Direct Site'
-    }]);
+      // 2. Create Reservation
+      const { error: resError } = await supabase.from('Reservation').insert([{
+        guest_id: guestId,
+        guest_name: formData.fullName,
+        room_id: parseInt(roomId),
+        room_type: room.type,
+        start_date: new Date(checkInStr).toISOString(),
+        end_date: new Date(checkOutStr).toISOString(),
+        guests_count: parseInt(guests),
+        nights: nights,
+        total_price: room.price * nights * 1.1, // Including 10% mock tax
+        status: 'Confirmed',
+        source: 'Luxury Web Portal'
+      }]);
 
-    if (!error) {
+      if (resError) throw resError;
+      
       setStep(3);
-    } else {
-      alert("Error creating reservation: " + error.message);
+      window.scrollTo(0, 0);
+    } catch (error) {
+      alert("Reservation Protocol Interrupted: " + error.message);
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   const formatPrice = (price) => {
@@ -103,232 +125,323 @@ const BookingFlow = () => {
 
   if (loading || !room) {
     return (
-      <div className="h-screen flex items-center justify-center bg-[#fafafa]">
+      <div className="h-screen flex items-center justify-center bg-luxury-cream">
         <Loader2 className="w-12 h-12 text-luxury-gold animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#fafafa] font-sans pb-20">
-      {/* Header */}
-      <nav className="fixed top-0 w-full z-50 bg-white border-b border-gray-100 py-6">
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-gray-400 hover:text-luxury-black font-bold text-[10px] uppercase tracking-widest transition-colors">
-            <ChevronLeft className="w-4 h-4" /> Back to Selection
+    <div className="min-h-screen bg-luxury-cream/30 font-sans pb-32">
+      {/* Precision Navigation */}
+      <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-2xl border-b border-luxury-gold/10 py-6">
+        <div className="container mx-auto px-8 flex justify-between items-center">
+          <button onClick={() => navigate(-1)} className="group flex items-center gap-3 text-gray-400 hover:text-luxury-black font-bold text-[10px] uppercase tracking-[0.3em] transition-all">
+            <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Selection
           </button>
           <Logo className="scale-90" />
-          <div className="flex gap-2">
-            {[1, 2, 3].map(s => (
-              <div key={s} className={`w-2.5 h-2.5 rounded-full ${step >= s ? 'bg-luxury-gold' : 'bg-gray-100'}`} />
-            ))}
+          <div className="flex items-center gap-6">
+            <div className="hidden md:flex gap-3 mr-6">
+              {[1, 2, 3].map(s => (
+                <div key={s} className="flex items-center gap-2">
+                   <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold transition-all ${step >= s ? 'bg-luxury-gold border-luxury-gold text-white shadow-gold' : 'bg-white border-gray-100 text-gray-300'}`}>
+                      {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
+                   </div>
+                   {s < 3 && <div className={`w-8 h-px ${step > s ? 'bg-luxury-gold' : 'bg-gray-100'}`} />}
+                </div>
+              ))}
+            </div>
+            <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center border border-gray-100">
+               <Shield className="w-5 h-5 text-luxury-gold/50" />
+            </div>
           </div>
         </div>
       </nav>
 
-      <div className="container mx-auto px-6 pt-32 md:pt-40">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          
-          {/* Main Flow */}
-          <div className="lg:col-span-2">
-            <AnimatePresence mode="wait">
-              {step === 1 && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="space-y-10"
-                >
-                  <div className="space-y-2">
-                    <h2 className="text-4xl font-serif font-bold text-luxury-black">Guest Details</h2>
-                    <p className="text-gray-400 font-medium">Please provide your information to secure your sanctuary.</p>
-                  </div>
-
-                  <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setStep(2); }}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                      <div className="space-y-3">
-                        <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest pl-1">Full Name</label>
-                        <div className="relative">
-                          <User className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <input 
-                            required
-                            type="text" 
-                            placeholder="John Doe" 
-                            value={formData.fullName}
-                            onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                            className="w-full bg-white border border-gray-100 rounded-2xl px-14 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm" 
-                          />
+      <div className="container mx-auto px-8 pt-44">
+        <div className="max-w-7xl mx-auto">
+          <AnimatePresence mode="wait">
+            {step !== 3 ? (
+              <motion.div 
+                key="booking-content"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="grid grid-cols-1 lg:grid-cols-12 gap-16"
+              >
+                {/* Main Flow (Step 1 & 2) */}
+                <div className="lg:col-span-7 space-y-12">
+                   {step === 1 && (
+                     <div className="space-y-12">
+                        <div className="space-y-4">
+                           <h1 className="text-5xl font-serif font-bold text-luxury-black">Guest Identity</h1>
+                           <p className="text-gray-400 font-medium text-lg italic">"Your comfort is our priority. Please provide your official credentials."</p>
                         </div>
-                      </div>
-                      <div className="space-y-3">
-                        <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest pl-1">Email Address</label>
-                        <div className="relative">
-                          <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                          <input 
-                            required
-                            type="email" 
-                            placeholder="john@example.com" 
-                            value={formData.email}
-                            onChange={(e) => setFormData({...formData, email: e.target.value})}
-                            className="w-full bg-white border border-gray-100 rounded-2xl px-14 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm" 
-                          />
+
+                        <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setStep(2); window.scrollTo(0, 0); }}>
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                              <div className="space-y-3">
+                                 <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Full Legal Name</label>
+                                 <div className="relative group">
+                                    <User className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                                    <input 
+                                      required
+                                      type="text" 
+                                      placeholder="Ex: Mourad Brahimi" 
+                                      value={formData.fullName}
+                                      onChange={(e) => setFormData({...formData, fullName: e.target.value})}
+                                      className="input-luxury w-full pl-16 h-16" 
+                                    />
+                                 </div>
+                              </div>
+                              <div className="space-y-3">
+                                 <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Email Address</label>
+                                 <div className="relative group">
+                                    <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                                    <input 
+                                      required
+                                      type="email" 
+                                      placeholder="mourad@gmail.com" 
+                                      value={formData.email}
+                                      onChange={(e) => setFormData({...formData, email: e.target.value})}
+                                      className="input-luxury w-full pl-16 h-16" 
+                                    />
+                                 </div>
+                              </div>
+                           </div>
+                           <div className="space-y-3">
+                              <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Mobile Connection</label>
+                              <div className="relative group">
+                                 <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                                 <input 
+                                   required
+                                   type="tel" 
+                                   placeholder="+213 --- --- ---" 
+                                   value={formData.phone}
+                                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
+                                   className="input-luxury w-full pl-16 h-16" 
+                                 />
+                              </div>
+                           </div>
+                           <div className="space-y-3">
+                              <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2 flex items-center justify-between">
+                                 Concierge Requests (Optional)
+                                 <span className="flex items-center gap-1.5"><MessageSquare className="w-3 h-3 text-luxury-gold" /> Personalized Care</span>
+                              </label>
+                              <textarea 
+                                rows="4" 
+                                placeholder="Dietary preferences, high floor request, or any special celebration details..."
+                                value={formData.requests}
+                                onChange={(e) => setFormData({...formData, requests: e.target.value})}
+                                className="w-full bg-white border-2 border-gray-100 rounded-[2rem] px-8 py-6 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm resize-none"
+                              />
+                           </div>
+                           <GoldButton type="submit" className="w-full py-6 shadow-2xl flex items-center justify-center gap-4 text-xs tracking-[0.2em]">
+                              PROCEED TO FINAL REVIEW <ArrowRight className="w-4 h-4" />
+                           </GoldButton>
+                        </form>
+                     </div>
+                   )}
+
+                   {step === 2 && (
+                     <div className="space-y-12">
+                        <div className="space-y-4">
+                           <h1 className="text-5xl font-serif font-bold text-luxury-black">Final Confirmation</h1>
+                           <p className="text-gray-400 font-medium text-lg italic">"Review your sanctuary details before we secure your arrival."</p>
                         </div>
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest pl-1">Phone Number</label>
-                      <div className="relative">
-                        <Phone className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                        <input 
-                          required
-                          type="tel" 
-                          placeholder="+213 --- --- ---" 
-                          value={formData.phone}
-                          onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                          className="w-full bg-white border border-gray-100 rounded-2xl px-14 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm" 
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest pl-1">Special Requests (Optional)</label>
-                      <textarea 
-                        rows="4" 
-                        placeholder="Dietary requirements, early check-in, etc."
-                        value={formData.requests}
-                        onChange={(e) => setFormData({...formData, requests: e.target.value})}
-                        className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm resize-none"
-                      />
-                    </div>
-                    <GoldButton type="submit" className="w-full py-5 shadow-lg flex items-center justify-center gap-3">
-                      CONTINUE TO SUMMARY <ArrowRight className="w-4 h-4" />
-                    </GoldButton>
-                  </form>
-                </motion.div>
-              )}
 
-              {step === 2 && (
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 20 }}
-                  className="space-y-10"
-                >
-                  <div className="space-y-2">
-                    <h2 className="text-4xl font-serif font-bold text-luxury-black">Confirm Reservation</h2>
-                    <p className="text-gray-400 font-medium">Verify your details and finalise your booking.</p>
-                  </div>
+                        <div className="space-y-8">
+                           <GlassCard className="bg-white border-gray-100 p-10 rounded-[3rem] space-y-10 shadow-sm">
+                              <div className="grid grid-cols-2 gap-10">
+                                 <div className="space-y-2">
+                                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em]">Primary Guest</p>
+                                    <p className="text-2xl font-serif font-bold text-luxury-black">{formData.fullName}</p>
+                                    <p className="text-sm font-medium text-gray-400">{formData.email}</p>
+                                 </div>
+                                 <div className="space-y-2">
+                                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em]">Timeline</p>
+                                    <p className="text-2xl font-serif font-bold text-luxury-black">{checkInStr} — {checkOutStr}</p>
+                                    <p className="text-sm font-medium text-luxury-gold uppercase tracking-widest">{nights} Luxury Evenings</p>
+                                 </div>
+                              </div>
+                              
+                              <div className="pt-10 border-t border-gray-50 space-y-8">
+                                 <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-4 text-luxury-gold">
+                                       <CreditCard className="w-6 h-6" />
+                                       <h4 className="text-[10px] font-bold uppercase tracking-[0.4em]">Financial Settlement</h4>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-4 py-1.5 rounded-full uppercase tracking-widest">No Prepayment Required</span>
+                                 </div>
 
-                  <GlassCard className="bg-white border-gray-100 p-8 space-y-8">
-                    <div className="grid grid-cols-2 gap-8">
-                      <div>
-                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Guest</p>
-                        <p className="font-bold text-luxury-black">{formData.fullName}</p>
-                        <p className="text-sm text-gray-500">{formData.email}</p>
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div 
+                                      onClick={() => setFormData({...formData, paymentMethod: 'property'})}
+                                      className={`p-8 rounded-[2.5rem] border-2 transition-all cursor-pointer group ${formData.paymentMethod === 'property' ? 'bg-luxury-gold/5 border-luxury-gold' : 'bg-white border-gray-100 hover:border-luxury-gold/30'}`}
+                                    >
+                                       <div className="flex justify-between items-start mb-6">
+                                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${formData.paymentMethod === 'property' ? 'bg-luxury-gold text-white' : 'bg-gray-50 text-gray-400'}`}>
+                                             <MapPin className="w-6 h-6" />
+                                          </div>
+                                          {formData.paymentMethod === 'property' && <div className="w-5 h-5 rounded-full bg-luxury-gold flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>}
+                                       </div>
+                                       <h5 className="font-bold text-luxury-black mb-1">Pay at Property</h5>
+                                       <p className="text-[10px] text-gray-400 uppercase tracking-widest leading-relaxed">Secure your booking now and settle the balance upon arrival in Setif.</p>
+                                    </div>
+                                    <div 
+                                      onClick={() => setFormData({...formData, paymentMethod: 'online'})}
+                                      className={`p-8 rounded-[2.5rem] border-2 transition-all cursor-pointer opacity-40 group grayscale hover:grayscale-0 hover:opacity-100 ${formData.paymentMethod === 'online' ? 'bg-luxury-gold/5 border-luxury-gold' : 'bg-white border-gray-100'}`}
+                                    >
+                                       <div className="flex justify-between items-start mb-6">
+                                          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400">
+                                             <ShieldCheck className="w-6 h-6" />
+                                          </div>
+                                          <div className="px-2 py-1 bg-gray-200 rounded text-[8px] font-bold uppercase tracking-tighter">Coming Soon</div>
+                                       </div>
+                                       <h5 className="font-bold text-gray-400 mb-1">Gilded Online Pay</h5>
+                                       <p className="text-[10px] text-gray-400 uppercase tracking-widest leading-relaxed">Fast-track your check-in with our upcoming secure digital settlement.</p>
+                                    </div>
+                                 </div>
+                              </div>
+                           </GlassCard>
+
+                           <div className="bg-blue-50 border border-blue-100 p-8 rounded-[2.5rem] flex items-center gap-6">
+                              <Info className="w-6 h-6 text-blue-500 shrink-0" />
+                              <p className="text-xs text-blue-600 font-medium leading-relaxed">By confirming, you agree to our 24-hour cancellation policy. No charges will be made to your card for "Pay at Property" selections.</p>
+                           </div>
+
+                           <div className="flex gap-6">
+                              <button 
+                                onClick={() => setStep(1)}
+                                className="px-12 h-16 bg-white border-2 border-gray-100 rounded-[2rem] text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-gray-50 transition-colors"
+                              >
+                                Back
+                              </button>
+                              <GoldButton 
+                                onClick={handleBooking}
+                                disabled={submitting}
+                                className="flex-1 h-16 shadow-2xl flex items-center justify-center gap-4 text-xs tracking-[0.2em]"
+                              >
+                                {submitting ? <Loader2 className="w-6 h-6 animate-spin" /> : <>AUTHENTICATE RESERVATION <Sparkles className="w-5 h-5" /></>}
+                              </GoldButton>
+                           </div>
+                        </div>
+                     </div>
+                   )}
+                </div>
+
+                {/* Sticky Summary Sidebar */}
+                <div className="lg:col-span-5">
+                   <div className="sticky top-44 space-y-8">
+                      <GlassCard className="bg-white border-luxury-gold/10 p-10 shadow-[0_50px_100px_-30px_rgba(0,0,0,0.1)] rounded-[3.5rem] overflow-hidden">
+                         <div className="absolute top-0 right-0 w-32 h-32 bg-luxury-gold/5 rounded-full -translate-y-16 translate-x-16 blur-3xl" />
+                         
+                         <div className="aspect-[16/10] rounded-[2.5rem] overflow-hidden mb-10 shadow-xl border border-white/40">
+                           <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover" alt="Suite" />
+                         </div>
+
+                         <div className="space-y-10">
+                            <div>
+                               <h3 className="text-3xl font-serif font-bold text-luxury-black mb-2">{room.type}</h3>
+                               <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">
+                                  <MapPin className="w-4 h-4 text-luxury-gold/50" /> Golden Hills • Setif, DZ
+                               </div>
+                            </div>
+
+                            <div className="space-y-6 pt-10 border-t border-gray-100">
+                               <div className="flex justify-between items-center text-sm">
+                                  <span className="text-gray-400 font-medium italic underline underline-offset-4 decoration-luxury-gold/30">{formatPrice(room.price)} x {nights} nights</span>
+                                  <span className="font-bold text-luxury-black">{formatPrice(room.price * nights)}</span>
+                               </div>
+                               <div className="flex justify-between items-center text-sm">
+                                  <span className="text-gray-400 font-medium flex items-center gap-2">Gilded Service Protocol (10%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
+                                  <span className="font-bold text-luxury-black">{formatPrice(room.price * nights * 0.1)}</span>
+                               </div>
+                               <div className="flex justify-between items-center text-sm text-green-600 bg-green-50/50 p-4 rounded-2xl border border-green-100">
+                                  <span className="font-bold uppercase tracking-widest text-[9px]">GHE Web Privilege</span>
+                                  <span className="font-bold">- {formatPrice(room.price * nights * 0.05)}</span>
+                               </div>
+                               
+                               <div className="flex justify-between items-end pt-10 border-t border-gray-100">
+                                  <div>
+                                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-1">Total Sanctuary Investment</p>
+                                     <p className="text-4xl font-serif font-bold text-luxury-gold">{formatPrice(room.price * nights * 1.05)}</p>
+                                  </div>
+                               </div>
+                            </div>
+                         </div>
+                      </GlassCard>
+
+                      <div className="grid grid-cols-2 gap-4 px-6">
+                         <div className="flex items-center gap-3 text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                            <ShieldCheck className="w-5 h-5 text-luxury-gold/40" /> SSL SECURED
+                         </div>
+                         <div className="flex items-center gap-3 text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                            <Calendar className="w-5 h-5 text-luxury-gold/40" /> INSTANT CONFIRM
+                         </div>
                       </div>
-                      <div>
-                        <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-2">Dates</p>
-                        <p className="font-bold text-luxury-black">{checkIn} — {checkOut}</p>
-                        <p className="text-sm text-gray-500">{nights} Nights</p>
-                      </div>
-                    </div>
+                   </div>
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="success-screen"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="max-w-4xl mx-auto"
+              >
+                 <div className="bg-white p-12 md:p-24 rounded-[4rem] shadow-2xl border border-luxury-gold/10 relative overflow-hidden text-center space-y-12">
+                    <div className="absolute top-0 left-0 w-full h-4 gold-gradient" />
+                    <div className="absolute -top-24 -left-24 w-64 h-64 bg-luxury-gold/5 rounded-full blur-3xl" />
+                    <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-luxury-gold/5 rounded-full blur-3xl" />
                     
-                    <div className="pt-8 border-t border-gray-50">
-                      <div className="flex items-center gap-4 text-luxury-gold mb-6">
-                        <CreditCard className="w-6 h-6" />
-                        <h4 className="font-bold">Payment Method</h4>
-                      </div>
-                      <div className="p-6 bg-gray-50 rounded-2xl border border-gray-100 flex items-center justify-between group cursor-pointer hover:border-luxury-gold/30 transition-all">
-                        <div className="flex items-center gap-4">
-                           <div className="w-12 h-8 bg-luxury-black rounded flex items-center justify-center text-white font-bold text-[8px] uppercase">Card</div>
-                           <span className="font-bold text-sm">Pay at Property</span>
-                        </div>
-                        <div className="w-5 h-5 rounded-full border-2 border-luxury-gold p-1 flex items-center justify-center">
-                           <div className="w-full h-full bg-luxury-gold rounded-full" />
-                        </div>
-                      </div>
+                    <motion.div 
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      transition={{ type: "spring", damping: 10, stiffness: 100 }}
+                      className="w-32 h-32 bg-luxury-gold rounded-full flex items-center justify-center mx-auto text-white shadow-gold relative"
+                    >
+                       <CheckCircle2 className="w-16 h-16" />
+                       <motion.div 
+                         animate={{ scale: [1, 1.5, 1], opacity: [0.5, 0, 0.5] }}
+                         transition={{ duration: 2, repeat: Infinity }}
+                         className="absolute inset-0 rounded-full bg-luxury-gold"
+                       />
+                    </motion.div>
+
+                    <div className="space-y-6 relative z-10">
+                       <h2 className="text-6xl md:text-8xl font-serif font-bold text-luxury-black tracking-tighter">Sanctuary Secured</h2>
+                       <p className="text-gray-400 text-xl font-medium max-w-2xl mx-auto italic">
+                          "Welcome to the Golden Hills, {formData.fullName.split(' ')[0]}. Your presence is highly anticipated."
+                       </p>
                     </div>
-                  </GlassCard>
 
-                  <div className="flex gap-4">
-                    <button 
-                      onClick={() => setStep(1)}
-                      className="px-10 py-5 bg-white border border-gray-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-colors"
-                    >
-                      Back
-                    </button>
-                    <GoldButton 
-                      onClick={handleBooking}
-                      disabled={submitting}
-                      className="flex-1 py-5 shadow-lg flex items-center justify-center gap-3"
-                    >
-                      {submitting ? <Loader2 className="w-5 h-5 animate-spin" /> : 'CONFIRM BOOKING'}
-                    </GoldButton>
-                  </div>
-                </motion.div>
-              )}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-y border-gray-50 relative z-10">
+                       <div className="space-y-2">
+                          <PlaneTakeoff className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Confirmation Key</p>
+                          <p className="text-xl font-bold font-serif">#GH-{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+                       </div>
+                       <div className="space-y-2">
+                          <Bell className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Next Steps</p>
+                          <p className="text-sm font-bold">Protocol Email Dispatched</p>
+                       </div>
+                       <div className="space-y-2">
+                          <ShieldCheck className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Arrival Support</p>
+                          <p className="text-sm font-bold">24/7 Gilded Concierge</p>
+                       </div>
+                    </div>
 
-              {step === 3 && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="text-center space-y-8 py-10"
-                >
-                  <div className="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500 mb-8">
-                    <CheckCircle2 className="w-12 h-12" />
-                  </div>
-                  <div className="space-y-4">
-                    <h2 className="text-5xl font-serif font-bold text-luxury-black">Reservation Confirmed!</h2>
-                    <p className="text-gray-500 max-w-md mx-auto text-lg leading-relaxed font-medium">
-                      Your gilded stay at Golden Hills is secured. A confirmation email has been sent to {formData.email}.
-                    </p>
-                  </div>
-                  <div className="pt-8 flex flex-col sm:flex-row justify-center gap-4">
-                    <GoldButton className="px-12 py-5" onClick={() => navigate('/')}>RETURN TO HOME</GoldButton>
-                    <button className="px-12 py-5 bg-white border border-gray-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-colors">VIEW BOOKING HISTORY</button>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {/* Booking Summary Sidebar */}
-          <aside className="space-y-8">
-            <GlassCard className="bg-white border-gray-100 p-8 shadow-sm space-y-8">
-              <div className="aspect-video rounded-2xl overflow-hidden mb-6">
-                <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <h3 className="text-2xl font-serif font-bold text-luxury-black mb-1">{room.type}</h3>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                  <MapPin className="w-3 h-3" /> Golden Hills Setif, Algeria
-                </p>
-              </div>
-
-              <div className="space-y-4 pt-8 border-t border-gray-50">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 font-medium">{formatPrice(room.price)} x {nights} nights</span>
-                  <span className="font-bold text-luxury-black">{formatPrice(room.price * nights)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-500 font-medium">Service Charge (10%)</span>
-                  <span className="font-bold text-luxury-black">{formatPrice(room.price * nights * 0.1)}</span>
-                </div>
-                <div className="flex justify-between text-lg pt-4 border-t border-gray-50">
-                  <span className="font-serif font-bold text-luxury-black">Total</span>
-                  <span className="font-bold text-luxury-gold">{formatPrice(room.price * nights * 1.1)}</span>
-                </div>
-              </div>
-            </GlassCard>
-
-            <div className="px-8 space-y-4">
-              <div className="flex items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                <ShieldCheck className="w-4 h-4 text-luxury-gold" /> Secure GHE-256 Encryption
-              </div>
-              <div className="flex items-center gap-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-                <Calendar className="w-4 h-4 text-luxury-gold" /> Flexible Cancellation Policy
-              </div>
-            </div>
-          </aside>
+                    <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
+                       <GoldButton className="px-16 py-6 text-xs shadow-2xl" onClick={() => navigate('/')}>RETURN TO PUBLIC PORTAL</GoldButton>
+                       <Link to="/register" className="px-16 py-6 bg-white border-2 border-gray-100 rounded-[2rem] text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all flex items-center justify-center">ENABLE MEMBER PRIVILEGES</Link>
+                    </div>
+                 </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </div>

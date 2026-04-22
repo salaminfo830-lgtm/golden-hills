@@ -1,94 +1,94 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --gold-primary: #bea269;
-  --gold-light: #d8c392;
-  --white-warm: #ffffff;
-  --luxury-black: #121212;
-  --glass-white: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.12);
+@layer base {
+  :root {
+    --luxury-gold: #D4AF37;
+    --luxury-black: #0A0A0A;
+    --luxury-cream: #FDFBF7;
+    --luxury-white-warm: #FAF9F6;
+  }
+
+  body {
+    @apply bg-luxury-cream text-luxury-black antialiased selection:bg-luxury-gold selection:text-white;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Playfair Display', serif;
+  }
 }
 
-body {
-  background-color: var(--white-warm);
-  color: var(--luxury-black);
-  font-family: "Outfit", sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  scroll-behavior: smooth;
-}
+@layer components {
+  .glass {
+    @apply bg-white/70 backdrop-blur-2xl border border-white/20 shadow-xl;
+  }
 
-h1, h2, h3, h4, .font-elegant {
-  font-family: "Cormorant Garamond", serif;
-}
+  .glass-dark {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(40px);
+    -webkit-backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  }
 
-/* Glassmorphism Classes */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
-}
+  .glass-gold {
+    background: rgba(212, 175, 55, 0.05);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(212, 175, 55, 0.2);
+  }
 
-.glass-dark {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(40px);
-  -webkit-backdrop-filter: blur(40px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
-}
+  .shadow-gold {
+    box-shadow: 0 20px 40px -10px rgba(212, 175, 55, 0.3);
+  }
 
-.glass-gold {
-  background: rgba(190, 162, 105, 0.05);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(190, 162, 105, 0.2);
-}
+  .gold-gradient {
+    background: linear-gradient(135deg, #A68546 0%, #D4AF37 40%, #D4AF37 60%, #A68546 100%);
+  }
 
-.glass-vapor {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
+  .gold-text-gradient {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #c5a059 0%, #d4af37 50%, #a68546 100%);
+  }
 
-/* Gold Gradient Effects */
-.gold-gradient {
-  background: linear-gradient(135deg, #A68546 0%, #D4AF37 40%, #D4AF37 60%, #A68546 100%);
-}
-
-.gold-text-gradient {
-  background-clip: text;
-  -webkit-background-clip: text;
-  color: transparent;
-  background-image: linear-gradient(135deg, #c5a059 0%, #d4af37 50%, #a68546 100%);
+  .input-luxury {
+    @apply bg-white border-2 border-gray-50 rounded-[1.5rem] px-8 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm;
+  }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background-color: #fdfbf7;
+  @apply bg-luxury-cream;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(212, 175, 55, 0.3);
+  background-color: rgba(212, 175, 55, 0.2);
   border-radius: 9999px;
-  transition: background-color 0.2s;
+  transition: all 0.3s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background-color: rgba(212, 175, 55, 0.5);
 }
 
-/* Animations */
+/* No Scrollbar Utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Luxury Animations */
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
@@ -106,18 +106,8 @@ h1, h2, h3, h4, .font-elegant {
   left: 0;
   width: 50%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 215, 0, 0.2), transparent);
+  background: linear-gradient(to right, transparent, rgba(255, 215, 0, 0.1), transparent);
   transform: skewX(-20deg);
-  animation: shimmer 2s infinite;
+  animation: shimmer 3s infinite;
 }
 
-/* Hide scrollbar for Chrome, Safari and Opera */
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}

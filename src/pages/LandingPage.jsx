@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Calendar, Users, MapPin, Star, Coffee, 
-  Wind, Ship, UtensilsCrossed, Waves, 
-  Menu, X, ChevronRight, PlayCircle
+  Wind, UtensilsCrossed, Waves, 
+  Menu, X, ChevronRight, PlayCircle,
+  ShieldCheck, Smartphone, Sparkles,
+  Search, ArrowRight, MousePointer2,
+  Globe, Shield, Award, Droplets
 } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import GoldButton from '../components/GoldButton';
-
 import Logo from '../components/Logo';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -33,7 +35,6 @@ const LandingPage = () => {
         .order('price', { ascending: true });
       
       if (!error && data) {
-        // Filter to show one room of each type for the landing page
         const uniqueTypes = [];
         const displayRooms = data.filter(room => {
           if (!uniqueTypes.includes(room.type)) {
@@ -42,7 +43,7 @@ const LandingPage = () => {
           }
           return false;
         });
-        setRooms(displayRooms);
+        setRooms(displayRooms.slice(0, 3)); // Just show top 3 for landing
       }
       setLoading(false);
     };
@@ -53,331 +54,407 @@ const LandingPage = () => {
     return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(price);
   };
 
+  const navItems = [
+    { label: 'Suites', path: '/suites' },
+    { label: 'Dining', path: '/dining' },
+    { label: 'Spa', path: '/spa' },
+    { label: 'About', path: '/about' },
+  ];
+
   return (
-    <div className="min-h-screen bg-luxury-white-warm overflow-x-hidden">
-      {/* Navigation */}
-      <nav className={`fixed top-0 w-full z-50 transition-all duration-700 ${isScrolled ? 'bg-white/90 backdrop-blur-xl py-3 shadow-2xl border-b border-luxury-gold/10' : 'bg-transparent py-8'}`}>
-        <div className="container mx-auto px-6 flex justify-between items-center">
-          <Link to="/" className="flex items-center gap-4 group">
-            <Logo inverse={!isScrolled} className={`transition-all duration-500 transform ${isScrolled ? 'scale-90' : 'scale-110'}`} />
+    <div className="min-h-screen bg-luxury-cream/10 overflow-x-hidden selection:bg-luxury-gold selection:text-white font-sans">
+      {/* Immersive Cinematic Navigation */}
+      <nav className={`fixed top-0 w-full z-[100] transition-all duration-700 px-8 lg:px-12 ${
+        isScrolled ? 'bg-white/90 backdrop-blur-2xl py-4 shadow-sm border-b border-luxury-gold/5' : 'bg-transparent py-10'
+      }`}>
+        <div className="max-w-[1800px] mx-auto flex justify-between items-center">
+          <Link to="/" className="group flex items-center gap-4">
+             <Logo inverse={!isScrolled} className={`transition-transform duration-700 ${isScrolled ? 'scale-90' : 'scale-110'}`} />
+             <div className="overflow-hidden">
+                <span className={`block font-serif font-bold text-2xl tracking-tighter transition-all duration-700 ${isScrolled ? 'text-luxury-black' : 'text-white'} group-hover:tracking-[0.1em]`}>
+                   GOLDEN HILLS
+                </span>
+                <span className={`block text-[8px] font-bold uppercase tracking-[0.4em] transition-all duration-700 ${isScrolled ? 'text-gray-400 opacity-100' : 'text-white/60 opacity-0 translate-y-2'}`}>
+                   Setif • Algeria
+                </span>
+             </div>
           </Link>
-          
-          <div className="hidden lg:flex items-center gap-10 font-bold tracking-widest text-[10px] uppercase">
-            <a href="#about" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>About</a>
-            <a href="#suites" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Suites</a>
-            <a href="#services" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Services</a>
-            <a href="#contact" className={`${isScrolled ? 'text-luxury-black' : 'text-white'} hover:text-luxury-gold transition-colors`}>Contact</a>
-            <GoldButton className="px-8 py-2 text-[10px]" onClick={() => navigate('/admin')}>MANAGEMENT</GoldButton>
+
+          {/* Desktop Nav */}
+          <div className="hidden lg:flex items-center gap-12">
+            {navItems.map((item) => (
+              <Link 
+                key={item.label} 
+                to={item.path}
+                className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all relative group ${
+                  isScrolled ? 'text-gray-400 hover:text-luxury-black' : 'text-white/70 hover:text-white'
+                }`}
+              >
+                {item.label}
+                <span className="absolute -bottom-2 left-0 w-0 h-px bg-luxury-gold transition-all duration-500 group-hover:w-full" />
+              </Link>
+            ))}
+            <div className="h-6 w-px bg-white/20 mx-4" />
+            <div className="flex gap-4">
+               <Link to="/login" className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-colors py-3 px-4 ${isScrolled ? 'text-gray-400 hover:text-luxury-gold' : 'text-white/40 hover:text-luxury-gold'}`}>Portal</Link>
+               <GoldButton className="px-8 py-3 text-[10px] shadow-gold" onClick={() => navigate('/search')}>BOOK SANCTUARY</GoldButton>
+            </div>
           </div>
 
-          <button className="lg:hidden p-2 rounded-xl glass" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-            {isMenuOpen ? <X className={isScrolled ? 'text-black' : 'text-white'} /> : <Menu className={isScrolled ? 'text-black' : 'text-white'} />}
+          <button className="lg:hidden p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10" onClick={() => setIsMenuOpen(true)}>
+             <Menu className={`w-5 h-5 ${isScrolled ? 'text-luxury-black' : 'text-white'}`} />
           </button>
         </div>
-
-        {/* Mobile Menu Drawer */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed inset-y-0 right-0 w-full md:w-80 bg-luxury-black border-l border-white/10 z-50 p-10 flex flex-col"
-            >
-              <div className="flex justify-between items-center mb-16">
-                <img src="/logo.jpg" alt="Golden Hills" className="w-16 h-16 brightness-0 invert" />
-                <button onClick={() => setIsMenuOpen(false)} className="p-2 glass rounded-full"><X className="text-white" /></button>
-              </div>
-              <div className="space-y-8 flex flex-col text-2xl font-serif">
-                <a href="#about" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Our Story</a>
-                <a href="#suites" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Luxury Suites</a>
-                <a href="#services" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Experience</a>
-                <a href="#contact" onClick={() => setIsMenuOpen(false)} className="text-white hover:text-luxury-gold transition-colors">Get in Touch</a>
-                <GoldButton className="mt-8" onClick={() => navigate('/admin')}>Admin Login</GoldButton>
-              </div>
-              <div className="mt-auto border-t border-white/10 pt-8 opacity-40 text-sm text-white text-center">
-                © 2026 Golden Hills Hotel
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
 
-      {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2070")' }}
-        >
-          <div className="absolute inset-0 bg-black/40" />
-        </div>
-
-        <div className="container mx-auto px-6 relative z-10 text-center text-white">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1 }}
-            className="flex flex-col items-center max-w-4xl mx-auto pt-32 md:pt-40"
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[200] bg-luxury-black p-10 flex flex-col justify-between"
           >
-            <h4 className="text-luxury-gold font-elegant italic text-sm md:text-lg mb-4 tracking-[0.4em] uppercase">Setif&apos;s Gilded Sanctuary</h4>
-            <h1 className="text-4xl sm:text-6xl md:text-7xl font-elegant font-bold mb-6 md:mb-8 leading-tight tracking-tight">
-              A Symphony of <br className="hidden md:block" /> Luxury & Light
+             <div className="flex justify-between items-center">
+                <Logo inverse />
+                <button onClick={() => setIsMenuOpen(false)} className="p-4 bg-white/10 rounded-full text-white"><X className="w-6 h-6" /></button>
+             </div>
+             <nav className="space-y-10">
+                {navItems.map((item, i) => (
+                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} key={item.label}>
+                     <Link to={item.path} onClick={() => setIsMenuOpen(false)} className="text-6xl font-serif font-bold text-white/40 hover:text-luxury-gold hover:italic transition-all inline-block">{item.label}</Link>
+                  </motion.div>
+                ))}
+             </nav>
+             <div className="pt-10 border-t border-white/5 space-y-6">
+                <GoldButton className="w-full py-5" onClick={() => navigate('/search')}>RESERVE NOW</GoldButton>
+                <p className="text-[10px] text-white/20 uppercase tracking-[0.4em] text-center">Golden Hills Hotel • Setif, Algeria</p>
+             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Hero Section - The Grand Arrival */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        <motion.div 
+          initial={{ scale: 1.15 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 20, ease: "linear" }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: 'url("/golden_hills_setif_hero_1776878839733.png")' }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-luxury-black/60 via-luxury-black/20 to-luxury-cream/10" />
+        </motion.div>
+
+        <div className="container mx-auto px-12 relative z-10 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+          >
+            <div className="flex items-center justify-center gap-6 mb-12">
+              <div className="h-px w-16 bg-luxury-gold/50" />
+              <h4 className="text-luxury-gold font-bold text-[10px] md:text-xs tracking-[0.6em] uppercase">Setif&apos;s Gilded Masterpiece</h4>
+              <div className="h-px w-16 bg-luxury-gold/50" />
+            </div>
+            <h1 className="text-7xl md:text-[12rem] font-serif font-bold text-white tracking-tighter leading-[0.85] mb-12">
+               Golden <br /> <span className="italic font-normal text-luxury-gold/90">Hills</span>
             </h1>
-            <p className="text-sm md:text-lg text-white/70 max-w-xl mx-auto mb-10 md:mb-16 font-medium leading-relaxed px-4 md:px-0">
-              Experience the pinnacle of Algerian hospitality at Golden Hills Hotel, where every moment is a masterpiece of gold and light.
+            <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-20 font-medium leading-relaxed italic">
+               Where ancient heritage meets the height of contemporary luxury. A sanctuary crafted for the world&apos;s most discerning travelers.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <GoldButton className="w-full sm:w-auto text-xs md:text-sm px-10 md:px-14 py-4 md:py-5 shadow-2xl">RESERVE YOUR MOMENT</GoldButton>
-              <button className="flex items-center gap-4 text-xs md:text-sm font-bold tracking-widest uppercase hover:text-luxury-gold transition-colors group">
-                <div className="w-12 h-12 rounded-full glass flex items-center justify-center group-hover:scale-110 transition-transform">
-                  <PlayCircle className="w-6 h-6" />
+            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
+              <GoldButton className="px-20 py-7 text-xs shadow-gold hover:scale-105 transition-all">START YOUR JOURNEY</GoldButton>
+              <button className="flex items-center gap-4 text-[10px] font-bold tracking-[0.4em] text-white uppercase hover:text-luxury-gold transition-all group">
+                <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
+                  <PlayCircle className="w-8 h-8" />
                 </div>
-                THE EXPERIENCE
+                THE FILM
               </button>
             </div>
           </motion.div>
         </div>
 
-        {/* Floating Booking Widget */}
-        <div className="hidden lg:block absolute -bottom-16 left-1/2 -translate-x-1/2 w-full max-w-6xl px-6 z-20">
-          <motion.div 
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1, duration: 1 }}
-            className="bg-white/95 backdrop-blur-3xl p-8 rounded-[3rem] flex flex-row items-center gap-10 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border border-luxury-gold/10"
-          >
-            <div className="flex-1 space-y-2 border-r border-gray-100 pr-8">
-              <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold flex items-center gap-2 mb-1">Check-in <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold animate-pulse" /></label>
-              <div className="flex items-center gap-4">
-                <Calendar className="text-luxury-gold w-6 h-6 opacity-80" />
-                <div className="flex flex-col">
-                   <span className="font-bold text-luxury-black text-lg">12 Oct</span>
-                   <span className="text-[10px] text-gray-400 font-bold uppercase">Wednesday</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 space-y-2 border-r border-gray-100 pr-8">
-              <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold flex items-center gap-2 mb-1">Check-out <div className="w-1.5 h-1.5 rounded-full bg-orange-400" /></label>
-              <div className="flex items-center gap-4">
-                <Calendar className="text-luxury-gold w-6 h-6 opacity-80" />
-                <div className="flex flex-col">
-                   <span className="font-bold text-luxury-black text-lg">18 Oct</span>
-                   <span className="text-[10px] text-gray-400 font-bold uppercase">Tuesday</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex-1 space-y-2">
-              <label className="text-[10px] uppercase tracking-[0.4em] font-bold text-luxury-gold flex items-center gap-2 mb-1">Guests <div className="w-1.5 h-1.5 rounded-full bg-blue-400" /></label>
-              <div className="flex items-center gap-4">
-                <Users className="text-luxury-gold w-6 h-6 opacity-80" />
-                <div className="flex flex-col">
-                   <span className="font-bold text-luxury-black text-lg">2 Adults</span>
-                   <span className="text-[10px] text-gray-400 font-bold uppercase">Superior Suite</span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center">
-              <GoldButton 
-                className="px-14 py-5 shadow-2xl hover:scale-105 transition-transform"
-                onClick={() => navigate('/search?checkIn=12+Oct&checkOut=18+Oct&guests=2')}
-              >
-                CHECK AVAILABILITY
-              </GoldButton>
-            </div>
-          </motion.div>
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-4 text-white/30 animate-bounce">
+           <span className="text-[8px] font-bold uppercase tracking-[0.4em]">Descend</span>
+           <div className="w-px h-12 bg-gradient-to-b from-luxury-gold to-transparent" />
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className="pt-24 md:pt-48 pb-20 container mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-24 items-center">
-          <motion.div
-             initial={{ opacity: 0, x: -30 }}
+      {/* Booking Widget Overlay (Booking.com style but Lux) */}
+      <div className="relative z-50 -mt-24 max-w-[1400px] mx-auto px-8 hidden lg:block">
+         <GlassCard className="bg-white p-3 rounded-[3.5rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] flex items-center border-luxury-gold/5">
+            <div className="flex-1 grid grid-cols-4 gap-2">
+               {[
+                 { icon: <Calendar />, label: 'Check-In', value: 'Select Date' },
+                 { icon: <Calendar />, label: 'Check-Out', value: 'Select Date' },
+                 { icon: <Users />, label: 'Guests', value: '2 Adults, 0 Children' },
+                 { icon: <MapPin />, label: 'View', value: 'Hillside Premier' },
+               ].map((item, i) => (
+                 <div key={i} className="group px-10 py-8 rounded-[2.5rem] hover:bg-luxury-cream/30 transition-all cursor-pointer border-r border-gray-50 last:border-0">
+                    <div className="flex items-center gap-5">
+                       <div className="text-luxury-gold opacity-60 group-hover:opacity-100 transition-opacity">{item.icon}</div>
+                       <div className="flex flex-col">
+                          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1">{item.label}</span>
+                          <span className="font-bold text-luxury-black text-sm">{item.value}</span>
+                       </div>
+                    </div>
+                 </div>
+               ))}
+            </div>
+            <button 
+              onClick={() => navigate('/search')}
+              className="h-[100px] aspect-square gold-gradient rounded-[2.5rem] flex items-center justify-center text-white shadow-gold hover:scale-95 transition-transform ml-4"
+            >
+               <Search className="w-8 h-8" />
+            </button>
+         </GlassCard>
+      </div>
+
+      {/* Section: The Heritage */}
+      <section className="py-60 container mx-auto px-12">
+        <div className="grid lg:grid-cols-2 gap-32 items-center">
+           <motion.div
+             initial={{ opacity: 0, x: -50 }}
              whileInView={{ opacity: 1, x: 0 }}
              viewport={{ once: true }}
              transition={{ duration: 1 }}
-          >
-            <h4 className="text-luxury-gold font-serif italic text-lg mb-3 tracking-wide">Centuries of Excellence</h4>
-            <h2 className="text-4xl md:text-6xl font-serif font-bold mb-8 leading-tight text-luxury-black">A Gilded Landmark <br className="hidden md:block" /> Since 1998</h2>
-            <p className="text-gray-500 leading-relaxed text-base md:text-lg mb-10 font-medium">
-              Golden Hills Hotel is more than just a destination; it is a testament to the enduring beauty of Algerian heritage blended with modern sophistication. Situated in the cultural heart of Setif, we offer a sanctuary of peace, prestige, and unparalleled service.
-            </p>
-            <div className="grid grid-cols-2 gap-8 mb-10">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full glass-gold flex items-center justify-center flex-shrink-0">
-                  <Star className="text-luxury-gold" />
-                </div>
-                <div>
-                  <h5 className="font-bold mb-1">5-Star Quality</h5>
-                  <p className="text-sm text-gray-500">Unmatched service</p>
-                </div>
-              </div>
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-full glass-gold flex items-center justify-center flex-shrink-0">
-                  <Waves className="text-luxury-gold" />
-                </div>
-                <div>
-                  <h5 className="font-bold mb-1">Heated Infinity Pool</h5>
-                  <p className="text-sm text-gray-500">Relax with a view</p>
-                </div>
-              </div>
-            </div>
-            <GoldButton outline>READ MORE</GoldButton>
-          </motion.div>
-          <div className="relative">
-            <div className="aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl relative z-10">
-              <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=2070" className="object-cover w-full h-full" alt="Hotel Interior" />
-            </div>
-            <div className="absolute -top-10 -right-10 w-64 h-64 glass-gold rounded-full -z-0 blur-3xl opacity-50" />
-            <GlassCard className="absolute -bottom-10 -left-10 p-4 max-w-[200px] z-20 hidden md:block">
-              <p className="text-3xl font-serif font-bold text-luxury-gold">150+</p>
-              <p className="text-sm font-medium text-gray-600">Luxury Rooms & Suites</p>
-            </GlassCard>
-          </div>
-        </div>
-      </section>
-
-      {/* Suites Section */}
-      <section id="suites" className="py-20 bg-luxury-white-cream/50">
-        <div className="container mx-auto px-6">
-          <div className="text-center mb-16">
-            <h4 className="text-luxury-gold font-serif italic text-lg mb-2">Accommodations</h4>
-            <h2 className="text-5xl font-serif font-bold mb-8">Exquisite Living Spaces</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Our suites are designed to provide a sanctuary of calm, with gold-leaf accents and the finest Algerian marble.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-            {loading ? (
-              [1, 2, 3].map((i) => (
-                <div key={i} className="aspect-[3/4] rounded-[2rem] bg-gray-100 animate-pulse" />
-              ))
-            ) : rooms.map((room, i) => (
-               <motion.div 
-                 key={room.id}
-                 whileHover={{ y: -10 }}
-                 className="group cursor-pointer"
-                 onClick={() => navigate(`/room/${room.id}`)}
-               >
-                 <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden mb-6 shadow-xl border border-white/10 group-hover:shadow-2xl transition-all duration-700">
-                   <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-[1.5s]" alt={room.type} />
-                   <div className="absolute inset-x-0 bottom-0 p-8 pt-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end text-white">
-                      <p className="text-luxury-gold font-bold text-xs mb-1 uppercase tracking-widest">Starting from {formatPrice(room.price)}</p>
-                      <h3 className="text-3xl font-elegant font-bold">{room.type}</h3>
-                   </div>
-                 </div>
-                 <div className="flex justify-between items-center px-2">
-                   <div className="flex gap-4 text-gray-500 text-sm">
-                     <span className="flex items-center gap-1"><Users className="w-4 h-4" /> 2 Guests</span>
-                     <span className="flex items-center gap-1"><Wind className="w-4 h-4" /> AC</span>
-                   </div>
-                   <Link to={`/room/${room.id}`} className="text-luxury-gold font-bold flex items-center gap-1 hover:gap-2 transition-all">
-                     View Details <ChevronRight className="w-4 h-4" />
-                   </Link>
-                 </div>
-               </motion.div>
-             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section id="services" className="py-20">
-        <div className="container mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
-            <div className="text-left">
-              <h4 className="text-luxury-gold font-serif italic text-lg mb-2">Experience</h4>
-              <h2 className="text-5xl font-serif font-bold">World-Class Services</h2>
-            </div>
-            <p className="text-gray-600 max-w-md">
-              From the aroma of fresh coffee to the serenity of our spa, we curate every moment of your stay.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-4 gap-6">
-             {[
-               { icon: <UtensilsCrossed />, title: 'Grand Dining', desc: 'Fine Algerian & French cuisine' },
-               { icon: <Waves />, title: 'Royal Spa', desc: 'Ancient hammam rituals' },
-               { icon: <Coffee />, title: 'Gold Lounge', desc: 'Premium coffee & pastries' },
-               { icon: <Ship />, title: 'Excursions', desc: 'Desert & Mountain tours' }
-             ].map((service, i) => (
-               <GlassCard key={i} className="hover:border-luxury-gold transition-colors duration-500" variant="gold">
-                 <div className="w-12 h-12 glass-gold rounded-xl flex items-center justify-center mb-6 text-luxury-gold">
-                   {service.icon}
-                 </div>
-                 <h4 className="text-xl font-bold mb-3">{service.title}</h4>
-                 <p className="text-gray-500">{service.desc}</p>
-               </GlassCard>
-             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-[#050505] text-white pt-32 pb-20 relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-luxury-gold/30 to-transparent" />
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-16 mb-24 font-sans">
-            <div className="col-span-2">
-              <div className="mb-12">
-                <Logo inverse />
-              </div>
-              <p className="text-white/40 max-w-sm mb-12 leading-relaxed font-normal text-sm">
-                The premier luxury destination in Setif, offering a perfect blend of modern comfort and traditional Algerian hospitality. Crafted for the discerning traveler.
+           >
+              <span className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-8 block">The Soul of Setif</span>
+              <h2 className="text-6xl md:text-8xl font-serif font-bold text-luxury-black leading-tight mb-12">Rugged Beauty, <br/><span className="italic text-luxury-gold">Refined.</span></h2>
+              <p className="text-xl text-gray-500 leading-relaxed font-medium mb-16 max-w-xl">
+                 Perched upon the highest point of Champs d&apos;azur, Golden Hills is more than a hotel. It is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of five-star excellence.
               </p>
-              <div className="flex gap-6">
-                 {[1,2,3,4].map(i => (
-                   <div key={i} className="w-12 h-12 rounded-full glass border border-white/5 flex items-center justify-center hover:bg-luxury-gold/20 hover:border-luxury-gold transition-all cursor-pointer text-white/40 hover:text-white">
-                      {/* Social Icons Placeholder */}
+              <div className="space-y-10">
+                 {[
+                   { icon: <Shield />, title: 'Absolute Privacy', desc: 'Gated enclaves and private concierges for total discretion.' },
+                   { icon: <Award />, title: 'Golden Service', desc: 'Our staff are masters of anticipation, trained in the art of the subtle.' }
+                 ].map((item, i) => (
+                   <div key={i} className="flex gap-8 group">
+                      <div className="w-16 h-16 rounded-3xl bg-luxury-cream/40 flex items-center justify-center text-luxury-gold shrink-0 group-hover:bg-luxury-gold group-hover:text-white transition-all shadow-sm group-hover:shadow-gold">
+                         {item.icon}
+                      </div>
+                      <div>
+                         <h4 className="text-xl font-serif font-bold text-luxury-black mb-2">{item.title}</h4>
+                         <p className="text-gray-400 text-sm italic font-medium">{item.desc}</p>
+                      </div>
                    </div>
                  ))}
               </div>
-            </div>
-            <div>
-              <h5 className="font-bold mb-8 text-luxury-gold text-xs uppercase tracking-widest">Quick Links</h5>
-              <ul className="space-y-4 text-white/40 text-sm">
-                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/about">About Us</Link></li>
-                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/suites">Our Rooms</Link></li>
-                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/spa">Spa & Wellness</Link></li>
-                <li className="hover:text-white transition-colors cursor-pointer"><Link to="/dining">Dining</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h5 className="font-bold mb-8 text-luxury-gold text-xs uppercase tracking-widest">Contact Us</h5>
-              <ul className="space-y-6 text-white/40 text-sm">
-                <li className="flex items-start gap-4">
-                  <MapPin className="w-5 h-5 text-luxury-gold shrink-0 mt-1" />
-                  <span>Blvd des Orangers, Setif, Algeria</span>
-                </li>
-                <li className="flex items-center gap-4">+213 36 00 00 00</li>
-                <li className="flex items-center gap-4">contact@goldenhills.dz</li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-white/5 pt-12 flex flex-col md:flex-row justify-between items-center gap-8 text-white/20 text-[10px] uppercase font-bold tracking-widest">
-            <p>© 2026 Golden Hills Hotel Setif. Crafted with Excellence.</p>
-            <div className="flex gap-12">
-              <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-              <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-      {/* Mobile Sticky CTA */}
-      <div className="lg:hidden fixed bottom-6 left-1/2 -translate-x-1/2 z-[60] w-[90%] pointer-events-none">
-        <motion.div
-           initial={{ y: 100 }}
-           animate={{ y: 0 }}
-           className="pointer-events-auto"
-        >
-           <GoldButton className="w-full py-4 text-sm shadow-[0_20px_50px_rgba(212,175,55,0.3)]" onClick={() => window.location.href='#contact'}>
-             BOOK YOUR STAY
-           </GoldButton>
-        </motion.div>
-      </div>
+              <div className="pt-20">
+                 <GoldButton outline className="px-16 py-6" onClick={() => navigate('/about')}>DISCOVER OUR STORY</GoldButton>
+              </div>
+           </motion.div>
 
+           <div className="relative">
+              <motion.div 
+                whileHover={{ rotate: 1 }}
+                className="aspect-[4/5] rounded-[4rem] overflow-hidden shadow-2xl relative z-10"
+              >
+                 <img src="/golden_hills_hammam_1776878932931.png" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000" alt="Spa" />
+                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+              </motion.div>
+              <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-luxury-gold opacity-[0.05] rounded-full blur-[100px]" />
+              <div className="absolute -top-12 -left-12 p-10 bg-white/80 backdrop-blur-3xl rounded-[3rem] shadow-2xl border border-luxury-gold/10 z-20 hidden xl:block">
+                 <p className="text-6xl font-serif font-bold text-luxury-gold mb-2 italic">0%</p>
+                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Authenticity Rating</p>
+              </div>
+           </div>
+        </div>
+      </section>
+
+      {/* Section: The Sanctuaries (Suites) */}
+      <section className="bg-white py-60">
+         <div className="container mx-auto px-12">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-32">
+               <div className="max-w-2xl">
+                  <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-6">Accommodations</h4>
+                  <h2 className="text-6xl font-serif font-bold text-luxury-black leading-tight">Sanctuaries of <br/><span className="italic">Profound Stillness</span></h2>
+               </div>
+               <Link to="/suites" className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 hover:text-luxury-gold transition-colors group">
+                  EXPLORE ALL SUITES <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+               </Link>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+               {rooms.map((room, i) => (
+                 <motion.div 
+                   key={room.id}
+                   whileHover={{ y: -20 }}
+                   className="group cursor-pointer"
+                   onClick={() => navigate(`/room/${room.id}`)}
+                 >
+                    <div className="relative aspect-[3/4] rounded-[3.5rem] overflow-hidden mb-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group-hover:shadow-gold/20 transition-all duration-700">
+                       <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]" alt={room.type} />
+                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent p-12 flex flex-col justify-end text-white">
+                          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold mb-3">{room.type}</span>
+                          <h3 className="text-4xl font-serif font-bold group-hover:italic transition-all">{room.type.split(' ')[0]}</h3>
+                          <div className="mt-6 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 duration-500">
+                             <span className="text-[10px] font-bold uppercase tracking-[0.3em]">Discovery Profile</span>
+                             <ChevronRight className="w-4 h-4 text-luxury-gold" />
+                          </div>
+                       </div>
+                    </div>
+                 </motion.div>
+               ))}
+            </div>
+         </div>
+      </section>
+
+      {/* Section: Epicurean Enclaves (Dining/Spa) */}
+      <section className="py-60 bg-luxury-black text-white relative overflow-hidden">
+         <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-luxury-gold opacity-[0.03] rounded-full blur-[150px] translate-x-1/2 -translate-y-1/2" />
+         <div className="container mx-auto px-12 relative z-10">
+            <div className="grid lg:grid-cols-2 gap-40 items-center">
+               <div className="space-y-16">
+                  <div className="space-y-6">
+                     <h4 className="text-luxury-gold font-serif italic text-2xl">The Gastronomy</h4>
+                     <h2 className="text-6xl md:text-8xl font-serif font-bold leading-tight tracking-tighter">The Saffron <br/>Theater.</h2>
+                     <p className="text-white/40 text-xl leading-relaxed max-w-xl">
+                        A sensory journey through the heart of Algeria. Experience the theater of fine dining where each dish is a masterpiece of hill-grown spices and artisanal precision.
+                     </p>
+                  </div>
+                  <div className="flex gap-8">
+                     <GoldButton className="px-12 py-5 text-[10px]" onClick={() => navigate('/dining')}>VIEW VENUES</GoldButton>
+                     <button className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors" onClick={() => navigate('/dining')}>
+                        Discovery Menu <ArrowRight className="w-4 h-4 text-luxury-gold" />
+                     </button>
+                  </div>
+               </div>
+               <div className="relative group">
+                  <div className="aspect-[16/11] rounded-[4rem] overflow-hidden shadow-2xl rotate-2 group-hover:rotate-0 transition-transform duration-1000">
+                     <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=1974" className="w-full h-full object-cover" alt="Dining" />
+                  </div>
+                  <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/5 backdrop-blur-3xl rounded-[3rem] p-10 border border-white/10 flex flex-col justify-center text-center">
+                     <UtensilsCrossed className="w-8 h-8 text-luxury-gold mx-auto mb-4" />
+                     <p className="text-[10px] font-bold uppercase tracking-widest">3 Michelin Concepts</p>
+                  </div>
+               </div>
+            </div>
+
+            <div className="grid lg:grid-cols-2 gap-40 items-center mt-60">
+               <div className="relative order-2 lg:order-1 group">
+                  <div className="aspect-[16/11] rounded-[4rem] overflow-hidden shadow-2xl -rotate-2 group-hover:rotate-0 transition-transform duration-1000">
+                     <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=2070" className="w-full h-full object-cover" alt="Spa" />
+                  </div>
+                  <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/5 backdrop-blur-3xl rounded-[3rem] p-10 border border-white/10 flex flex-col justify-center text-center">
+                     <Waves className="w-8 h-8 text-luxury-gold mx-auto mb-4" />
+                     <p className="text-[10px] font-bold uppercase tracking-widest">Royal Hammam</p>
+                  </div>
+               </div>
+               <div className="space-y-16 order-1 lg:order-2">
+                  <div className="space-y-6">
+                     <h4 className="text-luxury-gold font-serif italic text-2xl">The Rituals</h4>
+                     <h2 className="text-6xl md:text-8xl font-serif font-bold leading-tight tracking-tighter text-right">Pure <br/>Atmosphere.</h2>
+                     <p className="text-white/40 text-xl leading-relaxed max-w-xl ml-auto text-right">
+                        Immerse yourself in the ancient wisdom of the hills. Our spa rituals are choreographies of silence, steam, and restoration.
+                     </p>
+                  </div>
+                  <div className="flex gap-8 justify-end">
+                     <button className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors" onClick={() => navigate('/spa')}>
+                        Explore Rituals <ArrowRight className="w-4 h-4 text-luxury-gold" />
+                     </button>
+                     <GoldButton className="px-12 py-5 text-[10px]" onClick={() => navigate('/spa')}>BOOK WELLNESS</GoldButton>
+                  </div>
+               </div>
+            </div>
+         </div>
+      </section>
+
+      {/* Section: Guest Voices */}
+      <section className="py-60 container mx-auto px-12">
+         <div className="text-center mb-32">
+            <Sparkles className="w-12 h-12 text-luxury-gold mx-auto mb-8" />
+            <h2 className="text-6xl font-serif font-bold text-luxury-black">Voices of the Hills</h2>
+         </div>
+         <div className="grid md:grid-cols-3 gap-12">
+            {[
+              { name: 'Elena Romanov', city: 'London', text: 'An oasis of profound silence. The Royal Gold suite is quite literally the most beautiful residence I have ever experienced in North Africa.' },
+              { name: 'Julien Durand', city: 'Paris', text: 'The attention to detail is obsessive. From the weight of the silver to the scent of the lobby—Golden Hills is perfection.' },
+              { name: 'Ahmed Mansour', city: 'Dubai', text: 'Finally, a destination in Setif that understands the true meaning of world-class luxury. A landmark achievement.' }
+            ].map((review, i) => (
+              <GlassCard key={i} className="bg-white p-12 space-y-8 border-gray-100 hover:border-luxury-gold/30 transition-all duration-700">
+                 <div className="flex gap-1">
+                    {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 text-luxury-gold fill-current" />)}
+                 </div>
+                 <p className="text-gray-500 text-lg leading-relaxed italic font-medium">"{review.text}"</p>
+                 <div className="pt-8 border-t border-gray-50">
+                    <p className="font-bold text-luxury-black">{review.name}</p>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{review.city} • Verified Stay</p>
+                 </div>
+              </GlassCard>
+            ))}
+         </div>
+      </section>
+
+      {/* Footer (Matches Layout) */}
+      <footer className="bg-luxury-black pt-40 pb-20 text-white relative overflow-hidden">
+         <div className="container mx-auto px-12 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-24 mb-32">
+               <div className="space-y-10">
+                  <Logo inverse className="scale-125 origin-left" />
+                  <p className="text-white/40 text-sm leading-relaxed italic">
+                     "Elevating the hospitality standards of Setif through a perfect blend of heritage and modern luxury."
+                  </p>
+                  <div className="flex gap-5">
+                     {[Globe, Shield, Award, Droplets].map((Icon, i) => (
+                       <div key={i} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-luxury-gold hover:text-white transition-all cursor-pointer border border-white/5">
+                          <Icon className="w-4 h-4" />
+                       </div>
+                     ))}
+                  </div>
+               </div>
+
+               <div className="space-y-10">
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold">Exploration</h4>
+                  <nav className="flex flex-col gap-5">
+                     {navItems.map(item => (
+                       <Link key={item.label} to={item.path} className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 group">
+                          {item.label} <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                       </Link>
+                     ))}
+                  </nav>
+               </div>
+
+               <div className="space-y-10">
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold">Contact Enclave</h4>
+                  <div className="space-y-6 text-sm text-white/40 font-medium">
+                     <p className="leading-relaxed">Rue Champs d&apos;azur, Setif 19000, Algeria</p>
+                     <p>+213 36 00 00 00</p>
+                     <p className="text-luxury-gold">reserve@goldenhills.dz</p>
+                  </div>
+               </div>
+
+               <div className="space-y-10">
+                  <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold">The Gilded Letter</h4>
+                  <div className="relative">
+                     <input type="email" placeholder="Official Email" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs font-bold focus:border-luxury-gold outline-none" />
+                     <button className="absolute right-2 top-2 bottom-2 px-4 bg-luxury-gold text-white rounded-xl text-[8px] font-bold uppercase tracking-widest">Subscribe</button>
+                  </div>
+               </div>
+            </div>
+            <div className="pt-20 border-t border-white/5 flex justify-between items-center text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
+               <p>© 2026 Golden Hills Hotel. Crafted with Absolute Excellence.</p>
+               <div className="flex gap-10">
+                  <span className="hover:text-white transition-colors cursor-pointer">Privacy</span>
+                  <span className="hover:text-white transition-colors cursor-pointer">Terms</span>
+               </div>
+            </div>
+         </div>
+      </footer>
+
+      {/* Floating Concierge FAB */}
+      <motion.button 
+        whileHover={{ scale: 1.1 }}
+        whileTap={{ scale: 0.9 }}
+        className="fixed bottom-10 right-10 z-[150] w-16 h-16 bg-luxury-gold text-white rounded-full flex items-center justify-center shadow-gold group"
+        onClick={() => navigate('/login')}
+      >
+         <MousePointer2 className="w-7 h-7" />
+         <div className="absolute right-20 bg-luxury-black text-white px-4 py-2 rounded-xl text-[8px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">Access Portal</div>
+      </motion.button>
     </div>
   );
 };
