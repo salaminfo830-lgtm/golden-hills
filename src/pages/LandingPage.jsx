@@ -158,10 +158,10 @@ const LandingPage = () => {
               <h4 className="text-luxury-gold font-bold text-[10px] md:text-xs tracking-[0.6em] uppercase">Setif&apos;s Gilded Masterpiece</h4>
               <div className="h-px w-16 bg-luxury-gold/50" />
             </div>
-            <h1 className="text-7xl md:text-[12rem] font-serif font-bold text-white tracking-tighter leading-[0.85] mb-12">
+            <h1 className="text-6xl md:text-8xl lg:text-9xl font-serif font-bold text-white tracking-tighter leading-[0.85] mb-12">
                Golden <br /> <span className="italic font-normal text-luxury-gold/90">Hills</span>
             </h1>
-            <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-20 font-medium leading-relaxed italic">
+            <p className="text-base md:text-xl text-white/70 max-w-2xl mx-auto mb-16 font-medium leading-relaxed italic">
                Where ancient heritage meets the height of contemporary luxury. A sanctuary crafted for the world&apos;s most discerning travelers.
             </p>
             <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">

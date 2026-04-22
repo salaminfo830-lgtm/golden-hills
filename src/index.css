@@ -15,12 +15,26 @@
   body {
     @apply bg-luxury-cream text-luxury-black antialiased selection:bg-luxury-gold selection:text-white;
     font-family: 'Outfit', sans-serif;
+    font-size: 16px;
   }
 
-  h1, h2, h3, h4, .font-serif {
+  h1 {
+    @apply text-4xl md:text-6xl lg:text-7xl font-serif font-bold tracking-tight;
+  }
+
+  h2 {
+    @apply text-3xl md:text-5xl lg:text-6xl font-serif font-bold tracking-tight;
+  }
+
+  h3 {
+    @apply text-2xl md:text-4xl lg:text-5xl font-serif font-bold;
+  }
+
+  .font-serif {
     font-family: 'Playfair Display', serif;
   }
 }
+
 
 @layer components {
   .glass {

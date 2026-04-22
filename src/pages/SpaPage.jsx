@@ -55,7 +55,7 @@ const SpaPage = () => {
              transition={{ delay: 0.5, duration: 1.2 }}
            >
               <h4 className="text-luxury-gold font-serif italic text-2xl mb-4">The Royal Hammam</h4>
-              <h1 className="text-6xl md:text-9xl font-serif font-bold tracking-tighter leading-none">Pure <br/>Serenity</h1>
+              <h1 className="text-5xl md:text-8xl font-serif font-bold tracking-tighter leading-none">Pure <br/>Serenity</h1>
            </motion.div>
         </div>
         <motion.div 
@@ -160,7 +160,7 @@ const SpaPage = () => {
          </div>
          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 px-12 max-w-[1800px] mx-auto">
             {[
-              { name: 'Marble Hammam', img: 'https://images.unsplash.com/photo-1519415510236-8a59ef54b360?auto=format&fit=crop&q=80&w=2070', tag: 'Thermal' },
+              { name: 'Marble Hammam', img: '/golden_hills_hammam_1776878932931.png', tag: 'Thermal' },
               { name: 'Infinity Pool', img: 'https://images.unsplash.com/photo-1576013551627-0cc20b96c2a7?auto=format&fit=crop&q=80&w=2070', tag: 'Hydro' },
               { name: 'Restoration Lounge', img: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=2070', tag: 'Silence' },
             ].map((facility, i) => (

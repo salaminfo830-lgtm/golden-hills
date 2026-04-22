@@ -88,7 +88,7 @@ const SuitesPage = () => {
               transition={{ delay: 0.5, duration: 1 }}
             >
                <h4 className="text-luxury-gold font-serif italic text-2xl mb-4">Accommodations</h4>
-               <h1 className="text-6xl md:text-8xl font-serif font-bold text-white tracking-tighter leading-none">The Sanctuaries</h1>
+               <h1 className="text-5xl md:text-7xl font-serif font-bold text-white tracking-tighter leading-none">The Sanctuaries</h1>
             </motion.div>
          </div>
       </section>
@@ -96,7 +96,7 @@ const SuitesPage = () => {
       {/* Intro Context */}
       <section className="py-32 container mx-auto px-12">
          <div className="max-w-4xl">
-            <p className="text-3xl md:text-5xl font-serif text-luxury-black leading-tight">
+            <p className="text-2xl md:text-4xl font-serif text-luxury-black leading-tight">
                Every residence at Golden Hills is a <span className="italic text-luxury-gold">masterpiece of architectural soul</span>, blending the rugged beauty of Algeria with the delicate touch of high-craft luxury.
             </p>
          </div>
