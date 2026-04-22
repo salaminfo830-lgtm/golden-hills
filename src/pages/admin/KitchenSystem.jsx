@@ -43,7 +43,11 @@ const KitchenSystem = () => {
     const { data: stock } = await supabase.from('StockItem').select('*').order('created_at', { ascending: false });
     
     if (orders) setActiveOrders(orders);
+    else setActiveOrders([]);
+    
     if (stock) setStockAlerts(stock);
+    else setStockAlerts([]);
+    
     setLoading(false);
   };
 

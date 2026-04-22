@@ -15,6 +15,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
   const [editingRoom, setEditingRoom] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
   
   // Add Room Form State
   const [newRoom, setNewRoom] = useState({

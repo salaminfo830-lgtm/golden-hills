@@ -158,7 +158,7 @@ const ServicesSystem = () => {
     <div className="space-y-8 font-sans relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight text-luxury-black">Gastronomy & Wellness</h2>
+          <h2 className="text-3xl font-serif font-bold tracking-tight text-luxury-black">Dining & Wellness</h2>
           <p className="text-gray-400 font-medium tracking-wide">Manage property venues and guest rituals</p>
         </div>
         <div className="flex gap-4 w-full md:w-auto">

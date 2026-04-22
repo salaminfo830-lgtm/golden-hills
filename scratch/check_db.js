@@ -1,27 +1,21 @@
-import { createClient } from '@supabase/supabase-js'
-import dotenv from 'dotenv'
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
-dotenv.config({ path: '.env.local' })
+dotenv.config();
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL
-const supabaseKey = process.env.VITE_SUPABASE_ANON_KEY // Should ideally use service role key for migrations
+const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.VITE_SUPABASE_ANON_KEY);
 
-const supabase = createClient(supabaseUrl, supabaseKey)
-
-async function run() {
-  console.log('Checking database status...')
+async function checkTables() {
+  const tables = ['Room', 'Reservation', 'KitchenOrder', 'StockItem', 'Service', 'DiningReservation', 'Amenity'];
   
-  // We can't run raw SQL via the JS client unless there is an RPC.
-  // But we can check if the table exists by trying to select from it.
-  const { error } = await supabase.from('Amenity').select('id').limit(1)
-  
-  if (error && error.code === 'PGRST116') {
-     console.log('Amenity table seems to be missing or accessible.')
-  } else if (error) {
-     console.log('Error checking Amenity table:', error.message)
-  } else {
-     console.log('Amenity table exists.')
+  for (const table of tables) {
+    const { error } = await supabase.from(table).select('*').limit(1);
+    if (error) {
+      console.log(`[MISSING or ERROR] Table ${table}: ${error.message}`);
+    } else {
+      console.log(`[OK] Table ${table}`);
+    }
   }
 }
 
-run()
+checkTables();

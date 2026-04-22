@@ -6,7 +6,7 @@ import {
   ClipboardList, Utensils, 
   Bed, ShieldCheck, Mail, User as UserIcon,
   Menu, X, ChevronRight, Sparkles,
-  Command, Globe, Shield, Activity
+  Command, Globe, Shield, Activity, Flame
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -18,8 +18,8 @@ const adminItems = [
   { icon: <Calendar className="w-5 h-5" />, label: 'Reservations', path: '/admin/reservations' },
   { icon: <Users className="w-5 h-5" />, label: 'Guest Folio', path: '/admin/guests' },
   { icon: <Bed className="w-5 h-5" />, label: 'Inventory', path: '/admin/rooms' },
-  { icon: <Sparkles className="w-5 h-5" />, label: 'Services', path: '/admin/services' },
-  { icon: <Utensils className="w-5 h-5" />, label: 'Gastronomy', path: '/admin/kitchen' },
+  { icon: <Utensils className="w-5 h-5" />, label: 'Dining & Spa', path: '/admin/services' },
+  { icon: <Flame className="w-5 h-5" />, label: 'Kitchen Ops', path: '/admin/kitchen' },
   { icon: <Users className="w-5 h-5" />, label: 'Human Assets', path: '/admin/hr' },
   { icon: <BarChart3 className="w-5 h-5" />, label: 'Financials', path: '/admin/finance' },
   { icon: <ShieldCheck className="w-5 h-5" />, label: 'Systems', path: '/admin/security' },

@@ -30,7 +30,7 @@ const SearchResults = () => {
   const fallbackRooms = [
     {
       id: 'fallback-1',
-      type: 'Classic Room',
+      type: 'Heritage Deluxe',
       price: 25000,
       capacity: 2,
       description: 'Experience a sanctuary where timeless Algerian elegance meets modern 5-star refinement.',
@@ -38,7 +38,7 @@ const SearchResults = () => {
     },
     {
       id: 'fallback-2',
-      type: 'Junior Suite',
+      type: 'Royal Gold Suite',
       price: 45000,
       capacity: 2,
       description: 'Expansive views of the high plateau with dedicated living spaces and premium amenities.',
@@ -46,7 +46,7 @@ const SearchResults = () => {
     },
     {
       id: 'fallback-3',
-      type: 'Royal Suite',
+      type: 'Presidential Panorama',
       price: 120000,
       capacity: 4,
       description: 'The pinnacle of luxury in Setif. A sprawling residence offering absolute privacy and 24/7 bespoke service.',
@@ -155,7 +155,7 @@ const SearchResults = () => {
                     <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold" /> Suite Categories
                   </h3>
                   <div className="space-y-3">
-                    {['All', 'Classic Room', 'Junior Suite', 'Senior Suite', 'Royal Suite'].map((type) => (
+                    {['All', 'Heritage Deluxe', 'Royal Gold Suite', 'Presidential Panorama', 'Executive Hillside', 'Sapphire Garden Room', 'Imperial Family Wing'].map((type) => (
                       <button 
                         key={type}
                         onClick={() => setFilters({...filters, type})}
