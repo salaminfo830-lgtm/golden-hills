@@ -1,40 +1,38 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Waves, Flower2, Wind, Sparkles, ChevronRight, Droplets, MapPin, Clock } from 'lucide-react';
+import { Waves, Flower2, Wind, Sparkles, ChevronRight, Droplets, MapPin, Clock, Loader2 } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
+import { supabase } from '../lib/supabase';
 
 const SpaPage = () => {
-  const rituals = [
-    { 
-      name: 'The Saffron Glow Ritual', 
-      dur: '120m', 
-      price: '$180', 
-      desc: 'A sensory journey starting with a rare saffron-infused body polish, followed by a rhythmic massage that restores radiant vitality.',
-      category: 'Signature'
-    },
-    { 
-      name: 'Royal Heritage Hammam', 
-      dur: '90m', 
-      price: '$140', 
-      desc: 'Deep cleansing in our heated marble chamber, using traditional black soap and the invigorating kessa scrub technique.',
-      category: 'Tradition'
-    },
-    { 
-      name: 'Desert Oasis Hydra-facial', 
-      dur: '60m', 
-      price: '$120', 
-      desc: 'Harnessing the resilience of desert flora to provide intense hydration and a luminous, refreshed complexion.',
-      category: 'Advanced'
-    },
-    { 
-      name: 'Atlas Cedar Wood Therapy', 
-      dur: '105m', 
-      price: '$165', 
-      desc: 'A deep-tissue release using warmed cedar wood tools to ground the spirit and soothe muscular tension.',
-      category: 'Specialty'
-    }
-  ];
+  const [rituals, setRituals] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRituals = async () => {
+      const { data, error } = await supabase
+        .from('Service')
+        .select('*')
+        .eq('type', 'Spa')
+        .order('name', { ascending: true });
+      
+      if (!error && data) {
+        setRituals(data);
+      }
+      setLoading(false);
+    };
+    fetchRituals();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen bg-luxury-black flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-luxury-gold animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <BrochureLayout>
@@ -135,15 +133,15 @@ const SpaPage = () => {
                 <div className="flex-1 space-y-4">
                    <div className="flex justify-between items-start">
                       <div>
-                         <span className="text-[8px] font-bold text-luxury-gold uppercase tracking-[0.4em] block mb-2">{ritual.category}</span>
+                         <span className="text-[8px] font-bold text-luxury-gold uppercase tracking-[0.4em] block mb-2">{ritual.specialty || 'Wellness'}</span>
                          <h4 className="text-2xl font-serif font-bold text-luxury-black group-hover:italic transition-all">{ritual.name}</h4>
                       </div>
-                      <p className="text-xl font-serif font-bold text-luxury-gold">{ritual.price}</p>
+                      <p className="text-xl font-serif font-bold text-luxury-gold">{ritual.price ? `${ritual.price} DZD` : 'Inquire'}</p>
                    </div>
-                   <p className="text-gray-500 leading-relaxed max-w-lg">{ritual.desc}</p>
+                   <p className="text-gray-500 leading-relaxed max-w-lg">{ritual.description}</p>
                    <div className="flex items-center gap-4 pt-2">
                       <Clock className="w-3 h-3 text-gray-300" />
-                      <span className="text-[9px] font-bold uppercase tracking-widest text-gray-300">{ritual.dur} Duration</span>
+                      <span className="text-[9px] font-bold uppercase tracking-widest text-gray-300">{ritual.hours} Duration</span>
                       <ChevronRight className="w-4 h-4 text-luxury-gold opacity-0 group-hover:opacity-100 group-hover:translate-x-2 transition-all ml-auto" />
                    </div>
                 </div>

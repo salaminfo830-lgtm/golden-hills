@@ -10,15 +10,17 @@ import KitchenSystem from './admin/KitchenSystem';
 import SecuritySystem from './admin/SecuritySystem';
 import SettingsSystem from './admin/SettingsSystem';
 import RoomsSystem from './admin/RoomsSystem';
+import ServicesSystem from './admin/ServicesSystem';
 
 const AdminPanel = () => {
   return (
-    <DashboardLayout userType="Admin">
+    <DashboardLayout userType="admin">
       <Routes>
         <Route path="/" element={<AnalyticsOverview />} />
         <Route path="/reservations" element={<ReservationsSystem />} />
         <Route path="/guests" element={<GuestsSystem />} />
         <Route path="/rooms" element={<RoomsSystem />} />
+        <Route path="/services" element={<ServicesSystem />} />
         <Route path="/kitchen" element={<KitchenSystem />} />
         <Route path="/hr" element={<HRSystem />} />
         <Route path="/finance" element={<FinanceSystem />} />

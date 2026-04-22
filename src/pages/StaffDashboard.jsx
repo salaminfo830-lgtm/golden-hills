@@ -12,12 +12,14 @@ import GoldButton from '../components/GoldButton';
 
 const StaffDashboard = () => {
   const [user, setUser] = useState(null);
+  const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchData = async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (authUser) {
+        // Fetch User
         const { data: staffData } = await supabase
           .from('Staff')
           .select('*')
@@ -25,10 +27,18 @@ const StaffDashboard = () => {
           .single();
         
         setUser(staffData || { name: authUser.user_metadata.full_name || 'Staff Member' });
+
+        // Fetch Tasks
+        const { data: taskData } = await supabase
+          .from('Task')
+          .select('*')
+          .order('created_at', { ascending: false });
+        
+        if (taskData) setTasks(taskData);
       }
       setLoading(false);
     };
-    fetchUser();
+    fetchData();
   }, []);
 
   if (loading) {
@@ -77,26 +87,21 @@ const StaffDashboard = () => {
                </div>
                
                <div className="grid grid-cols-1 gap-4">
-                  {[
-                    { title: 'Room 304 Cleaning', area: '3rd Floor', time: '15:00', priority: 'High', type: <Bed className="w-5 h-5" /> },
-                    { title: 'Restock Mini-bar', area: 'Room 210', time: '15:30', priority: 'Normal', type: <Utensils className="w-5 h-5" /> },
-                    { title: 'Check AC Filter', area: 'Lobby Lounge', time: '16:00', priority: 'Normal', type: <Wind className="w-5 h-5" /> },
-                    { title: 'Emergency Towels', area: 'Room 405', time: 'ASAP', priority: 'High', type: <Bed className="w-5 h-5" /> },
-                  ].map((task, i) => (
+                  {tasks.length > 0 ? tasks.map((task, i) => (
                     <motion.div
-                      key={i}
+                      key={task.id || i}
                       whileHover={{ x: 8 }}
                       className="bg-white p-8 rounded-[1.5rem] border border-gray-100 flex items-center justify-between transition-all hover:shadow-[0_20px_40px_-15px_rgba(0,0,0,0.05)] group"
                     >
                       <div className="flex items-center gap-8">
                          <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-colors ${task.priority === 'High' ? 'bg-red-50 text-red-500' : 'bg-[#fafafa] text-gray-300 group-hover:text-luxury-gold group-hover:bg-luxury-gold/5'}`}>
-                            {task.type}
+                            {task.title.includes('Clean') ? <Bed className="w-5 h-5" /> : task.title.includes('Stock') ? <Utensils className="w-5 h-5" /> : <Wind className="w-5 h-5" />}
                          </div>
                          <div>
                             <h4 className="text-lg font-bold text-luxury-black group-hover:text-luxury-gold transition-colors">{task.title}</h4>
                             <div className="flex items-center gap-6 text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-2">
-                               <span className="flex items-center gap-2"><MapPin className="w-3 h-3" /> {task.area}</span>
-                               <span className="flex items-center gap-2"><Clock className="w-3 h-3" /> {task.time}</span>
+                               <span className="flex items-center gap-2"><MapPin className="w-3 h-3" /> {task.area || 'General Sector'}</span>
+                               <span className="flex items-center gap-2"><Clock className="w-3 h-3" /> {task.time || 'TBD'}</span>
                             </div>
                          </div>
                       </div>
@@ -109,7 +114,11 @@ const StaffDashboard = () => {
                          </button>
                       </div>
                     </motion.div>
-                  ))}
+                  )) : (
+                    <div className="py-12 text-center bg-gray-50 rounded-[2rem] border border-dashed border-gray-200">
+                       <p className="text-gray-400 text-xs font-bold uppercase tracking-widest">No Active Commitments</p>
+                    </div>
+                  )}
                </div>
             </div>
 

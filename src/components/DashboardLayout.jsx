@@ -18,6 +18,7 @@ const adminItems = [
   { icon: <Calendar className="w-5 h-5" />, label: 'Reservations', path: '/admin/reservations' },
   { icon: <Users className="w-5 h-5" />, label: 'Guest Folio', path: '/admin/guests' },
   { icon: <Bed className="w-5 h-5" />, label: 'Inventory', path: '/admin/rooms' },
+  { icon: <Sparkles className="w-5 h-5" />, label: 'Services', path: '/admin/services' },
   { icon: <Utensils className="w-5 h-5" />, label: 'Gastronomy', path: '/admin/kitchen' },
   { icon: <Users className="w-5 h-5" />, label: 'Human Assets', path: '/admin/hr' },
   { icon: <BarChart3 className="w-5 h-5" />, label: 'Financials', path: '/admin/finance' },
@@ -75,7 +76,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
   };
 
   const currentPath = location.pathname;
-  const menuItems = userType === 'ADMIN' ? adminItems : staffItems;
+  const menuItems = userType?.toUpperCase() === 'ADMIN' ? adminItems : staffItems;
 
   return (
     <div className="flex h-screen bg-[#FDFCFB] overflow-hidden font-sans text-luxury-black">

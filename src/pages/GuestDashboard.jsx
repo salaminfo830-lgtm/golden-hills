@@ -66,7 +66,7 @@ const GuestDashboard = () => {
   };
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(price);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
   };
 
   if (loading) {
@@ -385,7 +385,7 @@ const GuestDashboard = () => {
                            </div>
                            <div className="space-y-3">
                               <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Mobile Phone</label>
-                              <input type="tel" value="+213 555 12 34 56" className="input-luxury w-full h-16" readOnly />
+                              <input type="tel" value="+213 550 44 88 22" className="input-luxury w-full h-16" readOnly />
                            </div>
                            <div className="pt-8 flex gap-6 border-t border-gray-100">
                               <GoldButton className="px-12 py-5 text-[10px]">SAVE CHANGES</GoldButton>

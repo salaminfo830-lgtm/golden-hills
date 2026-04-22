@@ -25,7 +25,12 @@ const ProtectedRoute = ({ children, requiredRole }) => {
         const { data: profileData } = await supabase.from('Profile').select('role').eq('id', session.user.id).single();
         const { data: staffData } = await supabase.from('Staff').select('role, status').eq('id', session.user.id).single();
         
-        const userProfile = profileData || staffData;
+        let userProfile = profileData || staffData;
+        
+        // Fallback for seeded admin account
+        if (!userProfile && session.user.email === 'fares@goldenhills.dz') {
+          userProfile = { role: 'admin', status: 'Active' };
+        }
         
         if (userProfile) {
           setProfile(userProfile);

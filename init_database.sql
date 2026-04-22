@@ -24,8 +24,10 @@ CREATE TABLE IF NOT EXISTS "Room" (
     "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS "Reservation" CASCADE;
 CREATE TABLE IF NOT EXISTS "Reservation" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "guest_id" UUID,
     "guest_name" TEXT NOT NULL,
     "guests_count" INTEGER DEFAULT 1,
     "nights" INTEGER NOT NULL,
@@ -33,6 +35,7 @@ CREATE TABLE IF NOT EXISTS "Reservation" (
     "room_type" TEXT NOT NULL,
     "start_date" TIMESTAMP WITH TIME ZONE NOT NULL,
     "end_date" TIMESTAMP WITH TIME ZONE NOT NULL,
+    "total_price" DOUBLE PRECISION DEFAULT 0,
     "status" TEXT DEFAULT 'Pending Approval',
     "source" TEXT DEFAULT 'Direct Site',
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
@@ -51,15 +54,17 @@ CREATE TABLE IF NOT EXISTS "Staff" (
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS "Task" CASCADE;
 CREATE TABLE IF NOT EXISTS "Task" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "title" TEXT NOT NULL,
-    "area" TEXT NOT NULL,
+    "description" TEXT,
+    "area" TEXT,
     "time" TEXT,
     "priority" TEXT DEFAULT 'Normal',
-    "type" TEXT NOT NULL,
-    "completed" BOOLEAN DEFAULT FALSE,
-    "staff_id" UUID REFERENCES "Staff"("id") ON DELETE SET NULL,
+    "status" TEXT DEFAULT 'Pending',
+    "assigned_to" TEXT,
+    "room_id" INTEGER REFERENCES "Room"("id") ON DELETE SET NULL,
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -91,6 +96,7 @@ CREATE TABLE IF NOT EXISTS "SecurityLog" (
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS "FinanceTransaction" CASCADE;
 CREATE TABLE IF NOT EXISTS "FinanceTransaction" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "label" TEXT NOT NULL,
@@ -132,26 +138,54 @@ INSERT INTO "Room" ("number", "type", "price", "status", "occupancy", "updated_a
 ('302', 'Presidential Panorama', 850, 'Vacant', 'Clean', CURRENT_TIMESTAMP)
 ON CONFLICT ("number") DO NOTHING;
 
+-- Floor 4: Executive & Garden
+INSERT INTO "Room" ("number", "type", "price", "status", "occupancy", "updated_at") VALUES
+('401', 'Executive Hillside', 280, 'Vacant', 'Clean', CURRENT_TIMESTAMP),
+('402', 'Executive Hillside', 280, 'Occupied', 'Clean', CURRENT_TIMESTAMP),
+('403', 'Sapphire Garden Room', 190, 'Vacant', 'Clean', CURRENT_TIMESTAMP),
+('404', 'Sapphire Garden Room', 190, 'Vacant', 'Clean', CURRENT_TIMESTAMP)
+ON CONFLICT ("number") DO NOTHING;
+
+-- Floor 5: Family Wing
+INSERT INTO "Room" ("number", "type", "price", "status", "occupancy", "updated_at") VALUES
+('501', 'Imperial Family Wing', 550, 'Vacant', 'Clean', CURRENT_TIMESTAMP),
+('502', 'Imperial Family Wing', 550, 'Occupied', 'Clean', CURRENT_TIMESTAMP)
+ON CONFLICT ("number") DO NOTHING;
+
 -- Key Staff Members
 INSERT INTO "Staff" ("id", "name", "role", "department", "status", "phone", "email") VALUES
-(gen_random_uuid()::text, 'Youssef Benali', 'Executive Chef', 'Kitchen', 'On Shift', '+213 550 12 34 56', 'chef@goldenhills.dz'),
-(gen_random_uuid()::text, 'Amina Kaddour', 'Head of Housekeeping', 'Housekeeping', 'On Shift', '+213 550 98 76 54', 'housekeeping@goldenhills.dz'),
-(gen_random_uuid()::text, 'Karim Mansour', 'Security Chief', 'Security', 'Off Shift', '+213 551 22 33 44', 'security@goldenhills.dz'),
-(gen_random_uuid()::text, 'Lina Haddad', 'Front Desk Manager', 'Reservations', 'On Shift', '+213 552 44 55 66', 'desk@goldenhills.dz');
+(gen_random_uuid(), 'Youssef Benali', 'Executive Chef', 'Kitchen', 'On Shift', '+213 550 12 34 56', 'chef@goldenhills.dz'),
+(gen_random_uuid(), 'Amina Kaddour', 'Head of Housekeeping', 'Housekeeping', 'On Shift', '+213 550 98 76 54', 'housekeeping@goldenhills.dz'),
+(gen_random_uuid(), 'Karim Mansour', 'Security Chief', 'Security', 'Off Shift', '+213 551 22 33 44', 'security@goldenhills.dz'),
+(gen_random_uuid(), 'Lina Haddad', 'Front Desk Manager', 'Reservations', 'On Shift', '+213 552 44 55 66', 'desk@goldenhills.dz');
 
 -- Foundational Kitchen Inventory
 INSERT INTO "StockItem" ("id", "name", "level", "status", "category") VALUES
-(gen_random_uuid()::text, 'Fresh Saffron', '250g', 'Low', 'Spices'),
-(gen_random_uuid()::text, 'Wagyu Beef Ribeye', '15kg', 'Regular', 'Meat'),
-(gen_random_uuid()::text, 'Artemis Still Water', '120 Bottles', 'Regular', 'Beverages'),
-(gen_random_uuid()::text, 'Truffle Oil', '2L', 'Critical', 'Condiments');
+(gen_random_uuid(), 'Fresh Saffron', '250g', 'Low', 'Spices'),
+(gen_random_uuid(), 'Wagyu Beef Ribeye', '15kg', 'Regular', 'Meat'),
+(gen_random_uuid(), 'Artemis Still Water', '120 Bottles', 'Regular', 'Beverages'),
+(gen_random_uuid(), 'Truffle Oil', '2L', 'Critical', 'Condiments');
 
 -- Recent Financial Transactions Context
 INSERT INTO "FinanceTransaction" ("id", "label", "value", "type", "category", "is_up", "trend") VALUES
-(gen_random_uuid()::text, 'Royal Suite Booking (3 Nights)', 1350, 'Revenue', 'Room Booking', TRUE, '+15%'),
-(gen_random_uuid()::text, 'Grand Dining Service (Table 4)', 420, 'Revenue', 'F&B', TRUE, '+5%'),
-(gen_random_uuid()::text, 'Maintenance Supplies (Q3)', 850, 'Expense', 'Maintenance', FALSE, '-2%'),
-(gen_random_uuid()::text, 'Heritage Deluxe Booking', 320, 'Revenue', 'Room Booking', TRUE, '+0%');
+(gen_random_uuid(), 'Royal Suite Booking (3 Nights)', 1350, 'Revenue', 'Room Booking', TRUE, '+15%'),
+(gen_random_uuid(), 'Grand Dining Service (Table 4)', 420, 'Revenue', 'F&B', TRUE, '+5%'),
+(gen_random_uuid(), 'Maintenance Supplies (Q3)', 850, 'Expense', 'Maintenance', FALSE, '-2%'),
+(gen_random_uuid(), 'Heritage Deluxe Booking', 320, 'Revenue', 'Room Booking', TRUE, '+0%');
+
+-- Active Reservations
+INSERT INTO "Reservation" ("id", "guest_name", "room_type", "room_id", "start_date", "end_date", "guests_count", "nights", "total_price", "status", "source") VALUES
+(gen_random_uuid(), 'Elena Romanov', 'Royal Gold Suite', 1, CURRENT_DATE, CURRENT_DATE + INTERVAL '5 days', 2, 5, 2250, 'Checked-in', 'Luxury Web Portal'),
+(gen_random_uuid(), 'Mourad Brahimi', 'Heritage Deluxe', 2, CURRENT_DATE - INTERVAL '1 day', CURRENT_DATE + INTERVAL '2 days', 2, 3, 960, 'Checked-in', 'GHE Member Portal'),
+(gen_random_uuid(), 'Sarah Mansour', 'Presidential Panorama', 3, CURRENT_DATE + INTERVAL '2 days', CURRENT_DATE + INTERVAL '7 days', 3, 5, 4250, 'Confirmed', 'Concierge Service')
+ON CONFLICT ("id") DO NOTHING;
+
+-- Active Staff Tasks
+INSERT INTO "Task" ("id", "title", "description", "priority", "status", "assigned_to", "room_id") VALUES
+(gen_random_uuid(), 'Room 101 Deep Clean', 'Prepare for VIP arrival', 'High', 'Pending', 'Karim Brahimi', 1),
+(gen_random_uuid(), 'Mini-bar Restock', 'Check inventory for Room 201', 'Normal', 'Pending', 'Karim Brahimi', 6),
+(gen_random_uuid(), 'Lobby AC Inspection', 'Routine maintenance check', 'Normal', 'In Progress', 'Technical Team', NULL)
+ON CONFLICT ("id") DO NOTHING;
 
 -- Enable Realtime in Supabase for all these tables
 -- You must run these in the Supabase SQL editor if not done automatically via Prisma

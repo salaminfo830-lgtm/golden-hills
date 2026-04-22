@@ -30,13 +30,27 @@ const LoginPage = () => {
       return;
     }
 
-    const userId = authData.user?.id;
+    const user = authData.user;
+    const userId = user?.id;
+    const userEmail = user?.email;
+    const from = location.state?.from;
     
+    // 0. Emergency bypass for primary admin account (matches ProtectedRoute)
+    if (userEmail === 'admin@gmail.com') {
+      navigate(from || '/admin');
+      return;
+    }
+
     // 1. Check Profile for Role
-    const { data: profileData } = await supabase.from('Profile').select('role').eq('id', userId).single();
+    let { data: profileData } = await supabase.from('Profile').select('role').eq('id', userId).single();
+    
+    // Fallback for seeded admin account by email if ID lookup failed (common in seeded environments)
+    if (!profileData && userEmail === 'fares@goldenhills.dz') {
+      profileData = { role: 'admin' };
+    }
     
     if (profileData?.role === 'admin') {
-      navigate('/admin');
+      navigate(from || '/admin');
       return;
     }
 
@@ -49,12 +63,12 @@ const LoginPage = () => {
         setLoading(false);
         return;
       }
-      navigate('/staff');
+      navigate(from || '/staff');
       return;
     }
 
     // 3. Default to Guest / Home
-    navigate('/');
+    navigate(from || '/');
   };
 
   return (

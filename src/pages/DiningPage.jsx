@@ -1,38 +1,37 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { UtensilsCrossed, Clock, MapPin, ChevronRight, Star, Wine, Coffee, Zap } from 'lucide-react';
+import { UtensilsCrossed, Clock, MapPin, ChevronRight, Star, Wine, Coffee, Zap, Loader2 } from 'lucide-react';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
+import { supabase } from '../lib/supabase';
 
 const DiningPage = () => {
-  const venues = [
-    {
-      name: 'The Grand Saffron',
-      type: 'Fine Algerian Gastronomy',
-      desc: 'A theater of culinary excellence where centuries-old recipes meet modern innovation. Savor the essence of the hills in every bite.',
-      img: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2070',
-      hours: '19:00 - 23:30',
-      location: 'South Wing, Level 2',
-      specialty: 'Saffron Braised Lamb'
-    },
-    {
-      name: 'Gold Leaf Lounge',
-      type: 'Artisanal Patisserie',
-      desc: 'Sun-drenched marble and delicate gold-leafed pastries. The perfect sanctuary for Setif’s most discerning coffee connoisseurs.',
-      img: 'https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=2047',
-      hours: '08:00 - 20:00',
-      location: 'Grand Lobby',
-      specialty: 'Gilded Pistachio Baklava'
-    },
-    {
-      name: 'The Hillside Grill',
-      type: 'Al Fresco Terrace',
-      desc: 'Smoke, fire, and panoramic views. Experience the primal joy of open-flame cooking under the starlit Algerian sky.',
-      img: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=1974',
-      hours: '12:00 - 22:00',
-      location: 'Roof Terrace',
-      specialty: 'Flame-Grilled Merguez'
-    }
-  ];
+  const [venues, setVenues] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchVenues = async () => {
+      const { data, error } = await supabase
+        .from('Service')
+        .select('*')
+        .eq('type', 'Dining')
+        .order('name', { ascending: true });
+      
+      if (!error && data) {
+        setVenues(data);
+      }
+      setLoading(false);
+    };
+    fetchVenues();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="h-screen bg-luxury-black flex items-center justify-center">
+        <Loader2 className="w-12 h-12 text-luxury-gold animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <BrochureLayout>
@@ -102,7 +101,7 @@ const DiningPage = () => {
                    className="flex-1 w-full"
                  >
                     <div className="aspect-[16/11] rounded-[3.5rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group relative">
-                       <img src={venue.img} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[3s]" alt={venue.name} />
+                       <img src={venue.image_url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[3s]" alt={venue.name} />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                     </div>
                  </motion.div>
@@ -113,7 +112,7 @@ const DiningPage = () => {
                        <h2 className="text-5xl md:text-6xl font-serif font-bold text-luxury-black">{venue.name}</h2>
                     </div>
                     <p className="text-xl text-gray-500 leading-relaxed font-medium">
-                       {venue.desc}
+                       {venue.description}
                     </p>
                     
                     <div className="grid grid-cols-2 gap-10 py-10 border-y border-gray-100">

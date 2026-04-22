@@ -6,23 +6,30 @@ const Logo = ({ className = "", textVisible = true, inverse = false }) => {
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.6 }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         className="relative shrink-0"
       >
         <img 
-          src="/logo.jpg" 
+          src="/logo-premium.png" 
           alt="Golden Hills" 
-          className={`w-12 h-12 md:w-16 md:h-16 object-contain rounded-xl drop-shadow-md transition-all duration-500 ${inverse ? 'brightness-0 invert' : ''}`} 
+          className={`w-12 h-12 md:w-14 md:h-14 object-contain transition-all duration-700 ${
+            inverse ? 'brightness-0 invert opacity-90' : 'drop-shadow-[0_4px_12px_rgba(212,175,55,0.2)]'
+          }`} 
         />
+        <div className={`absolute inset-0 rounded-full blur-xl transition-opacity duration-700 ${
+          inverse ? 'bg-white/10 opacity-0' : 'bg-luxury-gold/5 opacity-100'
+        }`} />
       </motion.div>
       
       {textVisible && (
-        <div className={`flex flex-col leading-none transition-colors duration-500 ${inverse ? 'text-white' : 'text-luxury-black'}`}>
-          <span className="text-xl md:text-2xl font-elegant font-bold tracking-tight">
-            GOLDEN <span className="text-luxury-gold">HILLS</span>
+        <div className={`flex flex-col leading-tight transition-colors duration-700 ${inverse ? 'text-white' : 'text-luxury-black'}`}>
+          <span className="text-xl md:text-2xl font-serif font-bold tracking-tighter">
+            GOLDEN <span className="text-luxury-gold italic font-normal">HILLS</span>
           </span>
-          <span className="text-[8px] md:text-[10px] uppercase tracking-[0.4em] font-bold opacity-40 mt-1">
-            Luxury Sanctuary • Setif
+          <span className={`text-[8px] uppercase tracking-[0.5em] font-bold mt-1 transition-opacity duration-700 ${
+            inverse ? 'text-white/40' : 'text-gray-400'
+          }`}>
+            Setif • Algeria
           </span>
         </div>
       )}
@@ -31,3 +38,4 @@ const Logo = ({ className = "", textVisible = true, inverse = false }) => {
 };
 
 export default Logo;
+

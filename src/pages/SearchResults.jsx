@@ -64,7 +64,7 @@ const SearchResults = () => {
   });
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(price);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
   };
 
   return (
@@ -137,7 +137,7 @@ const SearchResults = () => {
                       className="w-full accent-luxury-gold h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" 
                     />
                     <div className="flex justify-between mt-6">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Min: 0 DZD</span>
+                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Min: 0 USD</span>
                       <span className="text-xs font-bold text-luxury-gold uppercase tracking-widest underline decoration-2 underline-offset-4">{formatPrice(filters.priceRange[1])}</span>
                     </div>
                   </div>

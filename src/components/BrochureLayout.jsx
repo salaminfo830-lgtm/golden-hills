@@ -1,27 +1,14 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useLocation } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import { 
   ChevronRight, Phone, Mail, MapPin, 
   Instagram, Facebook, Twitter, ShieldCheck,
-  Menu, X, Globe, MessageCircle
+  Globe, MessageCircle
 } from 'lucide-react';
 import Logo from './Logo';
-import GoldButton from './GoldButton';
+import Navbar from './Navbar';
 
-const BrochureLayout = ({ children, title, subtitle }) => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const location = useLocation();
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
+const BrochureLayout = ({ children }) => {
   const navItems = [
     { label: 'Suites', path: '/suites' },
     { label: 'Dining', path: '/dining' },
@@ -31,111 +18,10 @@ const BrochureLayout = ({ children, title, subtitle }) => {
 
   return (
     <div className="min-h-screen bg-luxury-cream/10 text-luxury-black font-sans selection:bg-luxury-gold selection:text-white">
-      {/* Luxury Navigation */}
-      <nav className={`fixed top-0 w-full z-[100] transition-all duration-700 px-8 lg:px-12 py-6 ${
-        isScrolled ? 'bg-white/80 backdrop-blur-2xl border-b border-luxury-gold/10 py-4 shadow-sm' : 'bg-transparent'
-      }`}>
-        <div className="max-w-[1800px] mx-auto flex justify-between items-center">
-          <Link to="/" className="group flex items-center gap-4">
-             <Logo textVisible={false} className={`transition-transform duration-700 ${isScrolled ? 'scale-90' : 'scale-110'}`} />
-             <div className="overflow-hidden">
-                <span className={`block font-serif font-bold text-2xl tracking-tighter transition-all duration-700 ${isScrolled ? 'text-luxury-black' : 'text-luxury-black'} group-hover:tracking-[0.1em]`}>
-                   GOLDEN HILLS
-                </span>
-                <span className={`block text-[8px] font-bold uppercase tracking-[0.4em] transition-all duration-700 ${isScrolled ? 'opacity-100' : 'opacity-0 translate-y-2'}`}>
-                   Setif • Algeria
-                </span>
-             </div>
-          </Link>
-
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-12">
-            {navItems.map((item) => (
-              <Link 
-                key={item.label} 
-                to={item.path}
-                className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all relative group ${
-                  location.pathname === item.path ? 'text-luxury-gold' : 'text-gray-400 hover:text-luxury-black'
-                }`}
-              >
-                {item.label}
-                <span className={`absolute -bottom-2 left-0 h-px bg-luxury-gold transition-all duration-500 ${
-                  location.pathname === item.path ? 'w-full' : 'w-0 group-hover:w-full'
-                }`} />
-              </Link>
-            ))}
-            <div className="h-6 w-px bg-gray-100 mx-4" />
-            <div className="flex gap-4">
-               <Link to="/login" className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-luxury-gold transition-colors py-3 px-4">Portal</Link>
-               <GoldButton className="px-8 py-3 text-[10px] shadow-gold" onClick={() => window.location.href='/search'}>BOOK SANCTUARY</GoldButton>
-            </div>
-          </div>
-
-          {/* Mobile Toggle */}
-          <button 
-            className="lg:hidden p-3 bg-white/50 backdrop-blur-md rounded-2xl border border-gray-100"
-            onClick={() => setIsMobileMenuOpen(true)}
-          >
-             <Menu className="w-5 h-5 text-luxury-black" />
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-luxury-black p-10 flex flex-col justify-between"
-          >
-             <div className="flex justify-between items-center">
-                <Logo inverse />
-                <button 
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-4 bg-white/10 rounded-full text-white"
-                >
-                   <X className="w-6 h-6" />
-                </button>
-             </div>
-
-             <nav className="space-y-10">
-                {navItems.map((item, i) => (
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.1 }}
-                    key={item.label}
-                  >
-                     <Link 
-                       to={item.path} 
-                       onClick={() => setIsMobileMenuOpen(false)}
-                       className="text-6xl font-serif font-bold text-white/40 hover:text-luxury-gold hover:italic transition-all inline-block"
-                     >
-                        {item.label}
-                     </Link>
-                  </motion.div>
-                ))}
-             </nav>
-
-             <div className="space-y-8 pt-10 border-t border-white/5">
-                <div className="flex justify-between items-center">
-                   <div className="flex gap-6">
-                      <Instagram className="w-6 h-6 text-white/40" />
-                      <Facebook className="w-6 h-6 text-white/40" />
-                      <Twitter className="w-6 h-6 text-white/40" />
-                   </div>
-                   <GoldButton className="px-10 py-5 text-xs" onClick={() => window.location.href='/search'}>BOOK NOW</GoldButton>
-                </div>
-                <p className="text-[10px] text-white/20 uppercase tracking-[0.4em]">Golden Hills Hotel & Spa • Setif, Algeria</p>
-             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Navbar />
 
       {/* Page Content */}
-      <main className="relative z-10">
+      <main className="relative z-10 pt-20">
         {children}
       </main>
 
@@ -176,11 +62,11 @@ const BrochureLayout = ({ children, title, subtitle }) => {
                   <div className="space-y-6">
                      <div className="flex items-start gap-4">
                         <MapPin className="w-5 h-5 text-luxury-gold shrink-0" />
-                        <p className="text-sm text-white/40 leading-relaxed">Cité des 1000 Logements, <br/>Setif 19000, Algeria</p>
+                        <p className="text-sm text-white/40 leading-relaxed">Boulevard des Champs d'azur, <br/>Setif 19000, Algeria</p>
                      </div>
                      <div className="flex items-center gap-4">
                         <Phone className="w-5 h-5 text-luxury-gold shrink-0" />
-                        <p className="text-sm text-white/40">+213 36 00 00 00</p>
+                        <p className="text-sm text-white/40">+213 36 12 34 56</p>
                      </div>
                      <div className="flex items-center gap-4">
                         <Mail className="w-5 h-5 text-luxury-gold shrink-0" />

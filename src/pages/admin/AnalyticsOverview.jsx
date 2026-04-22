@@ -92,7 +92,7 @@ const AnalyticsOverview = () => {
   };
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(price);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
   };
 
   if (loading) {

@@ -132,22 +132,22 @@ const AboutPage = () => {
                   <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-luxury-gold/30 p-2 mb-4 mx-auto">
                      <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=1974" className="w-full h-full object-cover rounded-full" alt="Manager" />
                   </div>
-                  <h5 className="font-bold text-sm">Amine Mansour</h5>
+                  <h5 className="font-bold text-sm">Fares Ahmed</h5>
                   <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest mt-1">General Manager</p>
                </div>
                <div className="text-center">
                   <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-luxury-gold/30 p-2 mb-4 mx-auto">
-                     <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&q=80&w=1976" className="w-full h-full object-cover rounded-full" alt="Chef" />
+                     <img src="https://images.unsplash.com/photo-1581299894007-aaa50297cf16?auto=format&fit=crop&q=80&w=1974" className="w-full h-full object-cover rounded-full" alt="Chef" />
                   </div>
-                  <h5 className="font-bold text-sm">Sarah Benali</h5>
+                  <h5 className="font-bold text-sm">Youssef Benali</h5>
                   <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest mt-1">Executive Chef</p>
                </div>
                <div className="text-center">
                   <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-luxury-gold/30 p-2 mb-4 mx-auto">
-                     <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=1974" className="w-full h-full object-cover rounded-full" alt="Concierge" />
+                     <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=1974" className="w-full h-full object-cover rounded-full" alt="Concierge" />
                   </div>
-                  <h5 className="font-bold text-sm">Karim Zahra</h5>
-                  <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest mt-1">Head Concierge</p>
+                  <h5 className="font-bold text-sm">Lina Haddad</h5>
+                  <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest mt-1">Front Desk Manager</p>
                </div>
             </div>
          </div>

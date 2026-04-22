@@ -1,73 +1,42 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Bed, Users, ChevronRight, Star, Maximize2, Wind, ShieldCheck, Map } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
+import Logo from '../components/Logo';
+import { supabase } from '../lib/supabase';
 
 const SuitesPage = () => {
-  const allSuites = [
-    { 
-      id: 0, 
-      name: 'The Royal Gold Suite', 
-      price: '$450', 
-      size: '120m²', 
-      type: 'Signature', 
-      desc: 'Our crown jewel, featuring panoramic views of the Setif hills and bespoke saffron silk furnishings.',
-      img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
-      features: ['Private Terrace', 'Jacuzzi', 'Butler Service']
-    },
-    { 
-      id: 1, 
-      name: 'Heritage Deluxe', 
-      price: '$320', 
-      size: '85m²', 
-      type: 'Premium', 
-      desc: 'A fusion of traditional Algerian craftsmanship and contemporary minimalist design.',
-      img: 'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974',
-      features: ['Hill View', 'Rain Shower', 'Local Art']
-    },
-    { 
-      id: 2, 
-      name: 'Presidential Panorama', 
-      price: '$850', 
-      size: '250m²', 
-      type: 'Elite', 
-      desc: 'The ultimate sanctuary for world leaders and luxury connoisseurs. Spanning a private wing.',
-      img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070',
-      features: ['Library', 'Dining Room', 'Private Spa']
-    },
-    { 
-      id: 3, 
-      name: 'Executive Hillside', 
-      price: '$280', 
-      size: '65m²', 
-      type: 'Business', 
-      desc: 'Precision and comfort for the modern executive. Integrated technology meet timeless elegance.',
-      img: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?auto=format&fit=crop&q=80&w=2070',
-      features: ['Office Nook', 'Fiber WiFi', 'Coffee Bar']
-    },
-    { 
-      id: 4, 
-      name: 'Sapphire Garden Room', 
-      price: '$190', 
-      size: '45m²', 
-      type: 'Standard', 
-      desc: 'A serene retreat overlooking our manicured sapphire gardens and infinity pool.',
-      img: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&q=80&w=2070',
-      features: ['Garden Access', 'Mini Bar', 'King Bed']
-    },
-    { 
-      id: 5, 
-      name: 'Imperial Family Wing', 
-      price: '$550', 
-      size: '180m²', 
-      type: 'Group', 
-      desc: 'Connecting suites designed for families who refuse to compromise on privacy or luxury.',
-      img: 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&q=80&w=1974',
-      features: ['Kitchenette', '3 Bedrooms', 'Play Area']
-    },
-  ];
+  const navigate = useNavigate();
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const { data, error } = await supabase
+        .from('Room')
+        .select('*')
+        .order('price', { ascending: true });
+      
+      if (!error && data) {
+        // Map DB data to include descriptions if missing, though we should ideally have them in DB
+        const mappedRooms = data.map(room => ({
+           ...room,
+           desc: room.description || `Experience the height of luxury in our ${room.type}. Crafted with the finest materials and an eye for detail.`,
+           features: room.features || ['Hill View', 'Rain Shower', 'Local Art']
+        }));
+        setRooms(mappedRooms);
+      }
+      setLoading(false);
+    };
+    fetchRooms();
+  }, []);
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
+  };
 
   return (
     <BrochureLayout>
@@ -105,7 +74,7 @@ const SuitesPage = () => {
       {/* Grid of Suites */}
       <section className="pb-40 container mx-auto px-12">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-x-20 gap-y-40">
-           {allSuites.map((suite, i) => (
+           {rooms.map((suite, i) => (
              <motion.div 
                key={i}
                initial={{ opacity: 0, y: 50 }}
@@ -115,16 +84,16 @@ const SuitesPage = () => {
                className="group flex flex-col"
              >
                 <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden mb-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group-hover:shadow-[0_80px_120px_-20px_rgba(0,0,0,0.25)] transition-all duration-700">
-                   <img src={suite.img} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]" alt={suite.name} />
+                   <img src={suite.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]" alt={suite.type} />
                    <div className="absolute top-10 right-10 flex flex-col gap-3">
-                      <div className="w-16 h-16 bg-white/10 backdrop-blur-2xl rounded-full border border-white/20 flex flex-col items-center justify-center text-white">
-                         <span className="text-[10px] font-bold">{suite.price.split('$')[1]}</span>
-                         <span className="text-[6px] font-bold uppercase tracking-widest opacity-60">USD</span>
+                      <div className="px-6 py-3 bg-white/10 backdrop-blur-2xl rounded-full border border-white/20 flex flex-col items-center justify-center text-white">
+                         <span className="text-[12px] font-bold">{formatPrice(suite.price)}</span>
+                         <span className="text-[6px] font-bold uppercase tracking-widest opacity-60">Investment</span>
                       </div>
                    </div>
                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                    <div className="absolute bottom-12 left-12 right-12 translate-y-10 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700">
-                      <GoldButton className="w-full py-5 shadow-gold">BOOK THIS SUITE</GoldButton>
+                      <GoldButton className="w-full py-5 shadow-gold" onClick={() => navigate(`/book/${suite.id}`)}>BOOK THIS SUITE</GoldButton>
                    </div>
                 </div>
                 
@@ -132,7 +101,7 @@ const SuitesPage = () => {
                    <div className="flex justify-between items-start">
                       <div>
                          <span className="text-luxury-gold text-[10px] font-bold uppercase tracking-[0.4em] mb-2 block">{suite.type} Selection</span>
-                         <h3 className="text-4xl font-serif font-bold text-luxury-black group-hover:italic transition-all duration-500">{suite.name}</h3>
+                         <h3 className="text-4xl font-serif font-bold text-luxury-black group-hover:italic transition-all duration-500">{suite.type}</h3>
                       </div>
                       <Star className="w-5 h-5 text-luxury-gold fill-current" />
                    </div>
@@ -144,7 +113,7 @@ const SuitesPage = () => {
                    <div className="flex flex-wrap gap-8 pt-4">
                       <div className="flex items-center gap-3">
                          <Maximize2 className="w-4 h-4 text-luxury-gold" />
-                         <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{suite.size}</span>
+                         <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">{suite.size || '85m²'}</span>
                       </div>
                       <div className="flex items-center gap-3">
                          <Wind className="w-4 h-4 text-luxury-gold" />
@@ -158,7 +127,7 @@ const SuitesPage = () => {
 
                    <div className="pt-8 border-t border-gray-100 flex items-center justify-between">
                       <div className="flex gap-4">
-                         {suite.features.map(f => (
+                         {(suite.features || []).map(f => (
                            <span key={f} className="text-[9px] font-bold uppercase tracking-tighter bg-gray-50 px-3 py-1 rounded-full text-gray-400">{f}</span>
                          ))}
                       </div>

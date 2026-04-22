@@ -1,31 +1,23 @@
 import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  Calendar, Users, MapPin, Star, Coffee, 
-  Wind, UtensilsCrossed, Waves, 
-  Menu, X, ChevronRight, PlayCircle,
-  ShieldCheck, Smartphone, Sparkles,
-  Search, ArrowRight, MousePointer2,
+  Calendar, Users, MapPin, Star,
+  UtensilsCrossed, Waves, 
+  ChevronRight, PlayCircle,
+  Sparkles, Search, ArrowRight, MousePointer2,
   Globe, Shield, Award, Droplets
 } from 'lucide-react';
 import GlassCard from '../components/GlassCard';
 import GoldButton from '../components/GoldButton';
 import Logo from '../components/Logo';
+import Navbar from '../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const LandingPage = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -50,10 +42,6 @@ const LandingPage = () => {
     fetchRooms();
   }, []);
 
-  const formatPrice = (price) => {
-    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(price);
-  };
-
   const navItems = [
     { label: 'Suites', path: '/suites' },
     { label: 'Dining', path: '/dining' },
@@ -63,77 +51,7 @@ const LandingPage = () => {
 
   return (
     <div className="min-h-screen bg-luxury-cream/10 overflow-x-hidden selection:bg-luxury-gold selection:text-white font-sans">
-      {/* Immersive Cinematic Navigation */}
-      <nav className={`fixed top-0 w-full z-[100] transition-all duration-700 px-8 lg:px-12 ${
-        isScrolled ? 'bg-white/90 backdrop-blur-2xl py-4 shadow-sm border-b border-luxury-gold/5' : 'bg-transparent py-10'
-      }`}>
-        <div className="max-w-[1800px] mx-auto flex justify-between items-center">
-          <Link to="/" className="group flex items-center gap-4">
-             <Logo inverse={!isScrolled} className={`transition-transform duration-700 ${isScrolled ? 'scale-90' : 'scale-110'}`} />
-             <div className="overflow-hidden">
-                <span className={`block font-serif font-bold text-2xl tracking-tighter transition-all duration-700 ${isScrolled ? 'text-luxury-black' : 'text-white'} group-hover:tracking-[0.1em]`}>
-                   GOLDEN HILLS
-                </span>
-                <span className={`block text-[8px] font-bold uppercase tracking-[0.4em] transition-all duration-700 ${isScrolled ? 'text-gray-400 opacity-100' : 'text-white/60 opacity-0 translate-y-2'}`}>
-                   Setif • Algeria
-                </span>
-             </div>
-          </Link>
-
-          {/* Desktop Nav */}
-          <div className="hidden lg:flex items-center gap-12">
-            {navItems.map((item) => (
-              <Link 
-                key={item.label} 
-                to={item.path}
-                className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all relative group ${
-                  isScrolled ? 'text-gray-400 hover:text-luxury-black' : 'text-white/70 hover:text-white'
-                }`}
-              >
-                {item.label}
-                <span className="absolute -bottom-2 left-0 w-0 h-px bg-luxury-gold transition-all duration-500 group-hover:w-full" />
-              </Link>
-            ))}
-            <div className="h-6 w-px bg-white/20 mx-4" />
-            <div className="flex gap-4">
-               <Link to="/login" className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-colors py-3 px-4 ${isScrolled ? 'text-gray-400 hover:text-luxury-gold' : 'text-white/40 hover:text-luxury-gold'}`}>Portal</Link>
-               <GoldButton className="px-8 py-3 text-[10px] shadow-gold" onClick={() => navigate('/search')}>BOOK SANCTUARY</GoldButton>
-            </div>
-          </div>
-
-          <button className="lg:hidden p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/10" onClick={() => setIsMenuOpen(true)}>
-             <Menu className={`w-5 h-5 ${isScrolled ? 'text-luxury-black' : 'text-white'}`} />
-          </button>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      <AnimatePresence>
-        {isMenuOpen && (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[200] bg-luxury-black p-10 flex flex-col justify-between"
-          >
-             <div className="flex justify-between items-center">
-                <Logo inverse />
-                <button onClick={() => setIsMenuOpen(false)} className="p-4 bg-white/10 rounded-full text-white"><X className="w-6 h-6" /></button>
-             </div>
-             <nav className="space-y-10">
-                {navItems.map((item, i) => (
-                  <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} key={item.label}>
-                     <Link to={item.path} onClick={() => setIsMenuOpen(false)} className="text-6xl font-serif font-bold text-white/40 hover:text-luxury-gold hover:italic transition-all inline-block">{item.label}</Link>
-                  </motion.div>
-                ))}
-             </nav>
-             <div className="pt-10 border-t border-white/5 space-y-6">
-                <GoldButton className="w-full py-5" onClick={() => navigate('/search')}>RESERVE NOW</GoldButton>
-                <p className="text-[10px] text-white/20 uppercase tracking-[0.4em] text-center">Golden Hills Hotel • Setif, Algeria</p>
-             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Navbar transparent />
 
       {/* Hero Section - The Grand Arrival */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
@@ -165,10 +83,10 @@ const LandingPage = () => {
                Where ancient heritage meets the height of contemporary luxury. A sanctuary crafted for the world&apos;s most discerning travelers.
             </p>
             <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-              <GoldButton className="px-20 py-7 text-xs shadow-gold hover:scale-105 transition-all">START YOUR JOURNEY</GoldButton>
+              <GoldButton className="px-20 py-7 text-xs shadow-gold hover:scale-105 transition-all" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
               <button className="flex items-center gap-4 text-[10px] font-bold tracking-[0.4em] text-white uppercase hover:text-luxury-gold transition-all group">
                 <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
-                  <PlayCircle className="w-8 h-8" />
+                   <PlayCircle className="w-8 h-8" />
                 </div>
                 THE FILM
               </button>
@@ -258,7 +176,7 @@ const LandingPage = () => {
               </motion.div>
               <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-luxury-gold opacity-[0.05] rounded-full blur-[100px]" />
               <div className="absolute -top-12 -left-12 p-10 bg-white/80 backdrop-blur-3xl rounded-[3rem] shadow-2xl border border-luxury-gold/10 z-20 hidden xl:block">
-                 <p className="text-6xl font-serif font-bold text-luxury-gold mb-2 italic">0%</p>
+                 <p className="text-6xl font-serif font-bold text-luxury-gold mb-2 italic">100%</p>
                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Authenticity Rating</p>
               </div>
            </div>
@@ -329,7 +247,7 @@ const LandingPage = () => {
                   </div>
                   <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/5 backdrop-blur-3xl rounded-[3rem] p-10 border border-white/10 flex flex-col justify-center text-center">
                      <UtensilsCrossed className="w-8 h-8 text-luxury-gold mx-auto mb-4" />
-                     <p className="text-[10px] font-bold uppercase tracking-widest">3 Michelin Concepts</p>
+                     <p className="text-[10px] font-bold uppercase tracking-widest">3 Signature Concepts</p>
                   </div>
                </div>
             </div>
@@ -420,11 +338,11 @@ const LandingPage = () => {
 
                <div className="space-y-10">
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold">Contact Enclave</h4>
-                  <div className="space-y-6 text-sm text-white/40 font-medium">
-                     <p className="leading-relaxed">Rue Champs d&apos;azur, Setif 19000, Algeria</p>
-                     <p>+213 36 00 00 00</p>
-                     <p className="text-luxury-gold">reserve@goldenhills.dz</p>
-                  </div>
+                   <div className="space-y-6 text-sm text-white/40 font-medium">
+                      <p className="leading-relaxed">Boulevard des Champs d&apos;azur, Sétif 19000, Algeria</p>
+                      <p>+213 36 12 34 56</p>
+                      <p className="text-luxury-gold">reserve@goldenhills.dz</p>
+                   </div>
                </div>
 
                <div className="space-y-10">
