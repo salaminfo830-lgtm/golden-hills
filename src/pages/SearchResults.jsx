@@ -26,6 +26,33 @@ const SearchResults = () => {
   const checkOut = searchParams.get('checkOut') || 'Tomorrow';
   const guests = searchParams.get('guests') || '2';
 
+  const fallbackRooms = [
+    {
+      id: 'fallback-1',
+      type: 'Classic Room',
+      price: 25000,
+      capacity: 2,
+      description: 'Experience a sanctuary where timeless Algerian elegance meets modern 5-star refinement.',
+      image_url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'
+    },
+    {
+      id: 'fallback-2',
+      type: 'Junior Suite',
+      price: 45000,
+      capacity: 2,
+      description: 'Expansive views of the high plateau with dedicated living spaces and premium amenities.',
+      image_url: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=2070'
+    },
+    {
+      id: 'fallback-3',
+      type: 'Royal Suite',
+      price: 120000,
+      capacity: 4,
+      description: 'The pinnacle of luxury in Setif. A sprawling residence offering absolute privacy and 24/7 bespoke service.',
+      image_url: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2070'
+    }
+  ];
+
   useEffect(() => {
     fetchAvailableRooms();
   }, [searchParams]);
@@ -40,20 +67,22 @@ const SearchResults = () => {
       .select('*, amenities:Amenity(*)')
       .order('price', { ascending: true });
 
-    if (roomError) {
-      setLoading(false);
-      return;
+    let finalRooms = allRooms;
+
+    if (roomError || !allRooms || allRooms.length === 0) {
+      finalRooms = fallbackRooms;
+    } else {
+      const { data: overlappingRes } = await supabase
+        .from('Reservation')
+        .select('room_id')
+        .filter('start_date', 'lt', endDate)
+        .filter('end_date', 'gt', startDate);
+
+      const reservedRoomIds = overlappingRes?.map(r => r.room_id).filter(id => id !== null) || [];
+      finalRooms = allRooms.filter(room => !reservedRoomIds.includes(room.id));
     }
-
-    const { data: overlappingRes } = await supabase
-      .from('Reservation')
-      .select('room_id')
-      .filter('start_date', 'lt', endDate)
-      .filter('end_date', 'gt', startDate);
-
-    const reservedRoomIds = overlappingRes?.map(r => r.room_id).filter(id => id !== null) || [];
-    const available = allRooms?.filter(room => !reservedRoomIds.includes(room.id)) || [];
-    setRooms(available);
+    
+    setRooms(finalRooms);
     setLoading(false);
   };
 
@@ -209,7 +238,7 @@ const SearchResults = () => {
                               <div className="flex flex-wrap gap-6 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
                                 <span className="flex items-center gap-2"><Users className="w-4 h-4 text-luxury-gold" /> {room.capacity || 2} Guests</span>
                                 <span className="flex items-center gap-2"><Wind className="w-4 h-4 text-luxury-gold" /> Climate Controlled</span>
-                                <span className="flex items-center gap-2 text-green-600"><CheckCircle className="w-4 h-4" /> Free Cancellation</span>
+                                <span className="flex items-center gap-2 text-green-600"> Free Cancellation</span>
                               </div>
                             </div>
                             <div className="text-right">
@@ -277,11 +306,5 @@ const SearchResults = () => {
     </div>
   );
 };
-
-const CheckCircle = ({ className }) => (
-  <svg className={className} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20 6 9 17l-5-5" />
-  </svg>
-);
 
 export default SearchResults;

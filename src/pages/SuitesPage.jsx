@@ -5,6 +5,7 @@ import GlassCard from '../components/GlassCard';
 import { Link, useNavigate } from 'react-router-dom';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
+import Logo from '../components/Logo';
 import { supabase } from '../lib/supabase';
 
 const SuitesPage = () => {

@@ -115,7 +115,7 @@ const LandingPage = () => {
       </section>
 
       {/* Booking Widget Overlay */}
-      <div className="relative z-50 -mt-20 max-w-[1400px] mx-auto px-8 hidden lg:block">
+      <div className="relative z-50 mt-10 max-w-[1400px] mx-auto px-8 hidden lg:block mb-20">
          <motion.div
            initial={{ opacity: 0, y: 40 }}
            animate={{ opacity: 1, y: 0 }}

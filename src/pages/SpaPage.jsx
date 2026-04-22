@@ -4,8 +4,10 @@ import { Waves, Sparkles, Droplets, Wind, Star, ChevronRight, Loader2, ArrowRigh
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 const SpaPage = () => {
+  const navigate = useNavigate();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -168,8 +170,8 @@ const SpaPage = () => {
                        </p>
                        
                        <div className="flex items-center gap-10 pt-6">
-                          <GoldButton className="px-16 py-7 shadow-gold text-[10px]">BOOK TREATMENT</GoldButton>
-                          <button className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group">
+                          <GoldButton onClick={() => navigate('/search')} className="px-16 py-7 shadow-gold text-[10px]">BOOK TREATMENT</GoldButton>
+                          <button onClick={() => navigate('/search')} className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group">
                              VIEW DETAILS <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                           </button>
                        </div>
@@ -191,8 +193,8 @@ const SpaPage = () => {
                   Join our exclusive wellness membership for priority booking, private hammam sessions, and bespoke botanical blends crafted specifically for your skin profile.
                </p>
                <div className="flex flex-col sm:flex-row justify-center gap-10">
-                  <GoldButton className="px-20 py-8 text-xs shadow-gold">BECOME A MEMBER</GoldButton>
-                  <GoldButton outline className="border-white/20 text-white hover:bg-white hover:text-luxury-black px-20 py-8 text-xs">EXPLORE BENEFITS</GoldButton>
+                  <GoldButton onClick={() => navigate('/search')} className="px-20 py-8 text-xs shadow-gold">BECOME A MEMBER</GoldButton>
+                  <GoldButton onClick={() => navigate('/search')} outline className="border-white/20 text-white hover:bg-white hover:text-luxury-black px-20 py-8 text-xs">EXPLORE BENEFITS</GoldButton>
                </div>
             </motion.div>
          </div>
