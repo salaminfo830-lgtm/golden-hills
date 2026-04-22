@@ -325,5 +325,3 @@ const AnalyticsOverview = () => {
 };
 
 export default AnalyticsOverview;
-
-export default AnalyticsOverview;
