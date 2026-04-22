@@ -10,7 +10,7 @@ const Logo = ({ className = "", textVisible = true, inverse = false }) => {
         className="relative shrink-0"
       >
         <img 
-          src="/logo-premium.png" 
+          src="/brand-logo.jpg" 
           alt="Golden Hills" 
           className={`w-12 h-12 md:w-14 md:h-14 object-contain transition-all duration-700 ${
             inverse ? 'drop-shadow-lg opacity-100' : 'drop-shadow-[0_4px_20px_rgba(212,175,55,0.4)]'

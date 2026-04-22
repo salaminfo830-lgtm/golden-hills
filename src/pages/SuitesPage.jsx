@@ -87,7 +87,10 @@ const SuitesPage = () => {
                transition={{ duration: 1, delay: i % 2 * 0.1 }}
                className="group flex flex-col"
              >
-                <div className="relative aspect-[4/5] rounded-[3rem] overflow-hidden mb-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group-hover:shadow-gold/20 transition-all duration-700">
+                <div 
+                  onClick={() => navigate(`/room/${suite.id}`)}
+                  className="relative aspect-[4/5] rounded-[3rem] overflow-hidden mb-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group-hover:shadow-gold/20 transition-all duration-700 cursor-pointer"
+                >
                    <img src={suite.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[3s]" alt={suite.type} />
                    <div className="absolute top-10 right-10 flex flex-col gap-3">
                       <div className="px-8 py-4 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20 flex flex-col items-center justify-center text-white">

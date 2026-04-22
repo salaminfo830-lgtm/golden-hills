@@ -4,7 +4,7 @@ import {
   Plus, Search, MoreVertical, 
   Bed, CheckCircle2,
   Loader2, User, Droplets, Hammer,
-  X, Trash2
+  X, Trash2, Edit3
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -14,7 +14,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('All');
-  const [showAddModal, setShowAddModal] = useState(false);
+  const [editingRoom, setEditingRoom] = useState(null);
   
   // Add Room Form State
   const [newRoom, setNewRoom] = useState({
@@ -58,18 +58,50 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
   const handleAddRoom = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.from('Room').insert([{ 
-      ...newRoom, 
-      updated_at: new Date().toISOString() 
-    }]);
-    if (!error) {
-      setShowAddModal(false);
-      setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '' });
-      fetchRooms();
+    
+    if (editingRoom && editingRoom.id) {
+      const { error } = await supabase
+        .from('Room')
+        .update({ ...newRoom, updated_at: new Date().toISOString() })
+        .eq('id', editingRoom.id);
+      
+      if (!error) {
+        setShowAddModal(false);
+        setEditingRoom(null);
+        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '' });
+        fetchRooms();
+      } else {
+        alert("Error updating room: " + error.message);
+        setLoading(false);
+      }
     } else {
-      alert("Error adding room: " + error.message);
-      setLoading(false);
+      const { error } = await supabase.from('Room').insert([{ 
+        ...newRoom, 
+        updated_at: new Date().toISOString() 
+      }]);
+      if (!error) {
+        setShowAddModal(false);
+        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '' });
+        fetchRooms();
+      } else {
+        alert("Error adding room: " + error.message);
+        setLoading(false);
+      }
     }
+  };
+
+  const handleEditRoom = (room) => {
+    setEditingRoom(room);
+    setNewRoom({
+      number: room.number,
+      type: room.type,
+      price: room.price,
+      status: room.status,
+      occupancy: room.occupancy,
+      housekeeper: room.housekeeper || '',
+      image_url: room.image_url || ''
+    });
+    setShowAddModal(true);
   };
 
   const handleDeleteRoom = async (id) => {
@@ -210,9 +242,14 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                 </td>
                 <td className="px-8 py-6">
                    {userType === 'Admin' ? (
-                     <button onClick={() => handleDeleteRoom(room.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors text-gray-400 hover:text-red-500">
-                       <Trash2 className="w-4 h-4" />
-                     </button>
+                     <div className="flex items-center gap-2">
+                       <button onClick={() => handleEditRoom(room)} className="p-2 hover:bg-luxury-gold/10 rounded-lg transition-colors text-gray-400 hover:text-luxury-gold">
+                         <Edit3 className="w-4 h-4" />
+                       </button>
+                       <button onClick={() => handleDeleteRoom(room.id)} className="p-2 hover:bg-red-50 rounded-lg transition-colors text-gray-400 hover:text-red-500">
+                         <Trash2 className="w-4 h-4" />
+                       </button>
+                     </div>
                    ) : (
                      <button className="px-4 py-1.5 text-[10px] font-bold rounded-lg border border-gray-200 text-gray-400">RESTRICTED</button>
                    )}

@@ -63,10 +63,20 @@ const SearchResults = () => {
     const startDate = searchParams.get('checkIn') ? new Date(searchParams.get('checkIn')).toISOString() : new Date().toISOString();
     const endDate = searchParams.get('checkOut') ? new Date(searchParams.get('checkOut')).toISOString() : new Date(Date.now() + 86400000).toISOString();
 
-    const { data: allRooms, error: roomError } = await supabase
+    let { data: allRooms, error: roomError } = await supabase
       .from('Room')
       .select('*, amenities:Amenity(*)')
       .order('price', { ascending: true });
+
+    if (roomError) {
+      console.warn('Room fetch with amenities failed, retrying without join:', roomError.message);
+      const { data: simpleRooms, error: simpleError } = await supabase
+        .from('Room')
+        .select('*')
+        .order('price', { ascending: true });
+      allRooms = simpleRooms;
+      roomError = simpleError;
+    }
 
     let finalRooms = allRooms;
 
@@ -238,7 +248,10 @@ const SearchResults = () => {
                     transition={{ delay: i * 0.1 }}
                     key={room.id}
                   >
-                  <GlassCard className="group p-0 bg-white border-gray-100 overflow-hidden hover:shadow-[0_50px_100px_-30px_rgba(0,0,0,0.1)] hover:border-luxury-gold/30 transition-all duration-700 cursor-pointer rounded-[3rem]">
+                  <GlassCard 
+                    onClick={() => navigate(`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}
+                    className="group p-0 bg-white border-gray-100 overflow-hidden hover:shadow-[0_50px_100px_-30px_rgba(0,0,0,0.15)] hover:border-luxury-gold/30 transition-all duration-700 cursor-pointer rounded-[3rem]"
+                  >
                     <div className="flex flex-col lg:flex-row h-full">
                       <div className="lg:w-[40%] relative overflow-hidden h-[300px] lg:h-auto">
                         <img 

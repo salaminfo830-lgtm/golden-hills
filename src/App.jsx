@@ -14,43 +14,49 @@ import SearchResults from './pages/SearchResults'
 import BookingFlow from './pages/BookingFlow'
 import GuestDashboard from './pages/GuestDashboard'
 import ProtectedRoute from './components/ProtectedRoute'
+import ScrollToTop from './components/ScrollToTop'
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/room/:id" element={<RoomDetails />} />
-      <Route path="/search" element={<SearchResults />} />
-      <Route path="/book/:roomId" element={<BookingFlow />} />
-      <Route path="/dashboard" element={
-        <ProtectedRoute requiredRole="guest">
-          <GuestDashboard />
-        </ProtectedRoute>
-      } />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/suites" element={<SuitesPage />} />
-      <Route path="/dining" element={<DiningPage />} />
-      <Route path="/spa" element={<SpaPage />} />
-      <Route path="/privacy" element={<LegalPages type="privacy" />} />
-      <Route path="/terms" element={<LegalPages type="terms" />} />
-      
-      <Route path="/admin/*" element={
-        <ProtectedRoute requiredRole="admin">
-          <AdminPanel />
-        </ProtectedRoute>
-      } />
-      
-      <Route path="/staff/*" element={
-        <ProtectedRoute requiredRole="staff">
-          <StaffPanel />
-        </ProtectedRoute>
-      } />
+    <>
+      <ScrollToTop />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/room/:id" element={<RoomDetails />} />
+        <Route path="/search" element={<SearchResults />} />
+        <Route path="/book/:roomId" element={<BookingFlow />} />
+        <Route path="/dashboard" element={
+          <ProtectedRoute requiredRole="guest">
+            <GuestDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/suites" element={<SuitesPage />} />
+        <Route path="/dining" element={<DiningPage />} />
+        <Route path="/spa" element={<SpaPage />} />
+        <Route path="/privacy" element={<LegalPages type="privacy" />} />
+        <Route path="/terms" element={<LegalPages type="terms" />} />
+        <Route path="/security" element={<LegalPages type="security" />} />
+        <Route path="/faq" element={<LegalPages type="faq" />} />
+        
+        <Route path="/admin/*" element={
+          <ProtectedRoute requiredRole="admin">
+            <AdminPanel />
+          </ProtectedRoute>
+        } />
+        
+        <Route path="/staff/*" element={
+          <ProtectedRoute requiredRole="staff">
+            <StaffPanel />
+          </ProtectedRoute>
+        } />
 
-      {/* Catch-all redirect to home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+        {/* Catch-all redirect to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </>
   )
 }
 

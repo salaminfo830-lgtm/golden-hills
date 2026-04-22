@@ -25,6 +25,26 @@ const LegalPages = ({ type = 'privacy' }) => {
         { h: 'Cancellations', p: 'Cancellations must be made at least 24 hours in advance to avoid a service fee.' },
         { h: 'House Rules', p: 'We maintain a noise-free environment in our suites after 22:00 to ensure the rest of all patrons.' }
       ]
+    },
+    security: {
+      title: 'Security Policy',
+      subtitle: 'Ensuring your safety and physical security during your stay.',
+      text: 'Golden Hills Hotel employs state-of-the-art security measures to provide a safe haven for our guests.',
+      sections: [
+        { h: 'Physical Security', p: '24/7 surveillance and professional security personnel are stationed throughout the premises.' },
+        { h: 'Digital Protection', p: 'Our guest network is secured with enterprise-grade firewalls and monitoring.' },
+        { h: 'Emergency Response', p: 'All staff are trained in emergency protocols to ensure rapid and efficient response when needed.' }
+      ]
+    },
+    faq: {
+      title: 'Frequently Asked Questions',
+      subtitle: 'Everything you need to know about your luxury experience.',
+      text: 'Find answers to common questions about staying at Golden Hills Hotel.',
+      sections: [
+        { h: 'What are the check-in and check-out times?', p: 'Check-in is from 15:00, and check-out is before 11:00. Late check-out may be available upon request.' },
+        { h: 'Do you offer airport shuttle services?', p: 'Yes, we provide luxury airport transfers. Please contact our concierge to arrange your pick-up.' },
+        { h: 'Is parking available on-site?', p: 'We offer complimentary valet parking in our secure underground garage for all guests.' }
+      ]
     }
   };
 

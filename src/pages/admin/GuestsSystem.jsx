@@ -16,6 +16,7 @@ const GuestsSystem = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGuest, setSelectedGuest] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [editingGuest, setEditingGuest] = useState(null);
   const [newGuest, setNewGuest] = useState({ full_name: '', email: '', phone: '', avatar_url: '' });
 
   useEffect(() => {
@@ -49,15 +50,44 @@ const GuestsSystem = () => {
   const handleAddGuest = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.from('Guest').insert([newGuest]);
-    if (!error) {
-      setShowAddModal(false);
-      setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' });
-      fetchGuests();
+    
+    if (editingGuest && editingGuest.id) {
+      const { error } = await supabase
+        .from('Guest')
+        .update(newGuest)
+        .eq('id', editingGuest.id);
+      
+      if (!error) {
+        setShowAddModal(false);
+        setEditingGuest(null);
+        setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' });
+        fetchGuests();
+      } else {
+        alert("Error updating guest: " + error.message);
+        setLoading(false);
+      }
     } else {
-      alert("Error adding guest: " + error.message);
-      setLoading(false);
+      const { error } = await supabase.from('Guest').insert([newGuest]);
+      if (!error) {
+        setShowAddModal(false);
+        setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' });
+        fetchGuests();
+      } else {
+        alert("Error adding guest: " + error.message);
+        setLoading(false);
+      }
     }
+  };
+
+  const handleEditGuest = (guest) => {
+    setEditingGuest(guest);
+    setNewGuest({
+      full_name: guest.full_name,
+      email: guest.email,
+      phone: guest.phone || '',
+      avatar_url: guest.avatar_url || ''
+    });
+    setShowAddModal(true);
   };
 
   const handleDeleteGuest = async (id) => {
@@ -96,7 +126,7 @@ const GuestsSystem = () => {
           <button className="px-6 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-gray-50 transition-all shadow-sm">
             <Download className="w-4 h-4" /> Export Data
           </button>
-          <GoldButton onClick={() => setShowAddModal(true)} className="px-6 py-3 text-[10px] flex items-center gap-2 shadow-lg">
+          <GoldButton onClick={() => { setEditingGuest(null); setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' }); setShowAddModal(true); }} className="px-6 py-3 text-[10px] flex items-center gap-2 shadow-lg">
             <Plus className="w-4 h-4" /> ADD GUEST
           </GoldButton>
         </div>
@@ -202,10 +232,13 @@ const GuestsSystem = () => {
                                <div className="flex items-center gap-1.5">
                                   <Star className={`w-3.5 h-3.5 ${getAvgRating(guest.reviews) > 0 ? 'text-luxury-gold fill-current' : 'text-gray-200'}`} />
                                   <span className="text-sm font-bold text-gray-700">{getAvgRating(guest.reviews)}</span>
-                               </div>
+                                </div>
                             </td>
                             <td className="px-8 py-6 text-right">
                                <div className="flex items-center justify-end gap-2">
+                                  <button onClick={(e) => { e.stopPropagation(); handleEditGuest(guest); }} className="p-2.5 hover:bg-luxury-gold/10 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-gray-100">
+                                     <Edit className="w-4 h-4" />
+                                  </button>
                                   <button onClick={(e) => { e.stopPropagation(); handleDeleteGuest(guest.id); }} className="p-2.5 hover:bg-white hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-gray-100">
                                      <Trash2 className="w-4 h-4" />
                                   </button>
@@ -302,7 +335,7 @@ const GuestsSystem = () => {
               <button onClick={() => setShowAddModal(false)} className="absolute top-6 right-6 text-gray-400 hover:text-black">
                 <X className="w-5 h-5"/>
               </button>
-              <h3 className="text-2xl font-bold font-serif mb-6">Register New Guest</h3>
+              <h3 className="text-2xl font-bold font-serif mb-6">{editingGuest ? 'Edit Guest Record' : 'Register New Guest'}</h3>
               <form onSubmit={handleAddGuest} className="space-y-6">
                 <div>
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Full Name</label>
@@ -320,7 +353,9 @@ const GuestsSystem = () => {
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Avatar URL</label>
                   <input value={newGuest.avatar_url} onChange={e=>setNewGuest({...newGuest, avatar_url: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
                 </div>
-                <GoldButton type="submit" className="w-full py-4 shadow-lg text-[10px]">CREATE GUEST RECORD</GoldButton>
+                <GoldButton type="submit" className="w-full py-4 shadow-lg text-[10px]">
+                  {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (editingGuest ? 'SAVE CHANGES' : 'CREATE GUEST RECORD')}
+                </GoldButton>
               </form>
            </GlassCard>
         </div>

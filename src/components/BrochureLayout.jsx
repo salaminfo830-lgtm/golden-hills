@@ -1,20 +1,33 @@
-import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { 
   ChevronRight, Phone, Mail, MapPin, 
   Instagram, Facebook, Twitter, ShieldCheck,
-  Globe, MessageCircle
+  Globe, MessageCircle, Check
 } from 'lucide-react';
 import Logo from './Logo';
 import Navbar from './Navbar';
 
 const BrochureLayout = ({ children }) => {
+  const [subscribed, setSubscribed] = useState(false);
+  const [email, setEmail] = useState('');
+
   const navItems = [
     { label: 'Suites', path: '/suites' },
     { label: 'Dining', path: '/dining' },
     { label: 'Spa', path: '/spa' },
     { label: 'About', path: '/about' },
   ];
+
+  const handleSubscribe = (e) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribed(true);
+      setEmail('');
+      setTimeout(() => setSubscribed(false), 5000);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-luxury-cream/10 text-luxury-black font-sans selection:bg-luxury-gold selection:text-white">
@@ -38,10 +51,20 @@ const BrochureLayout = ({ children }) => {
                      "Elevating the hospitality standards of Setif through a perfect blend of heritage and modern luxury."
                   </p>
                   <div className="flex gap-5">
-                     {[Instagram, Facebook, Twitter].map((Icon, i) => (
-                       <div key={i} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-luxury-gold hover:text-white transition-all cursor-pointer border border-white/5">
+                     {[
+                       { Icon: Instagram, href: 'https://instagram.com' },
+                       { Icon: Facebook, href: 'https://facebook.com' },
+                       { Icon: Twitter, href: 'https://twitter.com' }
+                     ].map(({ Icon, href }, i) => (
+                       <a 
+                         key={i} 
+                         href={href}
+                         target="_blank"
+                         rel="noopener noreferrer"
+                         className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-luxury-gold hover:text-white transition-all cursor-pointer border border-white/5"
+                       >
                           <Icon className="w-4 h-4" />
-                       </div>
+                       </a>
                      ))}
                   </div>
                </div>
@@ -78,10 +101,38 @@ const BrochureLayout = ({ children }) => {
                <div className="space-y-8">
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold">Gilded Newsletter</h4>
                   <p className="text-sm text-white/40">Join our inner circle for exclusive offers and seasonal events.</p>
-                  <div className="relative group">
-                     <input type="email" placeholder="Your official email" className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs font-bold focus:border-luxury-gold outline-none transition-all" />
-                     <button className="absolute right-2 top-2 bottom-2 px-4 bg-luxury-gold text-white rounded-xl text-[8px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-gold">Subscribe</button>
-                  </div>
+                  
+                  <form onSubmit={handleSubscribe} className="relative group">
+                     <input 
+                       type="email" 
+                       required
+                       value={email}
+                       onChange={(e) => setEmail(e.target.value)}
+                       placeholder="Your official email" 
+                       className="w-full bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xs font-bold focus:border-luxury-gold outline-none transition-all" 
+                     />
+                     <button 
+                       type="submit"
+                       className="absolute right-2 top-2 bottom-2 px-4 bg-luxury-gold text-white rounded-xl text-[8px] font-bold uppercase tracking-widest hover:scale-105 transition-all shadow-gold"
+                     >
+                        Subscribe
+                     </button>
+                  </form>
+
+                  <AnimatePresence>
+                    {subscribed && (
+                      <motion.div 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-center gap-2 text-luxury-gold"
+                      >
+                         <Check className="w-4 h-4" />
+                         <span className="text-[10px] font-bold uppercase tracking-widest">Welcome to the Inner Circle</span>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                   <div className="flex items-center gap-2 text-white/20">
                      <ShieldCheck className="w-4 h-4" />
                      <span className="text-[8px] font-bold uppercase tracking-widest">Privacy Protection Guaranteed</span>

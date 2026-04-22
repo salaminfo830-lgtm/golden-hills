@@ -3,7 +3,7 @@ import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { 
   ChevronLeft, Star, Coffee, Wind, 
   Tv, Waves, 
-  Calendar, ShieldCheck, ArrowRight,
+  Calendar, ShieldCheck, ArrowRight, ArrowLeft,
   Wifi, Bath, Sun, Loader2, MapPin,
   Maximize2, Sparkles, Heart, Share2,
   CheckCircle2, Clock
@@ -68,17 +68,30 @@ const RoomDetails = () => {
     ];
 
     const fetchRoom = async () => {
+      // Try with amenities join first
       let { data, error } = await supabase
         .from('Room')
         .select('*, amenities:Amenity(*)')
         .eq('id', id)
         .single();
       
+      if (error) {
+        console.warn('Room fetch with amenities failed, retrying without join:', error.message);
+        const { data: simpleData, error: simpleError } = await supabase
+          .from('Room')
+          .select('*')
+          .eq('id', id)
+          .single();
+        data = simpleData;
+        error = simpleError;
+      }
+      
       if (error || !data) {
         const fallback = fallbackRooms.find(r => r.id === id);
         if (fallback) {
            data = fallback;
         } else {
+           console.error('Room not found in DB or fallback:', id);
            navigate('/');
            return;
         }

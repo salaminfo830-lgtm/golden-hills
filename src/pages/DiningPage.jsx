@@ -4,10 +4,23 @@ import { UtensilsCrossed, Clock, MapPin, ChevronRight, Star, Wine, Coffee, Zap, 
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
 import { supabase } from '../lib/supabase';
+import { X } from 'lucide-react';
 
 const DiningPage = () => {
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedVenue, setSelectedVenue] = useState(null);
+  const [bookingStatus, setBookingStatus] = useState('idle'); // idle, booking, success
+  const [bookingData, setBookingData] = useState({
+    guest_name: '',
+    guest_email: '',
+    guest_phone: '',
+    party_size: 2,
+    reservation_date: '',
+    reservation_time: '',
+    notes: ''
+  });
 
   const fallbackVenues = [
     {
@@ -47,6 +60,38 @@ const DiningPage = () => {
     };
     fetchVenues();
   }, []);
+
+  const handleBooking = async (e) => {
+    e.preventDefault();
+    setBookingStatus('booking');
+    
+    const { error } = await supabase
+      .from('DiningReservation')
+      .insert([{
+        venue_name: selectedVenue.name,
+        ...bookingData
+      }]);
+
+    if (!error) {
+      setBookingStatus('success');
+      setTimeout(() => {
+        setShowBookingModal(false);
+        setBookingStatus('idle');
+        setBookingData({
+          guest_name: '',
+          guest_email: '',
+          guest_phone: '',
+          party_size: 2,
+          reservation_date: '',
+          reservation_time: '',
+          notes: ''
+        });
+      }, 2000);
+    } else {
+      alert("Error: " + error.message);
+      setBookingStatus('idle');
+    }
+  };
 
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
@@ -177,8 +222,16 @@ const DiningPage = () => {
                     </div>
 
                     <div className="flex items-center gap-10 pt-6">
-                       <GoldButton onClick={() => navigate('/search')} className="px-16 py-7 shadow-gold text-[10px]">RESERVE A TABLE</GoldButton>
-                       <button onClick={() => navigate('/search')} className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group">
+                       <GoldButton 
+                         onClick={() => {
+                           setSelectedVenue(venue);
+                           setShowBookingModal(true);
+                         }} 
+                         className="px-16 py-7 shadow-gold text-[10px]"
+                       >
+                         RESERVE A TABLE
+                       </GoldButton>
+                       <button className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group">
                           DISCOVERY MENU <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                        </button>
                     </div>
@@ -227,6 +280,90 @@ const DiningPage = () => {
             </div>
          </div>
       </section>
+
+      {/* Booking Modal */}
+      <AnimatePresence>
+        {showBookingModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowBookingModal(false)}
+              className="absolute inset-0 bg-luxury-black/80 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[3rem] overflow-hidden shadow-2xl"
+            >
+              <div className="p-12 md:p-16">
+                <div className="flex justify-between items-start mb-12">
+                  <div>
+                    <h3 className="text-3xl font-serif font-bold text-luxury-black mb-2">Reserve at {selectedVenue?.name}</h3>
+                    <p className="text-[10px] uppercase font-bold text-luxury-gold tracking-[0.3em]">Epicurean Reservation</p>
+                  </div>
+                  <button onClick={() => setShowBookingModal(false)} className="p-4 rounded-full bg-gray-50 text-gray-400 hover:text-luxury-black transition-colors">
+                    <X className="w-6 h-6" />
+                  </button>
+                </div>
+
+                {bookingStatus === 'success' ? (
+                  <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="py-20 text-center space-y-6"
+                  >
+                    <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500">
+                      <Star className="w-10 h-10 fill-current" />
+                    </div>
+                    <h4 className="text-2xl font-serif font-bold">Table Confirmed</h4>
+                    <p className="text-gray-400">Your table has been orchestrated. We await your arrival.</p>
+                  </motion.div>
+                ) : (
+                  <form onSubmit={handleBooking} className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Full Name</label>
+                        <input required type="text" value={bookingData.guest_name} onChange={e => setBookingData({...bookingData, guest_name: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" placeholder="Enter your name" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Phone Number</label>
+                        <input required type="tel" value={bookingData.guest_phone} onChange={e => setBookingData({...bookingData, guest_phone: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" placeholder="+213..." />
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Date</label>
+                        <input required type="date" value={bookingData.reservation_date} onChange={e => setBookingData({...bookingData, reservation_date: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Time</label>
+                        <input required type="time" value={bookingData.reservation_time} onChange={e => setBookingData({...bookingData, reservation_time: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Guests</label>
+                        <input required type="number" min="1" max="20" value={bookingData.party_size} onChange={e => setBookingData({...bookingData, party_size: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Special Requirements</label>
+                      <textarea rows="3" value={bookingData.notes} onChange={e => setBookingData({...bookingData, notes: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all resize-none" placeholder="Allergies, seating preference..."></textarea>
+                    </div>
+
+                    <GoldButton type="submit" className="w-full py-6 shadow-gold" disabled={bookingStatus === 'booking'}>
+                      {bookingStatus === 'booking' ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'CONFIRM RESERVATION'}
+                    </GoldButton>
+                  </form>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </BrochureLayout>
   );
 };
