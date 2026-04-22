@@ -64,7 +64,7 @@ const ReservationsSystem = () => {
       });
       fetchReservations();
     } else {
-      alert("Error: " + error.message);
+      console.error("Error creating booking:", error.message);
       setLoading(false);
     }
   };
@@ -233,7 +233,13 @@ const ReservationsSystem = () => {
                <p className="text-xs opacity-80 leading-relaxed mb-6">
                   Based on historical data for Setif region, we expect <span className="font-bold underline">100% occupancy</span> during next week&apos;s festival season.
                </p>
-               <GoldButton outline className="w-full border-white/40 text-white hover:bg-white hover:text-luxury-gold">ANALYZE TRENDS</GoldButton>
+               <GoldButton 
+                 onClick={() => console.log("Analyze Trends clicked")}
+                 outline 
+                 className="w-full border-white/40 text-white hover:bg-white hover:text-luxury-gold"
+               >
+                 ANALYZE TRENDS
+               </GoldButton>
             </GlassCard>
          </div>
       </div>

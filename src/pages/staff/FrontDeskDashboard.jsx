@@ -18,7 +18,7 @@ const FrontDeskDashboard = () => {
     fetchReservations();
     
     const subscription = supabase
-      .channel('frontdesk_updates')
+      .channel('public:Reservation')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'Reservation' }, () => fetchReservations())
       .subscribe();
 
@@ -64,8 +64,8 @@ const FrontDeskDashboard = () => {
           <p className="text-gray-400 font-medium tracking-wide text-sm font-semibold uppercase tracking-[0.2em]">Guest Experience & Arrival Management</p>
         </div>
         <div className="flex gap-4">
-           <GoldButton outline className="text-[10px] py-3 px-6">WALK-IN BOOKING</GoldButton>
-           <GoldButton className="text-[10px] py-3 px-10 shadow-lg flex items-center gap-2">
+           <GoldButton outline onClick={() => navigate('/search')} className="text-[10px] py-3 px-6">WALK-IN BOOKING</GoldButton>
+           <GoldButton onClick={() => navigate('/admin/reservations')} className="text-[10px] py-3 px-10 shadow-lg flex items-center gap-2">
               <Plus className="w-4 h-4" /> CREATE RESERVATION
            </GoldButton>
         </div>
@@ -180,7 +180,10 @@ const FrontDeskDashboard = () => {
                         </div>
                      ))}
                   </div>
-                  <GoldButton className="w-full py-3 text-[10px] mt-8 bg-transparent border-2 border-luxury-gold text-luxury-gold hover:bg-luxury-gold hover:text-white transition-all">
+                  <GoldButton 
+                    onClick={() => navigate('/admin/reservations')}
+                    className="w-full py-3 text-[10px] mt-8 bg-transparent border-2 border-luxury-gold text-luxury-gold hover:bg-luxury-gold hover:text-white transition-all"
+                  >
                      VIEW LOGBOOK
                   </GoldButton>
                </div>

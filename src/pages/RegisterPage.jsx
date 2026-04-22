@@ -45,9 +45,10 @@ const RegisterPage = () => {
 
     setLoading(true);
     try {
+      const cleanEmail = formData.email.trim().toLowerCase();
       // 1. Sign up with Supabase Auth
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: formData.email,
+        email: cleanEmail,
         password: formData.password,
         options: {
           data: {
@@ -58,6 +59,14 @@ const RegisterPage = () => {
       });
 
       if (authError) throw authError;
+
+      const { error: profileError } = await supabase.from('Profile').insert([{
+        id: authData.user?.id,
+        email: formData.email,
+        full_name: `${formData.firstName} ${formData.lastName}`,
+        role: identity
+      }]);
+      if (profileError) throw profileError;
 
       if (identity === 'staff') {
         // 2a. Insert into Staff table as Pending Approval

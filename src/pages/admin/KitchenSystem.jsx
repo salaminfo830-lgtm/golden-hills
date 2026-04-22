@@ -209,7 +209,12 @@ const KitchenSystem = () => {
                <p className="text-xs opacity-80 leading-relaxed mb-6">
                   Next standard health inspection scheduled for <span className="font-bold underline">Friday, Oct 23rd</span>. Please ensure logs are up-to-date.
                </p>
-               <button className="text-[10px] font-bold uppercase underline">View Checklist</button>
+                <button 
+                  onClick={() => console.log("Hygiene Checklist clicked")}
+                  className="text-[10px] font-bold uppercase underline"
+                >
+                  View Checklist
+                </button>
             </GlassCard>
          </div>
       </div>

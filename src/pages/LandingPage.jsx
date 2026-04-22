@@ -19,6 +19,11 @@ const LandingPage = () => {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchParams, setSearchParams] = useState({
+    checkIn: new Date().toISOString().split('T')[0],
+    checkOut: new Date(Date.now() + 86400000).toISOString().split('T')[0],
+    guests: '2'
+  });
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -79,12 +84,12 @@ const LandingPage = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
           >
-            <div className="flex items-center justify-center gap-6 mb-12">
-              <div className="h-px w-20 bg-luxury-gold/50" />
-              <h4 className="text-luxury-gold font-bold text-xs md:text-sm tracking-[0.8em] uppercase">Setif&apos;s Gilded Masterpiece</h4>
-              <div className="h-px w-20 bg-luxury-gold/50" />
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-12">
+              <div className="hidden sm:block h-px w-20 bg-luxury-gold/50" />
+              <h4 className="text-luxury-gold font-bold text-[10px] md:text-sm tracking-[0.4em] md:tracking-[0.8em] uppercase text-center">Setif&apos;s Gilded Masterpiece</h4>
+              <div className="hidden sm:block h-px w-20 bg-luxury-gold/50" />
             </div>
-            <h1 className="text-7xl md:text-9xl lg:text-[11rem] font-serif font-bold text-white tracking-tighter leading-[0.8] mb-12">
+            <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-serif font-bold text-white tracking-tighter leading-[1] sm:leading-[0.8] mb-12">
                <span className="text-mask">GOLDEN</span> <br /> 
                <span className="italic font-normal text-luxury-gold/90 drop-shadow-2xl">Hills</span>
             </h1>
@@ -122,29 +127,56 @@ const LandingPage = () => {
            transition={{ delay: 1, duration: 1 }}
          >
            <GlassCard className="bg-white p-4 rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)] flex items-center border-luxury-gold/10">
-              <div className="flex-1 grid grid-cols-4 gap-4">
-                 {[
-                   { icon: <Calendar />, label: 'Check-In', value: 'Select Date' },
-                   { icon: <Calendar />, label: 'Check-Out', value: 'Select Date' },
-                   { icon: <Users />, label: 'Guests', value: '2 Adults, 0 Children' },
-                   { icon: <MapPin />, label: 'Selection', value: 'Hillside Premier' },
-                 ].map((item, i) => (
-                   <div key={i} className="group px-10 py-7 rounded-2xl hover:bg-luxury-cream/40 transition-all cursor-pointer border-r border-gray-50 last:border-0">
-                      <div className="flex items-center gap-5">
-                         <div className="text-luxury-gold opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all">{item.icon}</div>
-                         <div className="flex flex-col">
-                            <span className="text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1">{item.label}</span>
-                            <span className="font-bold text-luxury-black text-[13px]">{item.value}</span>
-                         </div>
-                      </div>
-                   </div>
-                 ))}
+              <div className="flex-1 grid grid-cols-3 gap-4">
+                 <div className="group px-10 py-7 rounded-2xl hover:bg-luxury-cream/40 transition-all cursor-pointer border-r border-gray-50 relative">
+                    <div className="flex items-center gap-5">
+                       <div className="text-luxury-gold opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all"><Calendar /></div>
+                       <div className="flex flex-col flex-1">
+                          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1">Check-In</span>
+                          <input 
+                            type="date" 
+                            value={searchParams.checkIn}
+                            onChange={(e) => setSearchParams({...searchParams, checkIn: e.target.value})}
+                            className="font-bold text-luxury-black text-[13px] bg-transparent outline-none cursor-pointer" 
+                          />
+                       </div>
+                    </div>
+                 </div>
+                 <div className="group px-10 py-7 rounded-2xl hover:bg-luxury-cream/40 transition-all cursor-pointer border-r border-gray-50 relative">
+                    <div className="flex items-center gap-5">
+                       <div className="text-luxury-gold opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all"><Calendar /></div>
+                       <div className="flex flex-col flex-1">
+                          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1">Check-Out</span>
+                          <input 
+                            type="date" 
+                            value={searchParams.checkOut}
+                            onChange={(e) => setSearchParams({...searchParams, checkOut: e.target.value})}
+                            className="font-bold text-luxury-black text-[13px] bg-transparent outline-none cursor-pointer" 
+                          />
+                       </div>
+                    </div>
+                 </div>
+                 <div className="group px-10 py-7 rounded-2xl hover:bg-luxury-cream/40 transition-all cursor-pointer relative">
+                    <div className="flex items-center gap-5">
+                       <div className="text-luxury-gold opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all"><Users /></div>
+                       <div className="flex flex-col flex-1">
+                          <span className="text-[9px] font-bold uppercase text-gray-400 tracking-widest mb-1">Guests</span>
+                          <input 
+                            type="number" 
+                            min="1"
+                            value={searchParams.guests}
+                            onChange={(e) => setSearchParams({...searchParams, guests: e.target.value})}
+                            className="font-bold text-luxury-black text-[13px] bg-transparent outline-none cursor-pointer" 
+                          />
+                       </div>
+                    </div>
+                 </div>
               </div>
               <button 
-                onClick={() => navigate('/search')}
-                className="h-[80px] w-[140px] gold-gradient rounded-xl flex items-center justify-center text-white shadow-gold hover:brightness-110 transition-all ml-4"
+                onClick={() => navigate(`/search?checkIn=${searchParams.checkIn}&checkOut=${searchParams.checkOut}&guests=${searchParams.guests}`)}
+                className="h-[80px] w-[200px] gold-gradient rounded-xl flex items-center justify-center text-white shadow-gold hover:brightness-110 transition-all ml-4"
               >
-                 <span className="font-bold tracking-widest text-[10px]">FIND ROOM</span>
+                 <span className="font-bold tracking-[0.4em] text-[10px] uppercase">Initialize Discovery</span>
               </button>
            </GlassCard>
          </motion.div>

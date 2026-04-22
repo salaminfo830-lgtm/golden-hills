@@ -16,19 +16,43 @@ const FinanceSystem = () => {
   const [newEntry, setNewEntry] = useState({
     label: '', value: 0, type: 'Revenue', category: 'Room Booking'
   });
+  const [paymentRequests, setPaymentRequests] = useState([]);
+  const [bankAccounts, setBankAccounts] = useState([]);
+  const [activeTab, setActiveTab] = useState('Ledger'); // Ledger, Payments, Accounts
 
   useEffect(() => {
     fetchFinanceData();
+    fetchPaymentRequests();
+    fetchBankAccounts();
 
-    const subscription = supabase
+    const transactionsSub = supabase
       .channel('public:FinanceTransaction')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'FinanceTransaction' }, () => fetchFinanceData())
       .subscribe();
 
+    const paymentsSub = supabase
+      .channel('public:PaymentRequest')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'PaymentRequest' }, () => fetchPaymentRequests())
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(subscription);
+      supabase.removeChannel(transactionsSub);
+      supabase.removeChannel(paymentsSub);
     };
   }, []);
+
+  const fetchPaymentRequests = async () => {
+    const { data } = await supabase
+      .from('PaymentRequest')
+      .select('*, reservation:Reservation(*)')
+      .order('created_at', { ascending: false });
+    if (data) setPaymentRequests(data);
+  };
+
+  const fetchBankAccounts = async () => {
+    const { data } = await supabase.from('BankAccount').select('*');
+    if (data) setBankAccounts(data);
+  };
 
   const fetchFinanceData = async () => {
     const { data: transactions, error } = await supabase
@@ -72,6 +96,36 @@ const FinanceSystem = () => {
     }
   };
 
+  const handleVerifyPayment = async (requestId, reservationId, amount) => {
+    const { error } = await supabase.from('PaymentRequest').update({ 
+      status: 'Verified', 
+      verified_at: new Date().toISOString() 
+    }).eq('id', requestId);
+
+    if (!error) {
+      await supabase.from('Reservation').update({ 
+        payment_status: 'Paid',
+        status: 'Confirmed'
+      }).eq('id', reservationId);
+
+      await supabase.from('FinanceTransaction').insert([{
+        label: `Bank Transfer Payment - Res #${reservationId.slice(0, 5)}`,
+        value: amount,
+        type: 'Revenue',
+        category: 'Room Booking',
+        is_up: true
+      }]);
+
+      fetchPaymentRequests();
+      fetchFinanceData();
+    }
+  };
+
+  const handleRejectPayment = async (id) => {
+    await supabase.from('PaymentRequest').update({ status: 'Rejected' }).eq('id', id);
+    fetchPaymentRequests();
+  };
+
   return (
     <div className="space-y-8 font-sans relative">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
@@ -80,7 +134,17 @@ const FinanceSystem = () => {
           <p className="text-gray-400 font-medium tracking-wide">Real-time revenue & expense orchestration</p>
         </div>
         <div className="flex gap-4 w-full md:w-auto">
-           <GoldButton outline className="flex-1 md:flex-none py-3 px-6 text-[10px] cursor-not-allowed opacity-50">FINANCIAL REPORT</GoldButton>
+           <div className="flex gap-2 bg-gray-100 p-1 rounded-xl mr-4">
+              {['Ledger', 'Payments', 'Accounts'].map(tab => (
+                 <button 
+                   key={tab}
+                   onClick={() => setActiveTab(tab)}
+                   className={`px-4 py-2 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all ${activeTab === tab ? 'bg-white text-luxury-gold shadow-sm' : 'text-gray-400'}`}
+                 >
+                   {tab}
+                 </button>
+              ))}
+           </div>
            <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
              <Plus className="w-4 h-4" /> ADD ENTRY
            </GoldButton>
@@ -119,74 +183,137 @@ const FinanceSystem = () => {
                </div>
                <span className="text-[10px] font-bold text-white/60 uppercase tracking-widest">Growth Plan</span>
             </div>
-            <p className="text-[10px] uppercase font-bold text-white/80 tracking-[0.2em] mb-1">Investment Reserve</p>
-            <h3 className="text-3xl font-bold font-serif">2.4M DZD</h3>
+            <p className="text-[10px] uppercase font-bold text-white/80 tracking-[0.2em] mb-1">Pending Transfers</p>
+            <h3 className="text-3xl font-bold font-serif">{paymentRequests.filter(r => r.status === 'Pending').length} Req</h3>
          </GlassCard>
       </div>
 
-      <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden">
-         <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-            <h3 className="font-bold font-serif text-lg flex items-center gap-2">
-               <Calendar className="w-5 h-5 text-luxury-gold" /> Recent Ledger Entries
-            </h3>
-            {loading && <Loader2 className="w-4 h-4 text-luxury-gold animate-spin" />}
-         </div>
-         <div className="divide-y divide-gray-50 overflow-x-auto">
-            <table className="w-full text-left min-w-[700px]">
-               <thead className="bg-gray-50/50">
-                  <tr>
-                     <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Transaction</th>
-                     <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Category</th>
-                     <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Date</th>
-                     <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-right">Value</th>
-                     <th className="w-16"></th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <AnimatePresence mode="popLayout">
-                    {data.length === 0 ? (
-                      <tr>
-                        <td colSpan="5" className="py-20 text-center text-gray-400 font-medium italic">
-                           Waiting for financial transmissions...
-                        </td>
-                      </tr>
-                    ) : data.map((item) => (
-                      <motion.tr 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        key={item.id} 
-                        className="hover:bg-gray-50/50 transition-colors group"
-                      >
-                         <td className="px-8 py-6">
-                            <div className="flex items-center gap-4">
-                               <div className={`p-2 rounded-xl ${item.is_up ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
-                                  {item.is_up ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
-                               </div>
-                               <span className="font-bold text-gray-800">{item.label}</span>
-                            </div>
-                         </td>
-                         <td className="px-8 py-6">
-                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.category}</span>
-                         </td>
-                         <td className="px-8 py-6 text-xs text-gray-500 font-medium tracking-wide">
-                            {new Date(item.date).toLocaleDateString()} {new Date(item.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
-                         </td>
-                         <td className={`px-8 py-6 text-right font-serif font-bold ${item.is_up ? 'text-green-600' : 'text-red-500'}`}>
-                            {item.is_up ? '+' : '-'}{item.value.toLocaleString()} DZD
-                         </td>
-                         <td className="px-4 py-6 text-center">
-                            <button onClick={() => handleDeleteEntry(item.id)} className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                               <Trash2 className="w-4 h-4" />
-                            </button>
-                         </td>
-                      </motion.tr>
-                    ))}
-                  </AnimatePresence>
-               </tbody>
-            </table>
-         </div>
-      </GlassCard>
+      {activeTab === 'Ledger' && (
+        <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden">
+           <div className="p-8 border-b border-gray-50 flex justify-between items-center">
+              <h3 className="font-bold font-serif text-lg flex items-center gap-2">
+                 <Calendar className="w-5 h-5 text-luxury-gold" /> Recent Ledger Entries
+              </h3>
+              {loading && <Loader2 className="w-4 h-4 text-luxury-gold animate-spin" />}
+           </div>
+           <div className="divide-y divide-gray-50 overflow-x-auto">
+              <table className="w-full text-left min-w-[700px]">
+                 <thead className="bg-gray-50/50">
+                    <tr>
+                       <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Transaction</th>
+                       <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Category</th>
+                       <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400">Date</th>
+                       <th className="px-8 py-4 text-[10px] font-bold uppercase tracking-widest text-gray-400 text-right">Value</th>
+                       <th className="w-16"></th>
+                    </tr>
+                 </thead>
+                 <tbody>
+                    <AnimatePresence mode="popLayout">
+                      {data.length === 0 ? (
+                        <tr>
+                          <td colSpan="5" className="py-20 text-center text-gray-400 font-medium italic">
+                             Waiting for financial transmissions...
+                          </td>
+                        </tr>
+                      ) : data.map((item) => (
+                        <motion.tr 
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          key={item.id} 
+                          className="hover:bg-gray-50/50 transition-colors group"
+                        >
+                           <td className="px-8 py-6">
+                              <div className="flex items-center gap-4">
+                                 <div className={`p-2 rounded-xl ${item.is_up ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
+                                    {item.is_up ? <TrendingUp className="w-4 h-4" /> : <TrendingDown className="w-4 h-4" />}
+                                 </div>
+                                 <span className="font-bold text-gray-800">{item.label}</span>
+                              </div>
+                           </td>
+                           <td className="px-8 py-6">
+                              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{item.category}</span>
+                           </td>
+                           <td className="px-8 py-6 text-xs text-gray-500 font-medium tracking-wide">
+                              {new Date(item.date).toLocaleDateString()} {new Date(item.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                           </td>
+                           <td className={`px-8 py-6 text-right font-serif font-bold ${item.is_up ? 'text-green-600' : 'text-red-500'}`}>
+                              {item.is_up ? '+' : '-'}{item.value.toLocaleString()} DZD
+                           </td>
+                           <td className="px-4 py-6 text-center">
+                              <button onClick={() => handleDeleteEntry(item.id)} className="text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                 <Trash2 className="w-4 h-4" />
+                              </button>
+                           </td>
+                        </motion.tr>
+                      ))}
+                    </AnimatePresence>
+                 </tbody>
+              </table>
+           </div>
+        </GlassCard>
+      )}
+
+      {activeTab === 'Payments' && (
+        <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden">
+           <div className="p-8 border-b border-gray-50">
+              <h3 className="font-bold font-serif text-lg">Bank Transfer Verification</h3>
+           </div>
+           <div className="divide-y divide-gray-50">
+              {paymentRequests.length === 0 ? (
+                <div className="p-20 text-center text-gray-400">No pending verification requests.</div>
+              ) : paymentRequests.map(req => (
+                <div key={req.id} className="p-8 flex items-center justify-between hover:bg-gray-50/50 transition-colors">
+                   <div className="flex gap-6 items-center">
+                      <div className="w-12 h-12 bg-luxury-gold/10 rounded-2xl flex items-center justify-center text-luxury-gold">
+                         <CreditCard className="w-6 h-6" />
+                      </div>
+                      <div>
+                         <h4 className="font-bold">{req.reservation?.guest_name || 'Guest'}</h4>
+                         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount: {req.amount.toLocaleString()} DZD</p>
+                      </div>
+                   </div>
+                   <div className="flex gap-3">
+                      {req.status === 'Pending' ? (
+                         <>
+                            <GoldButton onClick={() => handleVerifyPayment(req.id, req.reservation_id, req.amount)} className="px-6 py-2 text-[10px]">VERIFY</GoldButton>
+                            <button onClick={() => handleRejectPayment(req.id)} className="px-6 py-2 border border-gray-200 rounded-xl text-[10px] font-bold text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">REJECT</button>
+                         </>
+                      ) : (
+                         <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${req.status === 'Verified' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                            {req.status}
+                         </span>
+                      )}
+                   </div>
+                </div>
+              ))}
+           </div>
+        </GlassCard>
+      )}
+
+      {activeTab === 'Accounts' && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+           {bankAccounts.map(acc => (
+              <GlassCard key={acc.id} className="bg-white border-gray-100 p-8 space-y-6">
+                 <div className="flex justify-between items-start">
+                    <div>
+                       <h4 className="font-bold text-lg">{acc.bank_name}</h4>
+                       <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{acc.account_holder}</p>
+                    </div>
+                    <div className={`w-3 h-3 rounded-full ${acc.is_active ? 'bg-green-500' : 'bg-gray-300'}`} />
+                 </div>
+                 <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">IBAN / RIB</p>
+                    <p className="text-sm font-mono font-bold text-luxury-gold break-all">{acc.iban}</p>
+                 </div>
+              </GlassCard>
+           ))}
+           <GlassCard className="bg-gray-50 border-dashed border-2 border-gray-200 p-8 flex flex-col items-center justify-center text-gray-400 cursor-not-allowed">
+              <Plus className="w-8 h-8 mb-2 opacity-20" />
+              <p className="text-[10px] font-bold uppercase tracking-widest">Add Business Account</p>
+           </GlassCard>
+        </div>
+      )}
 
       {showAddModal && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">

@@ -19,8 +19,9 @@ const LoginPage = () => {
     setLoading(true);
     setError(null);
 
+    const cleanEmail = email.trim().toLowerCase();
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-      email,
+      email: cleanEmail,
       password,
     });
 
@@ -69,6 +70,23 @@ const LoginPage = () => {
 
     // 3. Default to Guest / Home
     navigate(from || '/');
+  };
+
+  const handleResetPassword = async () => {
+    if (!email) {
+      setError("Please enter your email address to recover your key.");
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
+    });
+    if (error) {
+      setError(error.message);
+    } else {
+      setError("Recovery protocol initiated. Check your email.");
+    }
+    setLoading(false);
   };
 
   return (
@@ -139,7 +157,13 @@ const LoginPage = () => {
               <div className="space-y-2">
                 <div className="flex justify-between items-center px-2">
                   <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em]">Access Key</label>
-                  <button type="button" className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest hover:underline transition-all">Recover Key</button>
+                  <button 
+                    type="button" 
+                    onClick={handleResetPassword}
+                    className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest hover:underline transition-all"
+                  >
+                    Recover Key
+                  </button>
                 </div>
                 <div className="relative group">
                   <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />

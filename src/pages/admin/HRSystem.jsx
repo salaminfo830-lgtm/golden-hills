@@ -26,7 +26,7 @@ const HRSystem = () => {
     fetchStaff();
 
     const subscription = supabase
-      .channel('hr_updates')
+      .channel('public:Staff')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'Staff' }, () => fetchStaff())
       .subscribe();
 
@@ -60,7 +60,7 @@ const HRSystem = () => {
       setNewStaff({ name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: '' });
       fetchStaff();
     } else {
-      alert("Error: " + error.message);
+      console.error("Error adding staff:", error.message);
       setLoading(false);
     }
   };

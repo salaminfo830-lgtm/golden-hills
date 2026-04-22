@@ -18,7 +18,7 @@ const HousekeepingDashboard = () => {
     fetchRooms();
     
     const subscription = supabase
-      .channel('housekeeping_updates')
+      .channel('public:Room')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'Room' }, () => fetchRooms())
       .subscribe();
 
@@ -53,6 +53,21 @@ const HousekeepingDashboard = () => {
     
     if (!error) {
       fetchRooms();
+    } else {
+      console.error("Error updating room status:", error.message);
+    }
+  };
+
+  const handleRequestSupplies = async () => {
+    const { error } = await supabase.from('Notification').insert([{
+      title: 'Supplies Requested',
+      message: 'Housekeeping requested additional cleaning supplies.',
+      type: 'Alert',
+      is_read: false
+    }]);
+    if (!error) {
+       // Ideally show a toast
+       console.log("Supplies requested");
     }
   };
 
@@ -181,10 +196,20 @@ const HousekeepingDashboard = () => {
 
       <div className="pt-10 border-t border-gray-100 flex justify-between items-center text-gray-400">
          <p className="text-xs font-bold uppercase tracking-widest">Golden Hills • Excellence in Every Detail</p>
-         <div className="flex gap-6">
-            <button className="text-[10px] font-bold uppercase tracking-widest hover:text-luxury-black transition-colors">Request Supplies</button>
-            <button className="text-[10px] font-bold uppercase tracking-widest hover:text-luxury-black transition-colors">View Schedule</button>
-         </div>
+          <div className="flex gap-6">
+            <button 
+              onClick={handleRequestSupplies}
+              className="text-[10px] font-bold uppercase tracking-widest hover:text-luxury-gold transition-colors"
+            >
+              Request Supplies
+            </button>
+            <button 
+              onClick={() => console.log("View Schedule clicked")}
+              className="text-[10px] font-bold uppercase tracking-widest hover:text-luxury-gold transition-colors"
+            >
+              View Schedule
+            </button>
+          </div>
       </div>
     </div>
   );

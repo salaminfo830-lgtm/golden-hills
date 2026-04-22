@@ -37,16 +37,51 @@ const RoomDetails = () => {
   };
 
   useEffect(() => {
+    const fallbackRooms = [
+      {
+        id: 'fallback-1',
+        type: 'Classic Room',
+        price: 25000,
+        capacity: 2,
+        description: 'Experience a sanctuary where timeless Algerian elegance meets modern 5-star refinement.',
+        image_url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
+        amenities: []
+      },
+      {
+        id: 'fallback-2',
+        type: 'Junior Suite',
+        price: 45000,
+        capacity: 2,
+        description: 'Expansive views of the high plateau with dedicated living spaces and premium amenities.',
+        image_url: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=2070',
+        amenities: []
+      },
+      {
+        id: 'fallback-3',
+        type: 'Royal Suite',
+        price: 120000,
+        capacity: 4,
+        description: 'The pinnacle of luxury in Setif. A sprawling residence offering absolute privacy and 24/7 bespoke service.',
+        image_url: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2070',
+        amenities: []
+      }
+    ];
+
     const fetchRoom = async () => {
-      const { data, error } = await supabase
+      let { data, error } = await supabase
         .from('Room')
         .select('*, amenities:Amenity(*)')
         .eq('id', id)
         .single();
       
-      if (error) {
-        navigate('/');
-        return;
+      if (error || !data) {
+        const fallback = fallbackRooms.find(r => r.id === id);
+        if (fallback) {
+           data = fallback;
+        } else {
+           navigate('/');
+           return;
+        }
       }
 
       const roomData = {

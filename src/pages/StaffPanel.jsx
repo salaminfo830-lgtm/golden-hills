@@ -10,6 +10,8 @@ import FrontDeskDashboard from './staff/FrontDeskDashboard';
 import RoomsSystem from './admin/RoomsSystem';
 import KitchenSystem from './admin/KitchenSystem';
 import ReservationsSystem from './admin/ReservationsSystem';
+import SecuritySystem from './admin/SecuritySystem';
+import FinanceSystem from './admin/FinanceSystem';
 
 const ProtectedModule = ({ id, children }) => {
    const [permissions, setPermissions] = useState([]);
@@ -84,6 +86,10 @@ const StaffPanel = () => {
         return <FrontDeskDashboard />;
       case 'Kitchen':
         return <KitchenSystem userType="Employee" />;
+      case 'Security':
+        return <SecuritySystem userType="Employee" />;
+      case 'Finance':
+        return <FinanceSystem userType="Employee" />;
       default:
         return <StaffDashboard staff={staffInfo} />;
     }

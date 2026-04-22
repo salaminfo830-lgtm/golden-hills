@@ -20,6 +20,7 @@ const SearchResults = () => {
   const [filters, setFilters] = useState({
     type: 'All',
     priceRange: [0, 200000],
+    sortBy: 'price-low'
   });
 
   const checkIn = searchParams.get('checkIn') || 'Today';
@@ -86,11 +87,19 @@ const SearchResults = () => {
     setLoading(false);
   };
 
-  const filteredRooms = rooms.filter(room => {
-    const matchesType = filters.type === 'All' || room.type === filters.type;
-    const matchesPrice = room.price >= filters.priceRange[0] && room.price <= filters.priceRange[1];
-    return matchesType && matchesPrice;
-  });
+  const filteredRooms = rooms
+    .filter(room => {
+      const matchesType = filters.type === 'All' || room.type === filters.type;
+      const matchesPrice = room.price <= filters.priceRange[1];
+      const matchesCapacity = (room.capacity || 2) >= parseInt(guests);
+      return matchesType && matchesPrice && matchesCapacity;
+    })
+    .sort((a, b) => {
+      if (filters.sortBy === 'price-low') return a.price - b.price;
+      if (filters.sortBy === 'price-high') return b.price - a.price;
+      if (filters.sortBy === 'capacity') return (b.capacity || 0) - (a.capacity || 0);
+      return 0;
+    });
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(price);
@@ -182,7 +191,12 @@ const SearchResults = () => {
                       <h4 className="text-2xl font-serif font-bold mb-2">Gilded Privilege</h4>
                       <p className="text-white/40 text-xs leading-relaxed">Members enjoy 15% lower rates and complimentary late check-out.</p>
                     </div>
-                    <button className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-luxury-gold hover:border-luxury-gold transition-all">JOIN MEMBERSHIP</button>
+                    <button 
+                      onClick={() => navigate('/register')}
+                      className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-luxury-gold hover:border-luxury-gold transition-all"
+                    >
+                      JOIN MEMBERSHIP
+                    </button>
                   </div>
                 </GlassCard>
               </div>
@@ -197,7 +211,16 @@ const SearchResults = () => {
                 <p className="text-gray-400 font-medium text-lg">Found {filteredRooms.length} available sanctuaries for your dates.</p>
               </div>
               <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 bg-white px-8 py-4 rounded-2xl border border-gray-100 shadow-sm">
-                Sort by <ChevronRight className="w-4 h-4 text-luxury-gold" /> <span className="text-luxury-black cursor-pointer hover:text-luxury-gold transition-colors">Lowest Price</span>
+                Sort by <ChevronRight className="w-4 h-4 text-luxury-gold" /> 
+                <select 
+                  value={filters.sortBy}
+                  onChange={(e) => setFilters({...filters, sortBy: e.target.value})}
+                  className="text-luxury-black cursor-pointer hover:text-luxury-gold transition-colors bg-transparent outline-none appearance-none font-bold"
+                >
+                  <option value="price-low">Lowest Price</option>
+                  <option value="price-high">Highest Price</option>
+                  <option value="capacity">Capacity</option>
+                </select>
               </div>
             </div>
 
@@ -206,14 +229,15 @@ const SearchResults = () => {
                 [1, 2, 3].map(i => (
                   <div key={i} className="h-[450px] bg-white rounded-[3rem] animate-pulse shadow-sm border border-gray-100" />
                 ))
-              ) : filteredRooms.map((room, i) => (
-                <motion.div
-                  layout
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  key={room.id}
-                >
+              ) : (
+                filteredRooms.map((room, i) => (
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1 }}
+                    key={room.id}
+                  >
                   <GlassCard className="group p-0 bg-white border-gray-100 overflow-hidden hover:shadow-[0_50px_100px_-30px_rgba(0,0,0,0.1)] hover:border-luxury-gold/30 transition-all duration-700 cursor-pointer rounded-[3rem]">
                     <div className="flex flex-col lg:flex-row h-full">
                       <div className="lg:w-[40%] relative overflow-hidden h-[300px] lg:h-auto">
@@ -276,7 +300,8 @@ const SearchResults = () => {
                     </div>
                   </GlassCard>
                 </motion.div>
-              ))}
+              ))
+            )}
               
               {!loading && filteredRooms.length === 0 && (
                 <motion.div 

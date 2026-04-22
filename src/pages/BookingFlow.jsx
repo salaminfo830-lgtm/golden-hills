@@ -22,6 +22,8 @@ const BookingFlow = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [room, setRoom] = useState(null);
+  const [bankAccount, setBankAccount] = useState(null);
+  const [error, setError] = useState(null);
   
   const [formData, setFormData] = useState({
     fullName: '',
@@ -61,7 +63,17 @@ const BookingFlow = () => {
       if (!error) setRoom(data);
       setLoading(false);
     };
+    const fetchBank = async () => {
+      const { data } = await supabase
+        .from('BankAccount')
+        .select('*')
+        .eq('is_active', true)
+        .limit(1)
+        .single();
+      if (data) setBankAccount(data);
+    };
     fetchRoom();
+    fetchBank();
   }, [roomId]);
 
   const handleBooking = async (e) => {
@@ -93,8 +105,7 @@ const BookingFlow = () => {
         guestId = newGuest?.id;
       }
 
-      // 2. Create Reservation
-      const { error: resError } = await supabase.from('Reservation').insert([{
+      const { data: reservation, error: resError } = await supabase.from('Reservation').insert([{
         guest_id: guestId,
         guest_name: formData.fullName,
         room_id: parseInt(roomId),
@@ -103,17 +114,29 @@ const BookingFlow = () => {
         end_date: new Date(checkOutStr).toISOString(),
         guests_count: parseInt(guests),
         nights: nights,
-        total_price: room.price * nights * 1.1, // Including 10% mock tax
+        total_price: room.price * nights * 1.05,
         status: 'Confirmed',
-        source: 'Luxury Web Portal'
-      }]);
+        source: 'Luxury Web Portal',
+        payment_method: formData.paymentMethod === 'bank' ? 'Bank Transfer' : 'Pay at Property',
+        payment_status: 'Unpaid'
+      }]).select().single();
 
       if (resError) throw resError;
+
+      // 3. Create Payment Request if Bank Transfer
+      if (formData.paymentMethod === 'bank') {
+        await supabase.from('PaymentRequest').insert([{
+          reservation_id: reservation.id,
+          guest_id: guestId,
+          amount: room.price * nights * 1.05,
+          status: 'Pending'
+        }]);
+      }
       
       setStep(3);
       window.scrollTo(0, 0);
     } catch (error) {
-      alert("Reservation Protocol Interrupted: " + error.message);
+      setError("Reservation Protocol Interrupted: " + error.message);
     } finally {
       setSubmitting(false);
     }
@@ -236,6 +259,7 @@ const BookingFlow = () => {
                                 className="w-full bg-white border-2 border-gray-100 rounded-[2rem] px-8 py-6 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm resize-none"
                               />
                            </div>
+                           {error && <p className="text-red-500 text-xs font-bold text-center">⚠️ {error}</p>}
                            <GoldButton type="submit" className="w-full py-6 shadow-2xl flex items-center justify-center gap-4 text-xs tracking-[0.2em]">
                               PROCEED TO FINAL REVIEW <ArrowRight className="w-4 h-4" />
                            </GoldButton>
@@ -289,17 +313,17 @@ const BookingFlow = () => {
                                        <p className="text-[10px] text-gray-400 uppercase tracking-widest leading-relaxed">Secure your booking now and settle the balance upon arrival in Setif.</p>
                                     </div>
                                     <div 
-                                      onClick={() => setFormData({...formData, paymentMethod: 'online'})}
-                                      className={`p-8 rounded-[2.5rem] border-2 transition-all cursor-pointer opacity-40 group grayscale hover:grayscale-0 hover:opacity-100 ${formData.paymentMethod === 'online' ? 'bg-luxury-gold/5 border-luxury-gold' : 'bg-white border-gray-100'}`}
+                                      onClick={() => setFormData({...formData, paymentMethod: 'bank'})}
+                                      className={`p-8 rounded-[2.5rem] border-2 transition-all cursor-pointer group ${formData.paymentMethod === 'bank' ? 'bg-luxury-gold/5 border-luxury-gold' : 'bg-white border-gray-100 hover:border-luxury-gold/30'}`}
                                     >
                                        <div className="flex justify-between items-start mb-6">
-                                          <div className="w-12 h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-gray-400">
-                                             <ShieldCheck className="w-6 h-6" />
+                                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${formData.paymentMethod === 'bank' ? 'bg-luxury-gold text-white' : 'bg-gray-50 text-gray-400'}`}>
+                                             <CreditCard className="w-6 h-6" />
                                           </div>
-                                          <div className="px-2 py-1 bg-gray-200 rounded text-[8px] font-bold uppercase tracking-tighter">Coming Soon</div>
+                                          {formData.paymentMethod === 'bank' && <div className="w-5 h-5 rounded-full bg-luxury-gold flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>}
                                        </div>
-                                       <h5 className="font-bold text-gray-400 mb-1">Gilded Online Pay</h5>
-                                       <p className="text-[10px] text-gray-400 uppercase tracking-widest leading-relaxed">Fast-track your check-in with our upcoming secure digital settlement.</p>
+                                       <h5 className="font-bold text-luxury-black mb-1">Bank Transfer</h5>
+                                       <p className="text-[10px] text-gray-400 uppercase tracking-widest leading-relaxed">Transfer directly to our corporate account and upload proof.</p>
                                     </div>
                                  </div>
                               </div>
@@ -309,6 +333,8 @@ const BookingFlow = () => {
                               <Info className="w-6 h-6 text-blue-500 shrink-0" />
                               <p className="text-xs text-blue-600 font-medium leading-relaxed">By confirming, you agree to our 24-hour cancellation policy. No charges will be made to your card for "Pay at Property" selections.</p>
                            </div>
+
+                           {error && <p className="text-red-500 text-xs font-bold text-center">⚠️ {error}</p>}
 
                            <div className="flex gap-6">
                               <button 
@@ -414,24 +440,44 @@ const BookingFlow = () => {
                        <p className="text-gray-400 text-xl font-medium max-w-2xl mx-auto italic">
                           "Welcome to the Golden Hills, {formData.fullName.split(' ')[0]}. Your presence is highly anticipated."
                        </p>
-                    </div>
+                       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-y border-gray-50 relative z-10">
+                          <div className="space-y-2">
+                             <PlaneTakeoff className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
+                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Confirmation Key</p>
+                             <p className="text-xl font-bold font-serif">#GH-{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+                          </div>
+                          <div className="space-y-2">
+                             <Bell className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
+                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Payment Status</p>
+                             <p className="text-sm font-bold">{formData.paymentMethod === 'bank' ? 'Pending Transfer' : 'Pay at Property'}</p>
+                          </div>
+                          <div className="space-y-2">
+                             <ShieldCheck className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
+                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Arrival Support</p>
+                             <p className="text-sm font-bold">24/7 Gilded Concierge</p>
+                          </div>
+                       </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-y border-gray-50 relative z-10">
-                       <div className="space-y-2">
-                          <PlaneTakeoff className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Confirmation Key</p>
-                          <p className="text-xl font-bold font-serif">#GH-{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
-                       </div>
-                       <div className="space-y-2">
-                          <Bell className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Next Steps</p>
-                          <p className="text-sm font-bold">Protocol Email Dispatched</p>
-                       </div>
-                       <div className="space-y-2">
-                          <ShieldCheck className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Arrival Support</p>
-                          <p className="text-sm font-bold">24/7 Gilded Concierge</p>
-                       </div>
+                       {formData.paymentMethod === 'bank' && bankAccount && (
+                         <div className="bg-luxury-gold/5 border border-luxury-gold/20 p-10 rounded-[3rem] text-left space-y-6 relative z-10">
+                            <h4 className="text-xl font-serif font-bold text-luxury-black">Bank Transfer Credentials</h4>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                               <div>
+                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Bank Name</p>
+                                  <p className="text-sm font-bold text-gray-700">{bankAccount.bank_name}</p>
+                               </div>
+                               <div>
+                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Account Holder</p>
+                                  <p className="text-sm font-bold text-gray-700">{bankAccount.account_holder}</p>
+                               </div>
+                               <div className="md:col-span-2">
+                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">IBAN (Official)</p>
+                                  <p className="text-sm font-mono font-bold text-luxury-gold bg-white p-4 rounded-xl border border-luxury-gold/10 break-all">{bankAccount.iban}</p>
+                               </div>
+                            </div>
+                            <p className="text-[10px] text-gray-400 italic">Please upload your transfer proof in the member portal or email it to reserve@goldenhills.dz</p>
+                         </div>
+                       )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
