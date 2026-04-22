@@ -103,6 +103,8 @@ const HRSystem = () => {
       .eq('id', id);
     
     if (!error) {
+       // Also confirm the email in auth.users via RPC
+       await supabase.rpc('confirm_user_email', { target_user_id: id });
        await supabase.from('Profile').update({ role: 'staff' }).eq('id', id);
        fetchStaff();
     }

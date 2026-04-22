@@ -121,7 +121,7 @@ const RegisterPage = () => {
           <p className="text-gray-500 text-lg mb-12 max-w-md mx-auto leading-relaxed">
             {identity === 'guest' 
               ? 'Your account has been successfully created. You can now explore our gilded suites and book your dream stay.' 
-              : 'Your staff credentials have been submitted for administrative review. You will receive an email once your access is approved.'}
+              : 'Your staff credentials have been submitted for administrative review. Your access and email will be activated once your supervisor approves your request.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <GoldButton onClick={() => navigate('/login')} className="px-12 py-5 shadow-xl">LOG IN SECURELY</GoldButton>
