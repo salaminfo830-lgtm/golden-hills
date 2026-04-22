@@ -10,17 +10,48 @@ import GoldButton from '../components/GoldButton';
 
 import Logo from '../components/Logo';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const LandingPage = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 50);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      const { data, error } = await supabase
+        .from('Room')
+        .select('*')
+        .order('price', { ascending: true });
+      
+      if (!error && data) {
+        // Filter to show one room of each type for the landing page
+        const uniqueTypes = [];
+        const displayRooms = data.filter(room => {
+          if (!uniqueTypes.includes(room.type)) {
+            uniqueTypes.push(room.type);
+            return true;
+          }
+          return false;
+        });
+        setRooms(displayRooms);
+      }
+      setLoading(false);
+    };
+    fetchRooms();
+  }, []);
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(price);
+  };
 
   return (
     <div className="min-h-screen bg-luxury-white-warm overflow-x-hidden">
@@ -147,7 +178,10 @@ const LandingPage = () => {
               </div>
             </div>
             <div className="flex items-center">
-              <GoldButton className="px-14 py-5 shadow-2xl hover:scale-105 transition-transform">
+              <GoldButton 
+                className="px-14 py-5 shadow-2xl hover:scale-105 transition-transform"
+                onClick={() => navigate('/search?checkIn=12+Oct&checkOut=18+Oct&guests=2')}
+              >
                 CHECK AVAILABILITY
               </GoldButton>
             </div>
@@ -216,22 +250,22 @@ const LandingPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
-             {[
-               { id: 0, name: 'Royal Gold Suite', price: '45,000 DZD', img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070' },
-               { id: 1, name: 'Heritage Deluxe', price: '32,000 DZD', img: 'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974' },
-               { id: 2, name: 'Presidential Panorama', price: '85,000 DZD', img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070' }
-             ].map((suite, i) => (
+            {loading ? (
+              [1, 2, 3].map((i) => (
+                <div key={i} className="aspect-[3/4] rounded-[2rem] bg-gray-100 animate-pulse" />
+              ))
+            ) : rooms.map((room, i) => (
                <motion.div 
-                 key={i}
+                 key={room.id}
                  whileHover={{ y: -10 }}
                  className="group cursor-pointer"
-                 onClick={() => navigate(`/room/${suite.id}`)}
+                 onClick={() => navigate(`/room/${room.id}`)}
                >
                  <div className="relative aspect-[3/4] rounded-[2rem] overflow-hidden mb-6 shadow-xl border border-white/10 group-hover:shadow-2xl transition-all duration-700">
-                   <img src={suite.img} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-[1.5s]" alt={suite.name} />
+                   <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-[1.5s]" alt={room.type} />
                    <div className="absolute inset-x-0 bottom-0 p-8 pt-20 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end text-white">
-                      <p className="text-luxury-gold font-bold text-xs mb-1 uppercase tracking-widest">Starting from {suite.price}</p>
-                      <h3 className="text-3xl font-elegant font-bold">{suite.name}</h3>
+                      <p className="text-luxury-gold font-bold text-xs mb-1 uppercase tracking-widest">Starting from {formatPrice(room.price)}</p>
+                      <h3 className="text-3xl font-elegant font-bold">{room.type}</h3>
                    </div>
                  </div>
                  <div className="flex justify-between items-center px-2">
@@ -239,7 +273,7 @@ const LandingPage = () => {
                      <span className="flex items-center gap-1"><Users className="w-4 h-4" /> 2 Guests</span>
                      <span className="flex items-center gap-1"><Wind className="w-4 h-4" /> AC</span>
                    </div>
-                   <Link to={`/room/${suite.id}`} className="text-luxury-gold font-bold flex items-center gap-1 hover:gap-2 transition-all">
+                   <Link to={`/room/${room.id}`} className="text-luxury-gold font-bold flex items-center gap-1 hover:gap-2 transition-all">
                      View Details <ChevronRight className="w-4 h-4" />
                    </Link>
                  </div>

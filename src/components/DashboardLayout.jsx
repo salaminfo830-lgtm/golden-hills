@@ -14,6 +14,7 @@ import NotificationMenu from './NotificationMenu';
 const sidebarItems = [
   { icon: <Home className="w-5 h-5" />, label: 'Overview', path: '/admin' },
   { icon: <Calendar className="w-5 h-5" />, label: 'Reservations', path: '/admin/reservations' },
+  { icon: <Users className="w-5 h-5" />, label: 'Guests', path: '/admin/guests' },
   { icon: <Bed className="w-5 h-5" />, label: 'Rooms & Housekeeping', path: '/admin/rooms' },
   { icon: <Utensils className="w-5 h-5" />, label: 'Kitchen & F&B', path: '/admin/kitchen' },
   { icon: <Users className="w-5 h-5" />, label: 'Human Resources', path: '/admin/hr' },

@@ -212,17 +212,17 @@ const SettingsSystem = () => {
                     </div>
                     <div className="space-y-4">
                        {[
-                         { label: 'New Guest Reservation', desc: 'Email admin on every new booking' },
-                         { label: 'Stock Critical Alert', desc: 'Notify inventory manager when items are low' },
-                         { label: 'Staff Shift Start/End', desc: 'Summary of daily personnel attendance' }
+                         { field: 'email_notifications_reservations', label: 'New Guest Reservation', desc: 'Email admin on every new booking' },
+                         { field: 'email_notifications_stock', label: 'Stock Critical Alert', desc: 'Notify inventory manager when items are low' },
+                         { field: 'email_notifications_staff', label: 'Staff Shift Start/End', desc: 'Summary of daily personnel attendance' }
                        ].map((item, i) => (
-                         <div key={i} className="flex items-center justify-between p-4 rounded-2xl hover:bg-gray-50 transition-colors cursor-pointer group">
+                         <div key={i} className="flex items-center justify-between p-4 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer group" onClick={() => handleChange(item.field, !settings[item.field])}>
                             <div>
                                <p className="font-bold text-sm text-gray-700">{item.label}</p>
                                <p className="text-[10px] text-gray-400 font-medium">{item.desc}</p>
                             </div>
-                            <div className="w-12 h-6 rounded-full bg-luxury-gold p-1 flex justify-end transition-all">
-                               <div className="w-4 h-4 bg-white rounded-full shadow-sm" />
+                            <div className={`w-12 h-6 rounded-full p-1 transition-all ${settings[item.field] ? 'bg-luxury-gold' : 'bg-gray-200'}`}>
+                               <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${settings[item.field] ? 'translate-x-6' : 'translate-x-0'}`} />
                             </div>
                          </div>
                        ))}
@@ -237,7 +237,13 @@ const SettingsSystem = () => {
                           <p className="text-xs text-gray-400 font-medium">Real-time alerts to staff mobile devices</p>
                        </div>
                     </div>
-                    <GoldButton outline className="w-full py-4 text-[10px] border-dashed border-2">CONFIGURE SMS GATEWAY</GoldButton>
+                    <div className="space-y-6">
+                       <div className="space-y-3">
+                          <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest pl-1">Primary Contact Phone</label>
+                          <input type="text" value={settings.contact_phone} onChange={(e) => handleChange('contact_phone', e.target.value)} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                       </div>
+                       <GoldButton outline className="w-full py-4 text-[10px] border-dashed border-2">CONFIGURE SMS GATEWAY</GoldButton>
+                    </div>
                  </GlassCard>
               </div>
            )}

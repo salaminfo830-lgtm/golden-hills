@@ -3,6 +3,7 @@ import DashboardLayout from '../components/DashboardLayout';
 import { Routes, Route } from 'react-router-dom';
 import AnalyticsOverview from './admin/AnalyticsOverview';
 import ReservationsSystem from './admin/ReservationsSystem';
+import GuestsSystem from './admin/GuestsSystem';
 import HRSystem from './admin/HRSystem';
 import FinanceSystem from './admin/FinanceSystem';
 import KitchenSystem from './admin/KitchenSystem';
@@ -16,6 +17,7 @@ const AdminPanel = () => {
       <Routes>
         <Route path="/" element={<AnalyticsOverview />} />
         <Route path="/reservations" element={<ReservationsSystem />} />
+        <Route path="/guests" element={<GuestsSystem />} />
         <Route path="/rooms" element={<RoomsSystem />} />
         <Route path="/kitchen" element={<KitchenSystem />} />
         <Route path="/hr" element={<HRSystem />} />

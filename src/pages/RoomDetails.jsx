@@ -1,38 +1,75 @@
-import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft, Star, Coffee, Wind, 
   Tv, Waves, 
-  Calendar, ShieldCheck, ArrowRight
+  Calendar, ShieldCheck, ArrowRight,
+  Wifi, Bath, Sun, Loader2
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { supabase } from '../lib/supabase';
 import GoldButton from '../components/GoldButton';
 import GlassCard from '../components/GlassCard';
 import Logo from '../components/Logo';
 
 const RoomDetails = () => {
   const { id } = useParams();
-  console.log('Viewing room:', id);
+  const navigate = useNavigate();
+  const [room, setRoom] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
 
-  // Mock data for the room
-  const room = {
-    name: 'Royal Gold Suite',
-    price: '$450',
-    description: 'The Royal Gold Suite is the pinnacle of luxury in Setif. Featuring gold-leafed ceilings, expansive panoramic views of the city hills, and a private traditional hammam. Designed for those who demand the finest attention to detail.',
-    images: [
-      'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
-      'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974',
-      'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070'
-    ],
-    amenities: [
-      { icon: <Wind className="w-5 h-5" />, label: 'Climate Control' },
-      { icon: <Coffee className="w-5 h-5" />, label: 'Nespresso Bar' },
-      { icon: <Tv className="w-5 h-5" />, label: '65" OLED TV' },
-      { icon: <Waves className="w-5 h-5" />, label: 'Spa Access' },
-      { icon: <Star className="w-5 h-5" />, label: 'Butler 24/7' },
-      { icon: <ShieldCheck className="w-5 h-5" />, label: 'VIP Security' }
-    ]
+  const amenityIcons = {
+    'Wifi': <Wifi className="w-5 h-5" />,
+    'Bed': <Star className="w-5 h-5" />,
+    'Tv': <Tv className="w-5 h-5" />,
+    'Coffee': <Coffee className="w-5 h-5" />,
+    'Waves': <Waves className="w-5 h-5" />,
+    'Wind': <Wind className="w-5 h-5" />,
+    'Sun': <Sun className="w-5 h-5" />,
+    'Bath': <Bath className="w-5 h-5" />,
+  };
+
+  useEffect(() => {
+    const fetchRoom = async () => {
+      const { data, error } = await supabase
+        .from('Room')
+        .select('*, amenities:Amenity(*)')
+        .eq('id', id)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching room:', error);
+        navigate('/');
+        return;
+      }
+
+      // Default description and images if missing
+      const roomData = {
+        ...data,
+        description: data.description || 'Experience the pinnacle of luxury in Setif. Featuring gold-leafed ceilings, expansive panoramic views of the city hills, and a private traditional hammam. Designed for those who demand the finest attention to detail.',
+        images: [
+          data.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
+          'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974',
+          'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070'
+        ]
+      };
+      setRoom(roomData);
+      setLoading(false);
+    };
+    fetchRoom();
+  }, [id, navigate]);
+
+  if (loading || !room) {
+    return (
+      <div className="h-screen flex items-center justify-center bg-luxury-white-warm">
+        <Loader2 className="w-12 h-12 text-luxury-gold animate-spin" />
+      </div>
+    );
+  }
+
+  const formatPrice = (price) => {
+    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD' }).format(price);
   };
 
   return (
@@ -44,7 +81,12 @@ const RoomDetails = () => {
             <ChevronLeft className="w-4 h-4 translate-y-[-1px]" /> <span className="hidden sm:inline">Back</span>
           </Link>
           <Logo className="scale-75 md:scale-90" />
-          <GoldButton className="px-6 py-2 text-[10px] md:text-xs">BOOK NOW</GoldButton>
+          <GoldButton 
+            className="px-6 py-2 text-[10px] md:text-xs"
+            onClick={() => navigate(`/book/${id}?checkIn=12+Oct+2026&checkOut=18+Oct+2026&guests=2`)}
+          >
+            BOOK NOW
+          </GoldButton>
         </div>
       </nav>
 
@@ -89,9 +131,9 @@ const RoomDetails = () => {
                   <Star className="w-3.5 h-3.5 fill-current" />
                   <span className="text-[10px] font-bold uppercase tracking-[0.3em] ml-3 text-luxury-black/40">Heritage Selection</span>
                 </div>
-                <h1 className="text-4xl md:text-7xl font-serif font-bold mb-6 text-luxury-black tracking-tight">{room.name}</h1>
+                <h1 className="text-4xl md:text-7xl font-serif font-bold mb-6 text-luxury-black tracking-tight">{room.type}</h1>
                 <div className="inline-flex items-baseline gap-2 bg-white/40 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/60">
-                  <span className="text-3xl md:text-4xl text-luxury-gold font-bold">{room.price}</span> 
+                  <span className="text-3xl md:text-4xl text-luxury-gold font-bold">{formatPrice(room.price)}</span> 
                   <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">/ Per Night</span>
                 </div>
               </div>
@@ -103,14 +145,16 @@ const RoomDetails = () => {
               <div className="space-y-6">
                 <h3 className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Exclusive Amenities</h3>
                 <div className="grid grid-cols-2 gap-y-6 gap-x-4">
-                   {room.amenities.map((item, i) => (
+                   {room.amenities && room.amenities.length > 0 ? room.amenities.map((item, i) => (
                      <div key={i} className="flex items-center gap-4 group">
                         <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-white border border-gray-100 flex items-center justify-center text-luxury-gold shrink-0 shadow-sm group-hover:shadow-md transition-all">
-                          {item.icon}
+                          {amenityIcons[item.icon] || <Star className="w-5 h-5" />}
                         </div>
-                        <span className="text-xs md:text-sm font-bold tracking-wide text-luxury-black/70 group-hover:text-luxury-black transition-colors">{item.label}</span>
+                        <span className="text-xs md:text-sm font-bold tracking-wide text-luxury-black/70 group-hover:text-luxury-black transition-colors">{item.name}</span>
                      </div>
-                   ))}
+                   )) : (
+                     <p className="text-sm text-gray-400 italic">Standard luxury amenities included.</p>
+                   )}
                 </div>
               </div>
 
@@ -136,9 +180,12 @@ const RoomDetails = () => {
                  <div className="flex flex-col md:flex-row items-center justify-between gap-8 relative z-10">
                     <div>
                       <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest mb-1">Estimated Stay (6 Nights)</p>
-                      <p className="text-3xl font-bold text-luxury-black">$2,700</p>
+                      <p className="text-3xl font-bold text-luxury-black">{formatPrice(room.price * 6)}</p>
                     </div>
-                    <GoldButton className="w-full md:w-auto px-16 py-4 shadow-gold flex items-center justify-center gap-3">
+                    <GoldButton 
+                      className="w-full md:w-auto px-16 py-4 shadow-gold flex items-center justify-center gap-3"
+                      onClick={() => navigate(`/book/${id}?checkIn=12+Oct+2026&checkOut=18+Oct+2026&guests=2`)}
+                    >
                       RESERVE SUITE <ArrowRight className="w-4 h-4" />
                     </GoldButton>
                  </div>

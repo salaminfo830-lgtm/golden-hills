@@ -9,12 +9,13 @@ datasource db {
 }
 
 model Profile {
-  id         String   @id @default(uuid())
-  email      String   @unique
-  full_name  String?
-  role       String   @default("staff")
-  avatar_url String?
-  created_at DateTime @default(now())
+  id            String         @id @default(uuid())
+  email         String         @unique
+  full_name     String?
+  role          String         @default("staff")
+  avatar_url    String?
+  created_at    DateTime       @default(now())
+  notifications Notification[]
 }
 
 model Room {
@@ -26,13 +27,35 @@ model Room {
   occupancy    String        @default("Clean")
   housekeeper  String?
   image_url    String?
+  description  String?
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   reservations Reservation[]
+  amenities    Amenity[]
+  reviews      Review[]
+}
+
+model Amenity {
+  id    String @id @default(uuid())
+  name  String @unique
+  icon  String?
+  rooms Room[]
+}
+
+model Guest {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  full_name    String
+  phone        String?
+  avatar_url   String?
+  created_at   DateTime      @default(now())
+  reservations Reservation[]
+  reviews      Review[]
 }
 
 model Reservation {
   id           String   @id @default(uuid())
+  guest_id     String?
   guest_name   String
   guests_count Int      @default(1)
   nights       Int
@@ -42,8 +65,56 @@ model Reservation {
   end_date     DateTime
   status       String   @default("Pending Approval")
   source       String   @default("Direct Site")
+  total_price  Float?
   created_at   DateTime @default(now())
   room         Room?    @relation(fields: [room_id], references: [id])
+  guest        Guest?   @relation(fields: [guest_id], references: [id])
+}
+
+model Review {
+  id         String   @id @default(uuid())
+  rating     Int      @default(5)
+  comment    String?
+  guest_id   String
+  room_id    Int
+  created_at DateTime @default(now())
+  guest      Guest    @relation(fields: [guest_id], references: [id])
+  room       Room     @relation(fields: [room_id], references: [id])
+}
+
+model Settings {
+  id                    String   @id @default("global")
+  hotel_name            String   @default("Golden Hills Hotel Setif")
+  address               String   @default("Blvd des Orangers, Setif, Algeria")
+  contact_email         String   @default("contact@goldenhills.dz")
+  contact_phone         String   @default("+213 36 00 00 00")
+  language              String   @default("English")
+  timezone              String   @default("(GMT+01:00) Algiers, Casablanca, Tunis")
+  currency              String   @default("DZD")
+  logo_url              String?
+  brand_color_primary   String   @default("#D4AF37")
+  brand_color_secondary String   @default("#002349")
+  font_family           String   @default("Inter")
+  hero_image_url        String   @default("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2070")
+  password_min_length   Int      @default(8)
+  session_timeout       Int      @default(30)
+  two_factor_enabled               Boolean  @default(false)
+  data_retention_days              Int      @default(365)
+  email_notifications_reservations Boolean  @default(true)
+  email_notifications_stock        Boolean  @default(true)
+  email_notifications_staff        Boolean  @default(false)
+  updated_at                       DateTime @default(now()) @updatedAt
+}
+
+model Notification {
+  id         String   @id @default(uuid())
+  user_id    String
+  title      String
+  message    String
+  type       String   @default("info")
+  read       Boolean  @default(false)
+  created_at DateTime @default(now())
+  profile    Profile  @relation(fields: [user_id], references: [id])
 }
 
 model Staff {
