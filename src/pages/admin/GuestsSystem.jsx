@@ -3,7 +3,7 @@ import {
   Users, Search, Filter, Mail, 
   Phone, Calendar, Star, MoreVertical,
   Download, Plus, UserCircle, Loader2,
-  Trash2, Edit, ChevronRight
+  Trash2, Edit, ChevronRight, X
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
@@ -15,9 +15,22 @@ const GuestsSystem = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGuest, setSelectedGuest] = useState(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newGuest, setNewGuest] = useState({ full_name: '', email: '', phone: '', avatar_url: '' });
 
   useEffect(() => {
     fetchGuests();
+    
+    const subscription = supabase
+      .channel('public:Guest')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'Guest' }, () => {
+        fetchGuests();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
   }, []);
 
   const fetchGuests = async () => {
@@ -33,6 +46,27 @@ const GuestsSystem = () => {
     setLoading(false);
   };
 
+  const handleAddGuest = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.from('Guest').insert([newGuest]);
+    if (!error) {
+      setShowAddModal(false);
+      setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' });
+      fetchGuests();
+    } else {
+      alert("Error adding guest: " + error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleDeleteGuest = async (id) => {
+    if(window.confirm("Delete this guest record?")) {
+      await supabase.from('Guest').delete().eq('id', id);
+      fetchGuests();
+    }
+  };
+
   const filteredGuests = guests.filter(guest => 
     guest.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     guest.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -40,7 +74,7 @@ const GuestsSystem = () => {
 
   const getGuestStatus = (reservations) => {
     if (!reservations || reservations.length === 0) return { label: 'New', color: 'bg-blue-50 text-blue-600' };
-    const hasActive = reservations.some(r => r.status === 'Confirmed' || r.status === 'Checked In');
+    const hasActive = reservations.some(r => r.status === 'Confirmed' || r.status === 'Checked-in');
     if (hasActive) return { label: 'Active', color: 'bg-green-50 text-green-600' };
     return { label: 'Past', color: 'bg-gray-50 text-gray-600' };
   };
@@ -62,7 +96,7 @@ const GuestsSystem = () => {
           <button className="px-6 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-gray-50 transition-all shadow-sm">
             <Download className="w-4 h-4" /> Export Data
           </button>
-          <GoldButton className="px-6 py-3 text-[10px] flex items-center gap-2 shadow-lg">
+          <GoldButton onClick={() => setShowAddModal(true)} className="px-6 py-3 text-[10px] flex items-center gap-2 shadow-lg">
             <Plus className="w-4 h-4" /> ADD GUEST
           </GoldButton>
         </div>
@@ -81,7 +115,7 @@ const GuestsSystem = () => {
            <div className="p-4 bg-green-50 rounded-2xl text-green-500"><UserCircle className="w-6 h-6" /></div>
            <div>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Active Today</p>
-              <h3 className="text-2xl font-bold">{guests.filter(g => g.reservations?.some(r => r.status === 'Checked In')).length}</h3>
+              <h3 className="text-2xl font-bold">{guests.filter(g => g.reservations?.some(r => r.status === 'Checked-in')).length}</h3>
            </div>
         </GlassCard>
         <GlassCard className="bg-white border-gray-100 flex items-center gap-5">
@@ -132,7 +166,7 @@ const GuestsSystem = () => {
                        </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-50">
-                       {loading ? (
+                       {loading && guests.length === 0 ? (
                          [1,2,3,4].map(i => (
                            <tr key={i} className="animate-pulse">
                               <td colSpan="5" className="px-8 py-10 h-24 bg-gray-50/20" />
@@ -156,7 +190,7 @@ const GuestsSystem = () => {
                             <td className="px-8 py-6">
                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${getGuestStatus(guest.reservations).color}`}>
                                   {getGuestStatus(guest.reservations).label}
-                               </span>
+                                </span>
                             </td>
                             <td className="px-8 py-6">
                                <div className="flex flex-col">
@@ -172,10 +206,7 @@ const GuestsSystem = () => {
                             </td>
                             <td className="px-8 py-6 text-right">
                                <div className="flex items-center justify-end gap-2">
-                                  <button className="p-2.5 hover:bg-white hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-gray-100">
-                                     <Edit className="w-4 h-4" />
-                                  </button>
-                                  <button className="p-2.5 hover:bg-white hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-gray-100">
+                                  <button onClick={(e) => { e.stopPropagation(); handleDeleteGuest(guest.id); }} className="p-2.5 hover:bg-white hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-gray-100">
                                      <Trash2 className="w-4 h-4" />
                                   </button>
                                </div>
@@ -200,7 +231,7 @@ const GuestsSystem = () => {
                <GlassCard className="bg-white border-gray-100 p-0 h-full overflow-hidden sticky top-32">
                   <div className="h-32 gold-gradient relative">
                      <button onClick={() => setSelectedGuest(null)} className="absolute top-6 right-6 p-2 bg-white/20 backdrop-blur-md rounded-xl text-white hover:bg-white/40 transition-all">
-                        <MoreVertical className="w-4 h-4" />
+                        <X className="w-4 h-4" />
                      </button>
                   </div>
                   <div className="px-8 pb-8 -mt-16 text-center border-b border-gray-50">
@@ -210,12 +241,12 @@ const GuestsSystem = () => {
                         </div>
                      </div>
                      <h3 className="text-2xl font-serif font-bold text-luxury-black mb-1">{selectedGuest.full_name}</h3>
-                     <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-[0.2em] mb-6">Platinum Member</p>
+                     <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-[0.2em] mb-6">Verified Member</p>
                      
                      <div className="grid grid-cols-2 gap-4">
                         <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                            <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Spent</p>
-                           <p className="font-bold text-sm">450k DZD</p>
+                           <p className="font-bold text-sm">-- USD</p>
                         </div>
                         <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                            <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Visits</p>
@@ -242,7 +273,6 @@ const GuestsSystem = () => {
                      <div className="space-y-4">
                         <div className="flex justify-between items-center">
                            <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Recent Activity</h4>
-                           <button className="text-[8px] font-bold text-luxury-gold uppercase tracking-widest">View All</button>
                         </div>
                         <div className="space-y-3">
                            {selectedGuest.reservations?.slice(0, 3).map((res, i) => (
@@ -254,16 +284,48 @@ const GuestsSystem = () => {
                                 <ChevronRight className="w-3 h-3 text-gray-300" />
                              </div>
                            ))}
+                           {!selectedGuest.reservations?.length && <p className="text-[10px] text-gray-400 italic">No recent reservations</p>}
                         </div>
                      </div>
-
-                     <GoldButton className="w-full py-4 text-[10px] shadow-lg">MESSAGE GUEST</GoldButton>
                   </div>
                </GlassCard>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
+
+      {/* Add Guest Modal */}
+      <AnimatePresence>
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <GlassCard className="bg-white w-full max-w-md p-8 relative">
+              <button onClick={() => setShowAddModal(false)} className="absolute top-6 right-6 text-gray-400 hover:text-black">
+                <X className="w-5 h-5"/>
+              </button>
+              <h3 className="text-2xl font-bold font-serif mb-6">Register New Guest</h3>
+              <form onSubmit={handleAddGuest} className="space-y-6">
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Full Name</label>
+                  <input required value={newGuest.full_name} onChange={e=>setNewGuest({...newGuest, full_name: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Email Address</label>
+                  <input required value={newGuest.email} onChange={e=>setNewGuest({...newGuest, email: e.target.value})} type="email" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Phone Number</label>
+                  <input value={newGuest.phone} onChange={e=>setNewGuest({...newGuest, phone: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Avatar URL</label>
+                  <input value={newGuest.avatar_url} onChange={e=>setNewGuest({...newGuest, avatar_url: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                </div>
+                <GoldButton type="submit" className="w-full py-4 shadow-lg text-[10px]">CREATE GUEST RECORD</GoldButton>
+              </form>
+           </GlassCard>
+        </div>
+      )}
+      </AnimatePresence>
     </div>
   );
 };

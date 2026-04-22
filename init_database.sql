@@ -11,6 +11,16 @@ CREATE TABLE IF NOT EXISTS "Profile" (
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS "Guest" CASCADE;
+CREATE TABLE IF NOT EXISTS "Guest" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "full_name" TEXT NOT NULL,
+    "email" TEXT UNIQUE NOT NULL,
+    "phone" TEXT,
+    "avatar_url" TEXT,
+    "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
 CREATE TABLE IF NOT EXISTS "Room" (
     "id" SERIAL PRIMARY KEY,
     "number" TEXT UNIQUE NOT NULL,
@@ -108,12 +118,78 @@ CREATE TABLE IF NOT EXISTS "FinanceTransaction" (
     "date" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+DROP TABLE IF EXISTS "Service" CASCADE;
+CREATE TABLE IF NOT EXISTS "Service" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "name" TEXT NOT NULL,
+    "type" TEXT NOT NULL,
+    "description" TEXT,
+    "image_url" TEXT,
+    "hours" TEXT,
+    "location" TEXT,
+    "specialty" TEXT,
+    "price" TEXT,
+    "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+DROP TABLE IF EXISTS "Review" CASCADE;
+CREATE TABLE IF NOT EXISTS "Review" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "guest_id" UUID REFERENCES "Guest"("id") ON DELETE CASCADE,
+    "room_id" INTEGER REFERENCES "Room"("id") ON DELETE SET NULL,
+    "rating" INTEGER CHECK (rating >= 1 AND rating <= 5),
+    "comment" TEXT,
+    "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Enable RLS on all tables
+ALTER TABLE "Profile" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Room" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Reservation" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Staff" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Task" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "KitchenOrder" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "StockItem" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "SecurityLog" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "FinanceTransaction" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Guest" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Review" ENABLE ROW LEVEL SECURITY;
+ALTER TABLE "Service" ENABLE ROW LEVEL SECURITY;
+
+-- Create Permissive Policies (FOR DEVELOPMENT)
+CREATE POLICY "Full access for all" ON "Profile" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "Room" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "Reservation" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "Staff" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "Task" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "KitchenOrder" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "StockItem" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "SecurityLog" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "FinanceTransaction" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "Guest" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "Review" FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Full access for all" ON "Service" FOR ALL USING (true) WITH CHECK (true);
+
 -- 2. Insert Base Foundational Data
 
 -- Admin Profile
 INSERT INTO "Profile" ("id", "email", "full_name", "role") 
-VALUES (gen_random_uuid()::text, 'fares@goldenhills.dz', 'Fares Ahmed', 'admin')
+VALUES (gen_random_uuid(), 'fares@goldenhills.dz', 'Fares Ahmed', 'admin')
 ON CONFLICT ("email") DO NOTHING;
+
+-- Foundational Guests
+INSERT INTO "Guest" ("id", "full_name", "email", "phone", "avatar_url") VALUES
+(gen_random_uuid(), 'Elena Romanov', 'elena.r@luxury.com', '+44 7700 900000', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=150'),
+(gen_random_uuid(), 'Mourad Brahimi', 'mourad.b@business.dz', '+213 550 11 22 33', NULL),
+(gen_random_uuid(), 'Sarah Mansour', 'sarah.m@travel.fr', '+33 6 12 34 56 78', 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?auto=format&fit=crop&q=80&w=150')
+ON CONFLICT ("email") DO NOTHING;
+
+-- Initial Guest Reviews
+INSERT INTO "Review" ("guest_id", "rating", "comment")
+SELECT id, 5, 'Exceptional service and stunning views of Sétif!' FROM "Guest" WHERE full_name = 'Elena Romanov'
+UNION ALL
+SELECT id, 4, 'Very comfortable stay, the spa is world-class.' FROM "Guest" WHERE full_name = 'Sarah Mansour'
+ON CONFLICT DO NOTHING;
 
 -- Realistic Floor 1 Rooms Setup (Heritage Deluxe)
 INSERT INTO "Room" ("number", "type", "price", "status", "occupancy", "updated_at") VALUES
@@ -187,10 +263,14 @@ INSERT INTO "Task" ("id", "title", "description", "priority", "status", "assigne
 (gen_random_uuid(), 'Lobby AC Inspection', 'Routine maintenance check', 'Normal', 'In Progress', 'Technical Team', NULL)
 ON CONFLICT ("id") DO NOTHING;
 
+-- Foundational Services
+INSERT INTO "Service" ("id", "name", "type", "description", "hours", "location", "specialty", "image_url") VALUES
+(gen_random_uuid(), 'Atlas Sky Lounge', 'Dining', 'Panoramic views of Setif with signature cocktails.', '18:00 - 01:00', 'Rooftop', 'Saffron Martini', 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2070'),
+(gen_random_uuid(), 'The Heritage Kitchen', 'Dining', 'Traditional Algerian cuisine with a modern twist.', '07:00 - 23:00', 'Lobby Level', 'Slow-cooked Couscous', 'https://images.unsplash.com/photo-1550966842-2849a2249821?auto=format&fit=crop&q=80&w=2070'),
+(gen_random_uuid(), 'Numidian Spa', 'Spa', 'Ancient healing rituals using local botanical oils.', '09:00 - 21:00', 'Wellness Level', 'Atlas Stone Massage', 'https://images.unsplash.com/photo-1544161515-436cefb6579a?auto=format&fit=crop&q=80&w=2070')
+ON CONFLICT DO NOTHING;
+
 -- Enable Realtime in Supabase for all these tables
 -- You must run these in the Supabase SQL editor if not done automatically via Prisma
--- alter publication supabase_realtime add table "Room";
--- alter publication supabase_realtime add table "Reservation";
--- alter publication supabase_realtime add table "KitchenOrder";
--- alter publication supabase_realtime add table "Staff";
--- alter publication supabase_realtime add table "Task";
+DROP PUBLICATION IF EXISTS supabase_realtime;
+CREATE PUBLICATION supabase_realtime FOR TABLE "Room", "Reservation", "KitchenOrder", "Staff", "Task", "FinanceTransaction", "Guest", "Review", "Service";

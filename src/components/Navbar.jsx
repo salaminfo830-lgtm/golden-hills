@@ -65,7 +65,7 @@ const Navbar = ({ transparent = false }) => {
               <Link 
                 key={item.label} 
                 to={item.path}
-                className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-all relative group ${
+                className={`text-[13px] font-bold uppercase tracking-[0.2em] transition-all relative group ${
                   location.pathname === item.path 
                     ? 'text-luxury-gold' 
                     : isTransparentActive ? 'text-white/70 hover:text-white' : 'text-gray-400 hover:text-luxury-black'
@@ -81,7 +81,7 @@ const Navbar = ({ transparent = false }) => {
             <div className="flex gap-4">
                <Link 
                  to="/login" 
-                 className={`text-[10px] font-bold uppercase tracking-[0.3em] transition-colors py-3 px-4 flex items-center gap-2 ${
+                 className={`text-[11px] font-bold uppercase tracking-[0.2em] transition-colors py-3 px-4 flex items-center gap-2 ${
                    isTransparentActive ? 'text-white/40 hover:text-luxury-gold' : 'text-gray-400 hover:text-luxury-gold'
                  }`}
                >
@@ -89,7 +89,7 @@ const Navbar = ({ transparent = false }) => {
                  Portal
                </Link>
                <GoldButton 
-                 className="px-8 py-3 text-[10px] shadow-gold" 
+                 className="px-8 py-3 text-[11px] shadow-gold" 
                  onClick={() => navigate('/search')}
                >
                  BOOK SANCTUARY

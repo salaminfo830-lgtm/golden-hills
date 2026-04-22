@@ -81,11 +81,23 @@
   .btn-luxury:hover::after {
     @apply translate-y-0;
   }
+
+  .text-mask {
+    @apply bg-clip-text text-transparent bg-fixed bg-cover bg-center;
+    background-image: url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2070");
+  }
+
+  .luxury-blur {
+    backdrop-filter: blur(8px) saturate(180%);
+    -webkit-backdrop-filter: blur(8px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(209, 213, 219, 0.3);
+  }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -93,23 +105,45 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: rgba(212, 175, 55, 0.1);
-  border-radius: 9999px;
+  background-color: #D4AF37;
+  border-radius: 0px;
   transition: all 0.5s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(212, 175, 55, 0.4);
+  background-color: #A68546;
 }
 
 /* Luxury Animations */
 @keyframes luxury-reveal {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .reveal-anim {
-  animation: luxury-reveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: luxury-reveal 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Page Transitions */
+.page-enter {
+  opacity: 0;
+  transform: scale(1.05);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 1s, transform 1.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Floating Animation */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
 }
 
 /* Hover Shine Effect */
@@ -133,5 +167,3 @@
 .hover-shine:hover::before {
   left: 150%;
 }
-
-

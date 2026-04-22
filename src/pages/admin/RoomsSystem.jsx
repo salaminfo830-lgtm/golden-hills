@@ -23,7 +23,8 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
     price: 320,
     status: 'Vacant',
     occupancy: 'Clean',
-    housekeeper: ''
+    housekeeper: '',
+    image_url: ''
   });
 
   useEffect(() => {
@@ -63,7 +64,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
     }]);
     if (!error) {
       setShowAddModal(false);
-      setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '' });
+      setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '' });
       fetchRooms();
     } else {
       alert("Error adding room: " + error.message);
@@ -172,8 +173,14 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
               <tr key={room.id} className="border-b border-gray-50 last:border-0 hover:bg-gray-50/50 transition-colors">
                 <td className="px-8 py-6">
                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl gold-gradient flex items-center justify-center text-white font-bold text-xs">
-                        {room.number}
+                      <div className="w-12 h-12 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center shrink-0 border border-gray-100 shadow-sm group relative">
+                        {room.image_url ? (
+                          <img src={room.image_url} alt={room.number} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full gold-gradient flex items-center justify-center text-white font-bold text-xs">
+                            {room.number}
+                          </div>
+                        )}
                       </div>
                       <div>
                         <p className="font-bold text-sm">{room.type}</p>
@@ -221,8 +228,14 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
            <GlassCard key={room.id} className="bg-white border-gray-100 p-6 space-y-4">
               <div className="flex justify-between items-start">
                  <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl gold-gradient flex items-center justify-center text-white font-bold">
-                       {room.number}
+                    <div className="w-12 h-12 rounded-2xl overflow-hidden border border-gray-100 shadow-sm shrink-0">
+                       {room.image_url ? (
+                         <img src={room.image_url} alt={room.number} className="w-full h-full object-cover" />
+                       ) : (
+                         <div className="w-full h-full gold-gradient flex items-center justify-center text-white font-bold">
+                            {room.number}
+                         </div>
+                       )}
                     </div>
                     <div>
                        <h4 className="font-bold">{room.type}</h4>
@@ -278,47 +291,64 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                  <form id="add-room-form" onSubmit={handleAddRoom} className="space-y-8">
                    
                    {/* Preview Card */}
-                   <div className="relative h-40 gold-gradient rounded-2xl p-6 text-white flex flex-col justify-end shadow-lg overflow-hidden group">
-                      <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
-                      <div className="relative z-10 flex justify-between items-end">
+                   <div className="relative h-48 bg-gray-100 rounded-3xl overflow-hidden shadow-xl group border border-gray-200">
+                      {newRoom.image_url ? (
+                        <img src={newRoom.image_url} alt="Preview" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                      ) : (
+                        <div className="w-full h-full gold-gradient" />
+                      )}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                      <div className="absolute bottom-6 left-8 right-8 z-10 flex justify-between items-end">
                          <div>
-                            <h4 className="text-3xl font-serif font-bold tracking-tight">{newRoom.type}</h4>
-                            <p className="text-xs font-bold uppercase tracking-widest opacity-80 mt-1">Room {newRoom.number || '---'}</p>
+                            <h4 className="text-3xl font-serif font-bold tracking-tight text-white">{newRoom.type}</h4>
+                            <p className="text-xs font-bold uppercase tracking-widest text-white/70 mt-1">Room {newRoom.number || '---'}</p>
                          </div>
-                         <p className="text-xl font-bold">{newRoom.price ? `${newRoom.price.toLocaleString()} DZD` : '---'}</p>
+                         <p className="text-2xl font-bold text-luxury-gold">{newRoom.price ? `$${newRoom.price.toLocaleString()}` : '---'}</p>
                       </div>
                    </div>
 
                    <div className="space-y-6">
-                     <div>
-                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Number / Identifier</label>
-                       <input required placeholder="e.g. 401" value={newRoom.number} onChange={e=>setNewRoom({...newRoom, number: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                     <div className="grid grid-cols-2 gap-6">
+                        <div>
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Number</label>
+                          <input required placeholder="e.g. 401" value={newRoom.number} onChange={e=>setNewRoom({...newRoom, number: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Nightly Rate (USD)</label>
+                          <input required type="number" placeholder="320" value={newRoom.price} onChange={e=>setNewRoom({...newRoom, price: Number(e.target.value)})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                        </div>
                      </div>
+
+                     <div>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Image URL</label>
+                        <input placeholder="https://images.unsplash.com/photo-..." value={newRoom.image_url} onChange={e=>setNewRoom({...newRoom, image_url: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                     </div>
+
                      <div>
                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Category</label>
                        <select value={newRoom.type} onChange={e=>setNewRoom({...newRoom, type: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
                          <option>Heritage Deluxe</option>
                          <option>Royal Gold Suite</option>
                          <option>Presidential Panorama</option>
+                         <option>Executive Hillside</option>
+                         <option>Sapphire Garden Room</option>
+                         <option>Imperial Family Wing</option>
                        </select>
                      </div>
+
                      <div className="grid grid-cols-2 gap-6">
-                       <div>
-                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Nightly Rate (DZD)</label>
-                         <input required type="number" placeholder="45000" value={newRoom.price} onChange={e=>setNewRoom({...newRoom, price: Number(e.target.value)})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
-                       </div>
-                       <div>
-                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Initial Status</label>
-                         <select value={newRoom.status} onChange={e=>setNewRoom({...newRoom, status: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
-                           <option>Vacant</option>
-                           <option>Maintenance</option>
-                           <option>Cleaning</option>
-                         </select>
-                       </div>
-                     </div>
-                     <div>
-                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Assigned Housekeeper (Optional)</label>
-                       <input type="text" placeholder="e.g. Amina K." value={newRoom.housekeeper} onChange={e=>setNewRoom({...newRoom, housekeeper: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                        <div>
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Initial Status</label>
+                          <select value={newRoom.status} onChange={e=>setNewRoom({...newRoom, status: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
+                            <option>Vacant</option>
+                            <option>Maintenance</option>
+                            <option>Cleaning</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Housekeeper</label>
+                          <input type="text" placeholder="e.g. Amina K." value={newRoom.housekeeper} onChange={e=>setNewRoom({...newRoom, housekeeper: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                        </div>
                      </div>
                    </div>
                  </form>
