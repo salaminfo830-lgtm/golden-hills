@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { UtensilsCrossed, Clock, MapPin, ChevronRight, Star, Wine, Coffee, Zap, Loader2, ArrowRight } from 'lucide-react';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
@@ -111,7 +111,7 @@ const DiningPage = () => {
   return (
     <BrochureLayout>
       {/* Hero Section */}
-      <section className="relative h-[75vh] flex items-center justify-center overflow-hidden bg-luxury-black">
+      <section className="relative h-[65vh] md:h-[75vh] flex items-center justify-center overflow-hidden bg-luxury-black">
          <motion.div 
            initial={{ scale: 1.2, opacity: 0 }}
            animate={{ scale: 1, opacity: 0.6 }}
@@ -126,27 +126,27 @@ const DiningPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1 }}
             >
-               <h4 className="text-luxury-gold font-serif italic text-3xl mb-4">Epicurean Journeys</h4>
-               <h1 className="text-7xl md:text-9xl font-serif font-bold text-white tracking-tighter leading-none">The Gastronomy</h1>
+               <h4 className="text-luxury-gold font-serif italic text-2xl md:text-3xl mb-4">Epicurean Journeys</h4>
+               <h1 className="text-5xl md:text-9xl font-serif font-bold text-white tracking-tighter leading-none">The Gastronomy</h1>
             </motion.div>
          </div>
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-60 container mx-auto px-12">
-         <div className="grid lg:grid-cols-2 gap-32 items-center">
-            <motion.div {...fadeInUp} className="space-y-12">
-               <h2 className="text-6xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9]">From the Earth, <br/><span className="italic text-luxury-gold">To the Soul.</span></h2>
-               <p className="text-2xl text-gray-500 leading-relaxed font-medium max-w-xl">
+      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
+         <div className="grid lg:grid-cols-2 gap-20 md:gap-32 items-center">
+            <motion.div {...fadeInUp} className="space-y-10 md:space-y-12 text-center lg:text-left">
+               <h2 className="text-4xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9]">From the Earth, <br/><span className="italic text-luxury-gold">To the Soul.</span></h2>
+               <p className="text-lg md:text-2xl text-gray-500 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0">
                   At Golden Hills, we believe that luxury is found in the purity of ingredients. Our executive chef works directly with local farmers to harvest the finest saffron and spices, ensuring every dish tells a story of the Algerian terroir.
                </p>
-               <div className="flex gap-20 pt-8">
+               <div className="flex justify-center lg:justify-start gap-10 md:gap-20 pt-8">
                   <div className="space-y-2">
-                     <p className="text-5xl font-serif font-bold text-luxury-black">0</p>
+                     <p className="text-4xl md:text-5xl font-serif font-bold text-luxury-black">0</p>
                      <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Kilometer Sourcing</p>
                   </div>
                   <div className="space-y-2">
-                     <p className="text-5xl font-serif font-bold text-luxury-black">12</p>
+                     <p className="text-4xl md:text-5xl font-serif font-bold text-luxury-black">12</p>
                      <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Heritage Awards</p>
                   </div>
                </div>
@@ -157,27 +157,27 @@ const DiningPage = () => {
               transition={{ duration: 1.5 }}
               className="relative"
             >
-               <div className="aspect-square rounded-[4rem] overflow-hidden shadow-2xl">
+               <div className="aspect-square rounded-[2rem] md:rounded-[4rem] overflow-hidden shadow-2xl">
                   <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=1974" className="w-full h-full object-cover" alt="Chef" />
                </div>
                <motion.div 
                  initial={{ y: 30, opacity: 0 }}
                  whileInView={{ y: 0, opacity: 1 }}
                  transition={{ delay: 0.5, duration: 1 }}
-                 className="absolute -bottom-16 -right-16 bg-luxury-gold p-12 rounded-[3rem] text-white shadow-2xl max-w-sm"
+                 className="static lg:absolute -bottom-16 -right-16 bg-luxury-gold p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] text-white shadow-2xl max-w-sm mt-10 lg:mt-0 mx-auto"
                >
-                  <Star className="w-10 h-10 mb-6" />
-                  <p className="text-xl font-serif font-bold italic leading-relaxed">"We don't just serve food; we serve memories forged in the fire of Algerian hospitality."</p>
+                  <Star className="w-8 md:w-10 h-8 md:h-10 mb-4 md:mb-6 mx-auto lg:mx-0" />
+                  <p className="text-lg md:text-xl font-serif font-bold italic leading-relaxed text-center lg:text-left">"We don't just serve food; we serve memories forged in the fire of Algerian hospitality."</p>
                </motion.div>
             </motion.div>
          </div>
       </section>
 
       {/* Venues Flow */}
-      <section className="pb-60 space-y-60">
+      <section className="pb-40 md:pb-60 space-y-40 md:space-y-60">
          {venues.map((venue, i) => (
-           <div key={i} className="container mx-auto px-12">
-              <div className={`flex flex-col ${i % 2 !== 0 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-32 items-center`}>
+           <div key={i} className="container mx-auto px-6 md:px-12">
+              <div className={`flex flex-col ${i % 2 !== 0 ? 'lg:flex-row-reverse' : 'lg:flex-row'} gap-12 md:gap-32 items-center`}>
                  <motion.div 
                    initial={{ opacity: 0, x: i % 2 !== 0 ? 50 : -50 }}
                    whileInView={{ opacity: 1, x: 0 }}
@@ -185,49 +185,49 @@ const DiningPage = () => {
                    transition={{ duration: 1.2 }}
                    className="flex-1 w-full"
                  >
-                    <div className="aspect-[16/11] rounded-[4rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group relative">
+                    <div className="aspect-[16/11] rounded-[2rem] md:rounded-[4rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group relative">
                        <img src={venue.image_url} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[4s]" alt={venue.name} />
                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
                     </div>
                  </motion.div>
                  
-                 <motion.div {...fadeInUp} className="flex-1 space-y-12">
-                    <div className="space-y-6">
+                 <motion.div {...fadeInUp} className="flex-1 space-y-8 md:space-y-12">
+                    <div className="space-y-4 md:space-y-6">
                        <span className="text-luxury-gold font-bold uppercase tracking-[0.6em] text-[10px]">{venue.type} Sanctuary</span>
-                       <h2 className="text-6xl md:text-7xl font-serif font-bold text-luxury-black leading-none">{venue.name}</h2>
+                       <h2 className="text-4xl md:text-7xl font-serif font-bold text-luxury-black leading-none">{venue.name}</h2>
                     </div>
-                    <p className="text-2xl text-gray-500 leading-relaxed font-medium">
+                    <p className="text-lg md:text-2xl text-gray-500 leading-relaxed font-medium">
                        {venue.description}
                     </p>
                     
-                    <div className="grid grid-cols-2 gap-12 py-12 border-y border-gray-100">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 md:gap-12 py-8 md:py-12 border-y border-gray-100">
                        <div className="flex items-center gap-6">
-                          <div className="w-16 h-16 bg-luxury-cream/50 rounded-2xl flex items-center justify-center text-luxury-gold">
-                             <Clock className="w-6 h-6" />
+                          <div className="w-12 md:w-16 h-12 md:h-16 bg-luxury-cream/50 rounded-2xl flex items-center justify-center text-luxury-gold">
+                             <Clock className="w-5 md:w-6 h-5 md:h-6" />
                           </div>
                           <div>
                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em] mb-1">Daily Service</p>
-                             <p className="text-sm font-bold text-luxury-black tracking-widest">{venue.hours}</p>
+                             <p className="text-xs md:text-sm font-bold text-luxury-black tracking-widest">{venue.hours}</p>
                           </div>
                        </div>
                        <div className="flex items-center gap-6">
-                          <div className="w-16 h-16 bg-luxury-cream/50 rounded-2xl flex items-center justify-center text-luxury-gold">
-                             <MapPin className="w-6 h-6" />
+                          <div className="w-12 md:w-16 h-12 md:h-16 bg-luxury-cream/50 rounded-2xl flex items-center justify-center text-luxury-gold">
+                             <MapPin className="w-5 md:w-6 h-5 md:h-6" />
                           </div>
                           <div>
                              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em] mb-1">The Enclave</p>
-                             <p className="text-sm font-bold text-luxury-black tracking-widest">{venue.location}</p>
+                             <p className="text-xs md:text-sm font-bold text-luxury-black tracking-widest">{venue.location}</p>
                           </div>
                        </div>
                     </div>
 
-                    <div className="flex items-center gap-10 pt-6">
+                    <div className="flex flex-col sm:flex-row items-center gap-6 md:gap-10 pt-6">
                        <GoldButton 
                          onClick={() => {
                            setSelectedVenue(venue);
                            setShowBookingModal(true);
                          }} 
-                         className="px-16 py-7 shadow-gold text-[10px]"
+                         className="w-full sm:w-auto px-10 md:px-16 py-5 md:py-7 shadow-gold text-[10px]"
                        >
                          RESERVE A TABLE
                        </GoldButton>
@@ -242,22 +242,22 @@ const DiningPage = () => {
       </section>
 
       {/* Private Dining Accent */}
-      <section className="bg-luxury-black py-60 text-white relative overflow-hidden text-center">
+      <section className="bg-luxury-black py-20 md:py-60 text-white relative overflow-hidden text-center">
          <motion.div 
            animate={{ rotate: 360 }}
            transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border border-white/5 rounded-full pointer-events-none"
          />
-         <div className="container mx-auto px-12 relative z-10">
+         <div className="container mx-auto px-6 md:px-12 relative z-10">
             <motion.div {...fadeInUp}>
-               <UtensilsCrossed className="w-20 h-20 text-luxury-gold mx-auto mb-12" />
-               <h2 className="text-6xl md:text-9xl font-serif font-bold mb-10 italic leading-none tracking-tighter">Sanctuary Dining</h2>
-               <p className="text-white/40 max-w-3xl mx-auto text-2xl leading-relaxed mb-20 font-medium">
+               <UtensilsCrossed className="w-16 md:w-20 h-16 md:h-20 text-luxury-gold mx-auto mb-8 md:mb-12" />
+               <h2 className="text-4xl md:text-9xl font-serif font-bold mb-8 md:mb-10 italic leading-none tracking-tighter">Sanctuary Dining</h2>
+               <p className="text-white/40 max-w-3xl mx-auto text-lg md:text-2xl leading-relaxed mb-12 md:mb-20 font-medium">
                   For the ultimate in privacy, our chefs can curate a bespoke menu served in your private suite terrace or our exclusive desert-edge pavilion.
                </p>
             </motion.div>
             
-            <div className="flex flex-col md:flex-row justify-center gap-10 items-center">
+            <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-10 items-center">
                {[
                  { icon: <Wine />, label: 'Sommelier Service' },
                  { icon: <Coffee />, label: 'Artisanal Brews' },
@@ -268,15 +268,15 @@ const DiningPage = () => {
                    initial={{ opacity: 0, y: 20 }}
                    whileInView={{ opacity: 1, y: 0 }}
                    transition={{ delay: i * 0.2 }}
-                   className="flex items-center gap-6 bg-white/5 px-10 py-6 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all cursor-default"
+                   className="flex items-center gap-6 bg-white/5 px-8 md:px-10 py-5 md:py-6 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all cursor-default w-full md:w-auto justify-center md:justify-start"
                  >
                     <div className="text-luxury-gold">{item.icon}</div>
                     <span className="text-[11px] font-bold uppercase tracking-[0.4em]">{item.label}</span>
                  </motion.div>
                ))}
             </div>
-            <div className="mt-32">
-               <GoldButton onClick={() => navigate('/search')} outline className="border-white/20 text-white hover:bg-white hover:text-luxury-black px-20 py-8 text-xs">INQUIRE FOR PRIVATE EVENTS</GoldButton>
+            <div className="mt-20 md:mt-32">
+               <GoldButton onClick={() => navigate('/search')} outline className="border-white/20 text-white hover:bg-white hover:text-luxury-black px-12 md:px-20 py-6 md:py-8 text-[10px] md:text-xs">INQUIRE FOR PRIVATE EVENTS</GoldButton>
             </div>
          </div>
       </section>
@@ -284,7 +284,7 @@ const DiningPage = () => {
       {/* Booking Modal */}
       <AnimatePresence>
         {showBookingModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center px-6">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 md:px-6">
             <motion.div 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -296,16 +296,16 @@ const DiningPage = () => {
               initial={{ scale: 0.9, opacity: 0, y: 20 }}
               animate={{ scale: 1, opacity: 1, y: 0 }}
               exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-[3rem] overflow-hidden shadow-2xl"
+              className="relative w-full max-w-2xl bg-white rounded-[2rem] md:rounded-[3rem] overflow-y-auto max-h-[90vh] shadow-2xl"
             >
-              <div className="p-12 md:p-16">
-                <div className="flex justify-between items-start mb-12">
+              <div className="p-8 md:p-16">
+                <div className="flex justify-between items-start mb-8 md:mb-12">
                   <div>
-                    <h3 className="text-3xl font-serif font-bold text-luxury-black mb-2">Reserve at {selectedVenue?.name}</h3>
+                    <h3 className="text-2xl md:text-3xl font-serif font-bold text-luxury-black mb-2">Reserve at {selectedVenue?.name}</h3>
                     <p className="text-[10px] uppercase font-bold text-luxury-gold tracking-[0.3em]">Epicurean Reservation</p>
                   </div>
-                  <button onClick={() => setShowBookingModal(false)} className="p-4 rounded-full bg-gray-50 text-gray-400 hover:text-luxury-black transition-colors">
-                    <X className="w-6 h-6" />
+                  <button onClick={() => setShowBookingModal(false)} className="p-3 md:p-4 rounded-full bg-gray-50 text-gray-400 hover:text-luxury-black transition-colors">
+                    <X className="w-5 md:w-6 h-5 md:h-6" />
                   </button>
                 </div>
 
@@ -313,17 +313,17 @@ const DiningPage = () => {
                   <motion.div 
                     initial={{ opacity: 0, scale: 0.9 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="py-20 text-center space-y-6"
+                    className="py-16 md:py-20 text-center space-y-6"
                   >
-                    <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500">
-                      <Star className="w-10 h-10 fill-current" />
+                    <div className="w-16 md:w-20 h-16 md:h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500">
+                      <Star className="w-8 md:w-10 h-8 md:h-10 fill-current" />
                     </div>
-                    <h4 className="text-2xl font-serif font-bold">Table Confirmed</h4>
-                    <p className="text-gray-400">Your table has been orchestrated. We await your arrival.</p>
+                    <h4 className="text-xl md:text-2xl font-serif font-bold">Table Confirmed</h4>
+                    <p className="text-sm md:text-base text-gray-400">Your table has been orchestrated. We await your arrival.</p>
                   </motion.div>
                 ) : (
-                  <form onSubmit={handleBooking} className="space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <form onSubmit={handleBooking} className="space-y-6 md:space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Full Name</label>
                         <input required type="text" value={bookingData.guest_name} onChange={e => setBookingData({...bookingData, guest_name: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" placeholder="Enter your name" />
@@ -334,7 +334,7 @@ const DiningPage = () => {
                       </div>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Date</label>
                         <input required type="date" value={bookingData.reservation_date} onChange={e => setBookingData({...bookingData, reservation_date: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
@@ -354,7 +354,7 @@ const DiningPage = () => {
                       <textarea rows="3" value={bookingData.notes} onChange={e => setBookingData({...bookingData, notes: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all resize-none" placeholder="Allergies, seating preference..."></textarea>
                     </div>
 
-                    <GoldButton type="submit" className="w-full py-6 shadow-gold" disabled={bookingStatus === 'booking'}>
+                    <GoldButton type="submit" className="w-full py-5 md:py-6 shadow-gold" disabled={bookingStatus === 'booking'}>
                       {bookingStatus === 'booking' ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'CONFIRM RESERVATION'}
                     </GoldButton>
                   </form>

@@ -33,10 +33,10 @@ const Navbar = ({ transparent = false }) => {
 
   return (
     <>
-      <nav className={`fixed top-0 w-full z-[100] transition-all duration-700 px-8 lg:px-12 py-6 ${
+      <nav className={`fixed top-0 w-full z-[100] transition-all duration-700 px-4 md:px-8 lg:px-12 py-4 md:py-6 ${
         isScrolled 
-          ? 'bg-white/80 backdrop-blur-2xl border-b border-luxury-gold/10 py-4 shadow-sm' 
-          : transparent ? 'bg-transparent py-10' : 'bg-white/90 backdrop-blur-xl py-6 border-b border-luxury-gold/5'
+          ? 'bg-white/80 backdrop-blur-2xl border-b border-luxury-gold/10 py-3 md:py-4 shadow-sm' 
+          : transparent ? 'bg-transparent py-6 md:py-10' : 'bg-white/90 backdrop-blur-xl py-4 md:py-6 border-b border-luxury-gold/5'
       }`}>
         <div className="max-w-[1800px] mx-auto flex justify-between items-center">
           <Link to="/" className="group flex items-center gap-4">
@@ -46,12 +46,12 @@ const Navbar = ({ transparent = false }) => {
                className={`transition-transform duration-700 ${isScrolled ? 'scale-90' : 'scale-110'}`} 
              />
              <div className="overflow-hidden">
-                <span className={`block font-serif font-bold text-2xl tracking-tighter transition-all duration-700 ${
+                <span className={`block font-serif font-bold text-xl md:text-2xl tracking-tighter transition-all duration-700 ${
                   isTransparentActive ? 'text-white' : 'text-luxury-black'
                 } group-hover:tracking-[0.1em]`}>
                    GOLDEN HILLS
                 </span>
-                <span className={`block text-[8px] font-bold uppercase tracking-[0.4em] transition-all duration-700 ${
+                <span className={`block text-[7px] md:text-[8px] font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all duration-700 ${
                   isTransparentActive ? 'text-white/60 translate-y-2 opacity-0' : 'text-gray-400 opacity-100 translate-y-0'
                 } ${isScrolled ? 'opacity-100 translate-y-0' : ''}`}>
                    Setif • Algeria
@@ -141,7 +141,7 @@ const Navbar = ({ transparent = false }) => {
                      <Link 
                        to={item.path} 
                        onClick={() => setIsMobileMenuOpen(false)}
-                       className="text-6xl font-serif font-bold text-white/40 hover:text-luxury-gold hover:italic transition-all inline-block"
+                       className="text-4xl md:text-6xl font-serif font-bold text-white/40 hover:text-luxury-gold hover:italic transition-all inline-block"
                      >
                         {item.label}
                      </Link>
@@ -155,7 +155,7 @@ const Navbar = ({ transparent = false }) => {
                       <Globe className="w-4 h-4" />
                       <span className="text-[10px] font-bold uppercase tracking-widest">Global • EN</span>
                    </div>
-                   <GoldButton className="px-10 py-5 text-xs" onClick={() => { setIsMobileMenuOpen(false); navigate('/search'); }}>RESERVE NOW</GoldButton>
+                   <GoldButton className="px-6 md:px-10 py-3 md:py-5 text-[10px]" onClick={() => { setIsMobileMenuOpen(false); navigate('/search'); }}>RESERVE NOW</GoldButton>
                 </div>
                 <p className="text-[10px] text-white/20 uppercase tracking-[0.4em]">Golden Hills Hotel & Spa • Setif, Algeria</p>
              </div>

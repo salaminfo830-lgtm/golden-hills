@@ -117,14 +117,14 @@ const LoginPage = () => {
 
       {/* Form Column */}
       <div className="flex-1 flex items-center justify-center p-8 md:p-20 bg-white relative">
-        <Link to="/" className="absolute top-10 right-10 text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-luxury-gold transition-colors">
+        <Link to="/" className="absolute top-6 md:top-10 right-6 md:right-10 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-luxury-gold transition-colors">
           Exit to Public Portal
         </Link>
 
         <div className="w-full max-w-md space-y-12">
-          <div className="text-center md:text-left space-y-4">
-            <h1 className="text-5xl font-serif font-bold text-luxury-black">Authorized Access</h1>
-            <p className="text-gray-400 font-medium text-lg">Secure your session with your credentials.</p>
+          <div className="text-center md:text-left space-y-3 md:space-y-4">
+            <h1 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black">Authorized Access</h1>
+            <p className="text-gray-400 font-medium text-base md:text-lg">Secure your session with your credentials.</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-8">
@@ -181,7 +181,7 @@ const LoginPage = () => {
 
             <GoldButton 
               type="submit" 
-              className="w-full py-5 shadow-2xl flex items-center justify-center gap-4 text-xs tracking-[0.2em]"
+              className="w-full py-4 md:py-5 shadow-2xl flex items-center justify-center gap-4 text-[10px] md:text-xs tracking-[0.2em]"
               disabled={loading}
             >
               {loading ? (

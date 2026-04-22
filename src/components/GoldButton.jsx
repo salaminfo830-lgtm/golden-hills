@@ -8,7 +8,7 @@ const GoldButton = ({ children, className, onClick, outline = false }) => {
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={twMerge(
-        'relative px-8 py-3 rounded-full font-bold transition-all duration-500 overflow-hidden group tracking-wide',
+        'relative px-6 md:px-8 py-2.5 md:py-3 rounded-full font-bold transition-all duration-500 overflow-hidden group tracking-wide',
         outline 
           ? 'border-2 border-luxury-gold text-luxury-gold hover:bg-luxury-gold hover:text-white shadow-sm'
           : 'bg-gradient-to-r from-luxury-gold-vibrant via-luxury-gold-shimmer to-luxury-gold text-white shadow-xl shadow-luxury-gold/30 hover:shadow-luxury-gold/50',

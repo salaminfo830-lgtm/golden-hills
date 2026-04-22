@@ -78,7 +78,7 @@ const LandingPage = () => {
           <div className="absolute inset-0 bg-gradient-to-b from-luxury-black/80 via-transparent to-luxury-cream/10" />
         </motion.div>
 
-        <div className="container mx-auto px-12 relative z-10 text-center">
+        <div className="container mx-auto px-6 md:px-12 relative z-10 text-center">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -89,15 +89,15 @@ const LandingPage = () => {
               <h4 className="text-luxury-gold font-bold text-[10px] md:text-sm tracking-[0.4em] md:tracking-[0.8em] uppercase text-center">Setif&apos;s Gilded Masterpiece</h4>
               <div className="hidden sm:block h-px w-20 bg-luxury-gold/50" />
             </div>
-            <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-serif font-bold text-white tracking-tighter leading-[1] sm:leading-[0.8] mb-12">
+            <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-serif font-bold text-white tracking-tighter leading-[1] sm:leading-[0.8] mb-8 md:mb-12">
                <span className="text-mask">GOLDEN</span> <br /> 
                <span className="italic font-normal text-luxury-gold/90 drop-shadow-2xl">Hills</span>
             </h1>
             <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-16 font-medium leading-relaxed italic">
                Where ancient heritage meets the height of contemporary luxury. A sanctuary crafted for the world&apos;s most discerning travelers.
             </p>
-            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-              <GoldButton className="px-20 py-8 text-xs shadow-gold hover:scale-105 transition-all" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
+            <div className="flex flex-col sm:flex-row gap-6 md:gap-8 justify-center items-center">
+              <GoldButton className="px-10 md:px-20 py-5 md:py-8 text-[10px] md:text-xs shadow-gold hover:scale-105 transition-all w-full sm:w-auto" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
               <button className="flex items-center gap-4 text-[10px] font-bold tracking-[0.4em] text-white uppercase hover:text-luxury-gold transition-all group">
                 <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
                    <PlayCircle className="w-8 h-8" />
@@ -183,11 +183,11 @@ const LandingPage = () => {
       </div>
 
       {/* Section: The Heritage */}
-      <section className="py-60 container mx-auto px-12">
+      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
         <div className="grid lg:grid-cols-2 gap-32 items-center">
            <motion.div {...fadeInUp}>
               <span className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-8 block">The Soul of Setif</span>
-              <h2 className="text-6xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9] mb-12">Rugged Beauty, <br/><span className="italic text-luxury-gold">Refined.</span></h2>
+              <h2 className="text-4xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9] mb-8 md:mb-12">Rugged Beauty, <br/><span className="italic text-luxury-gold">Refined.</span></h2>
               <p className="text-xl text-gray-500 leading-relaxed font-medium mb-16 max-w-xl">
                  Perched upon the highest point of Champs d&apos;azur, Golden Hills is more than a hotel. It is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of five-star excellence.
               </p>
@@ -207,8 +207,8 @@ const LandingPage = () => {
                    </div>
                  ))}
               </div>
-              <div className="pt-20">
-                 <GoldButton outline className="px-16 py-6" onClick={() => navigate('/about')}>DISCOVER OUR STORY</GoldButton>
+              <div className="pt-10 md:pt-20">
+                 <GoldButton outline className="px-10 md:px-16 py-4 md:py-6" onClick={() => navigate('/about')}>DISCOVER OUR STORY</GoldButton>
               </div>
            </motion.div>
 
@@ -221,7 +221,7 @@ const LandingPage = () => {
                  <img src="/golden_hills_hammam_1776878932931.png" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-1000" alt="Spa" />
                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
               </motion.div>
-              <div className="absolute -bottom-16 -right-16 w-80 h-80 bg-luxury-gold opacity-[0.05] rounded-full blur-[100px]" />
+              <div className="absolute -bottom-8 md:-bottom-16 -right-8 md:-right-16 w-40 md:w-80 h-40 md:h-80 bg-luxury-gold opacity-[0.05] rounded-full blur-[50px] md:blur-[100px]" />
               <motion.div 
                 initial={{ x: 30, opacity: 0 }}
                 whileInView={{ x: 0, opacity: 1 }}
@@ -236,8 +236,8 @@ const LandingPage = () => {
       </section>
 
       {/* Signature Experiences Grid */}
-      <section className="bg-luxury-white-warm py-40">
-         <div className="container mx-auto px-12">
+      <section className="bg-luxury-white-warm py-20 md:py-40">
+         <div className="container mx-auto px-6 md:px-12">
             <motion.div {...fadeInUp} className="text-center mb-32">
                <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-6">World Class</h4>
                <h2 className="text-5xl md:text-7xl font-serif font-bold text-luxury-black">Signature Enclaves</h2>
@@ -270,8 +270,8 @@ const LandingPage = () => {
       </section>
 
       {/* Section: The Sanctuaries (Suites) */}
-      <section className="bg-white py-60">
-         <div className="container mx-auto px-12">
+      <section className="bg-white py-20 md:py-60">
+         <div className="container mx-auto px-6 md:px-12">
             <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-32">
                <motion.div {...fadeInUp} className="max-w-2xl">
                   <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-6">Accommodations</h4>
@@ -312,9 +312,9 @@ const LandingPage = () => {
       </section>
 
       {/* Section: Epicurean Enclaves (Dining/Spa) */}
-      <section className="py-60 bg-luxury-black text-white relative overflow-hidden">
-         <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-luxury-gold opacity-[0.03] rounded-full blur-[150px] translate-x-1/2 -translate-y-1/2" />
-         <div className="container mx-auto px-12 relative z-10">
+      <section className="py-20 md:py-60 bg-luxury-black text-white relative overflow-hidden">
+         <div className="absolute top-0 right-0 w-[500px] md:w-[1000px] h-[500px] md:h-[1000px] bg-luxury-gold opacity-[0.03] rounded-full blur-[100px] md:blur-[150px] translate-x-1/2 -translate-y-1/2" />
+         <div className="container mx-auto px-6 md:px-12 relative z-10">
             <div className="grid lg:grid-cols-2 gap-40 items-center">
                <motion.div {...fadeInUp} className="space-y-16">
                   <div className="space-y-6">
@@ -382,7 +382,7 @@ const LandingPage = () => {
       </section>
 
       {/* Section: Guest Voices */}
-      <section className="py-60 container mx-auto px-12">
+      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
          <motion.div {...fadeInUp} className="text-center mb-32">
             <Sparkles className="w-12 h-12 text-luxury-gold mx-auto mb-8" />
             <h2 className="text-6xl font-serif font-bold text-luxury-black">Voices of the Hills</h2>
@@ -416,9 +416,9 @@ const LandingPage = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-luxury-black pt-40 pb-20 text-white relative overflow-hidden">
-         <div className="container mx-auto px-12 relative z-10">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-24 mb-32">
+      <footer className="bg-luxury-black pt-20 md:pt-40 pb-10 md:pb-20 text-white relative overflow-hidden">
+         <div className="container mx-auto px-6 md:px-12 relative z-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-24 mb-20 md:mb-32">
                <div className="space-y-10">
                   <Logo inverse className="scale-125 origin-left" />
                   <p className="text-white/40 text-sm leading-relaxed italic">
@@ -461,9 +461,9 @@ const LandingPage = () => {
                   </div>
                </div>
             </div>
-            <div className="pt-20 border-t border-white/5 flex justify-between items-center text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
+            <div className="pt-10 md:pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold text-white/20 uppercase tracking-[0.4em] text-center md:text-left">
                <p>© 2026 Golden Hills Hotel. Crafted with Absolute Excellence.</p>
-               <div className="flex gap-10">
+               <div className="flex gap-6 md:gap-10">
                   <span className="hover:text-white transition-colors cursor-pointer">Privacy</span>
                   <span className="hover:text-white transition-colors cursor-pointer">Terms</span>
                </div>
