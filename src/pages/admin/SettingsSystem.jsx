@@ -45,7 +45,10 @@ const SettingsSystem = () => {
 
       const { error: uploadError } = await supabase.storage
         .from('branding')
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          contentType: file.type,
+          upsert: true
+        });
 
       if (uploadError) throw uploadError;
 
@@ -53,6 +56,7 @@ const SettingsSystem = () => {
         .from('branding')
         .getPublicUrl(filePath);
       
+      console.log('Successfully uploaded branding image. Public URL:', publicUrl);
       await handleChange(field, publicUrl);
       setSaveStatus('saved');
     } catch (error) {

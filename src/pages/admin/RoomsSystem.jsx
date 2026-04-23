@@ -78,7 +78,10 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
 
         const { error: uploadError } = await supabase.storage
           .from('rooms')
-          .upload(filePath, file);
+          .upload(filePath, file, {
+            contentType: file.type,
+            upsert: true
+          });
 
         if (uploadError) throw uploadError;
 
@@ -86,6 +89,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
           .from('rooms')
           .getPublicUrl(filePath);
         
+        console.log('Successfully uploaded room image. Public URL:', publicUrl);
         uploadedUrls.push(publicUrl);
       }
 
