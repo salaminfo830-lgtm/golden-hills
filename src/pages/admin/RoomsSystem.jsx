@@ -433,14 +433,21 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
 
                      <div>
                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Category</label>
-                       <select value={newRoom.type} onChange={e=>setNewRoom({...newRoom, type: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
-                         <option>Heritage Deluxe</option>
-                         <option>Royal Gold Suite</option>
-                         <option>Presidential Panorama</option>
-                         <option>Executive Hillside</option>
-                         <option>Sapphire Garden Room</option>
-                         <option>Imperial Family Wing</option>
-                       </select>
+                       <input 
+                         list="room-categories"
+                         value={newRoom.type} 
+                         onChange={e=>setNewRoom({...newRoom, type: e.target.value})} 
+                         placeholder="e.g. Heritage Deluxe"
+                         className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm"
+                       />
+                       <datalist id="room-categories">
+                         <option value="Heritage Deluxe" />
+                         <option value="Royal Gold Suite" />
+                         <option value="Presidential Panorama" />
+                         <option value="Executive Hillside" />
+                         <option value="Sapphire Garden Room" />
+                         <option value="Imperial Family Wing" />
+                       </datalist>
                      </div>
 
                       <div>

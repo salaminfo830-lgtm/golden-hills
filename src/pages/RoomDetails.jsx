@@ -43,7 +43,7 @@ const RoomDetails = () => {
         type: 'Classic Room',
         price: 25000,
         capacity: 2,
-        description: 'Experience a sanctuary where timeless Algerian elegance meets modern 5-star refinement.',
+        description: 'Experience a sanctuary where timeless Algerian elegance meets modern 4-star refinement.',
         image_url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
         amenities: []
       },
@@ -200,10 +200,10 @@ const RoomDetails = () => {
                  <div className="space-y-6 md:space-y-8">
                     <div className="flex items-center gap-4">
                        <div className="flex items-center gap-1 text-luxury-gold">
-                          {[1,2,3,4,5].map(s => <Star key={s} className="w-3 md:w-3.5 h-3 md:h-3.5 fill-current" />)}
+                          {[1,2,3,4].map(s => <Star key={s} className="w-3 md:w-3.5 h-3 md:h-3.5 fill-current" />)}
                        </div>
                        <div className="h-px w-12 bg-luxury-gold/20" />
-                       <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Official 5-Star Gilded Rating</span>
+                       <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Official 4-Star Gilded Rating</span>
                     </div>
                     <h1 className="text-4xl md:text-8xl font-serif font-bold text-luxury-black leading-[1.1]">
                        {room.type} <br /> <span className="italic font-normal text-luxury-gold">Sanctuary</span>
@@ -236,7 +236,7 @@ const RoomDetails = () => {
                  <div className="space-y-8 md:space-y-10">
                     <h3 className="text-2xl md:text-3xl font-serif font-bold">A Masterpiece of Hospitality</h3>
                     <p className="text-gray-500 text-lg md:text-xl leading-relaxed font-medium italic">
-                       "{room.description || 'Experience a sanctuary where timeless Algerian elegance meets modern 5-star refinement. Featuring gold-leafed ceilings, expansive panoramic views of the Setif highlands, and a private traditional hammam.'}"
+                       "{room.description || 'Experience a sanctuary where timeless Algerian elegance meets modern 4-star refinement. Featuring gold-leafed ceilings, expansive panoramic views of the Setif highlands, and a private traditional hammam.'}"
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
                        <div className="space-y-6">

@@ -135,7 +135,7 @@ const SuitesPage = () => {
                           <h3 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black group-hover:italic transition-all duration-700 leading-none">{suite.type}</h3>
                        </div>
                        <div className="flex gap-1">
-                          {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 text-luxury-gold fill-current" />)}
+                          {[1,2,3,4].map(s => <Star key={s} className="w-4 h-4 text-luxury-gold fill-current" />)}
                        </div>
                     </div>
                     

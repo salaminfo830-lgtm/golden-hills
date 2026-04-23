@@ -191,7 +191,7 @@ const LandingPage = () => {
               <span className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-8 block">The Soul of Setif</span>
               <h2 className="text-3xl md:text-7xl font-serif font-bold text-luxury-black leading-[0.9] mb-8 md:mb-12">Rugged Beauty, <br/><span className="italic text-luxury-gold">Refined.</span></h2>
               <p className="text-xl text-gray-500 leading-relaxed font-medium mb-16 max-w-xl">
-                 Perched upon the highest point of Champs d&apos;azur, Golden Hills is more than a hotel. It is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of five-star excellence.
+                 Perched upon the highest point of Champs d&apos;azur, Golden Hills is more than a hotel. It is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of four-star excellence.
               </p>
               <div className="space-y-10">
                  {[
@@ -404,7 +404,7 @@ const LandingPage = () => {
               >
                 <GlassCard className="bg-white p-12 space-y-8 border-gray-100 hover:border-luxury-gold/30 transition-all duration-700 h-full flex flex-col">
                    <div className="flex gap-1">
-                      {[1,2,3,4,5].map(s => <Star key={s} className="w-4 h-4 text-luxury-gold fill-current" />)}
+                      {[1,2,3,4].map(s => <Star key={s} className="w-4 h-4 text-luxury-gold fill-current" />)}
                    </div>
                    <p className="text-gray-500 text-lg leading-relaxed italic font-medium flex-1">"{review.text}"</p>
                    <div className="pt-8 border-t border-gray-50">

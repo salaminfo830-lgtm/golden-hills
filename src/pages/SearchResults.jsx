@@ -33,7 +33,7 @@ const SearchResults = () => {
       type: 'Heritage Deluxe',
       price: 25000,
       capacity: 2,
-      description: 'Experience a sanctuary where timeless Algerian elegance meets modern 5-star refinement.',
+      description: 'Experience a sanctuary where timeless Algerian elegance meets modern 4-star refinement.',
       image_url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'
     },
     {
@@ -263,7 +263,7 @@ const SearchResults = () => {
                           {room.type}
                         </div>
                         <div className="absolute bottom-6 lg:bottom-8 left-6 lg:left-8 flex gap-1.5 lg:gap-2">
-                           {[1,2,3,4,5].map(s => <Star key={s} className="w-2.5 lg:w-3 h-2.5 lg:h-3 text-luxury-gold fill-current" />)}
+                           {[1,2,3,4].map(s => <Star key={s} className="w-2.5 lg:w-3 h-2.5 lg:h-3 text-luxury-gold fill-current" />)}
                         </div>
                       </div>
                       
@@ -285,7 +285,7 @@ const SearchResults = () => {
                           </div>
 
                           <p className="text-gray-500 text-base lg:text-lg leading-relaxed line-clamp-2 italic">
-                            {room.description || 'Experience a sanctuary where timeless Algerian elegance meets modern 5-star refinement.'}
+                            {room.description || 'Experience a sanctuary where timeless Algerian elegance meets modern 4-star refinement.'}
                           </p>
 
                           {/* Urgency Badge */}
