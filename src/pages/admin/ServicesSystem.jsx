@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, Utensils, Waves, Clock, MapPin, 
-  Trash2, Edit3, Loader2, X, Image as ImageIcon,
-  ChevronRight, Sparkles, Star
-} from 'lucide-react';
+import { Plus, Utensils, Waves, Clock, MapPin, Trash2, Edit3, Loader2, X, Image as ImageIcon, ChevronRight, Sparkles, Star, Upload } from 'lucide-react';
+import { useRef } from 'react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';
@@ -27,6 +24,15 @@ const ServicesSystem = () => {
     specialty: '',
     price: ''
   });
+
+  const [uploading, setUploading] = useState(false);
+  const [toast, setToast] = useState(null); // { message, type }
+  const fileInputRef = useRef(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 5000);
+  };
 
   useEffect(() => {
     fetchServices();
@@ -72,35 +78,71 @@ const ServicesSystem = () => {
     setLoading(false);
   };
 
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `services-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('rooms') // Reusing rooms bucket for simplicity, or we could use 'services'
+        .upload(fileName, file, {
+          contentType: file.type,
+          upsert: true
+        });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('rooms')
+        .getPublicUrl(fileName);
+      
+      setNewService(prev => ({ ...prev, image_url: publicUrl }));
+      showToast('Image uploaded successfully', 'success');
+    } catch (error) {
+      console.error('Upload error:', error);
+      showToast('Upload failed: ' + error.message, 'error');
+    } finally {
+      setUploading(false);
+      e.target.value = '';
+    }
+  };
+
   const handleAddService = async (e) => {
     e.preventDefault();
     setLoading(true);
 
-    if (editingService && editingService.id) {
-      const { error } = await supabase
-        .from('Service')
-        .update(newService)
-        .eq('id', editingService.id);
-      
-      if (!error) {
+    try {
+      if (editingService && editingService.id) {
+        const { error } = await supabase
+          .from('Service')
+          .update(newService)
+          .eq('id', editingService.id);
+        
+        if (error) throw error;
+        
+        showToast('Service updated', 'success');
         setShowAddModal(false);
         setEditingService(null);
         resetForm();
         fetchServices();
       } else {
-        alert("Error updating service: " + error.message);
-        setLoading(false);
-      }
-    } else {
-      const { error } = await supabase.from('Service').insert([newService]);
-      if (!error) {
+        const { error } = await supabase.from('Service').insert([newService]);
+        if (error) throw error;
+        
+        showToast('Service added to catalog', 'success');
         setShowAddModal(false);
         resetForm();
         fetchServices();
-      } else {
-        alert("Error adding service: " + error.message);
-        setLoading(false);
       }
+    } catch (error) {
+      console.error('Error saving service:', error);
+      showToast('Error saving: ' + error.message, 'error');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -403,11 +445,27 @@ const ServicesSystem = () => {
                       </div>
 
                       <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Image URL</label>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Cover Image</label>
                         <div className="flex gap-4">
-                           <input placeholder="https://images.unsplash.com/..." type="text" value={newService.image_url} onChange={e=>setNewService({...newService, image_url: e.target.value})} className="flex-1 bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm" />
-                           <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0 border border-gray-200">
-                              {newService.image_url ? <img src={newService.image_url} className="w-full h-full object-cover rounded-2xl" /> : <ImageIcon className="w-5 h-5 text-gray-300" />}
+                           <div className="flex-1 relative">
+                             <input placeholder="https://images.unsplash.com/..." type="text" value={newService.image_url} onChange={e=>setNewService({...newService, image_url: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm pr-12" />
+                             <button 
+                               type="button"
+                               onClick={() => fileInputRef.current?.click()}
+                               className="absolute right-3 top-1/2 -translate-y-1/2 p-2 text-luxury-gold hover:bg-luxury-gold/10 rounded-xl transition-all"
+                             >
+                               <Upload className="w-4 h-4" />
+                             </button>
+                             <input 
+                               type="file" 
+                               ref={fileInputRef} 
+                               hidden 
+                               onChange={handleFileUpload} 
+                               accept="image/*" 
+                             />
+                           </div>
+                           <div className="w-14 h-14 bg-gray-100 rounded-2xl flex items-center justify-center shrink-0 border border-gray-200 overflow-hidden shadow-sm">
+                              {newService.image_url ? <img src={newService.image_url} className="w-full h-full object-cover" /> : <ImageIcon className="w-5 h-5 text-gray-300" />}
                            </div>
                         </div>
                       </div>
@@ -425,6 +483,24 @@ const ServicesSystem = () => {
       )}
       </AnimatePresence>
 
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className={`fixed bottom-10 right-10 z-[300] px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-4 border bg-white ${
+              toast.type === 'success' 
+                ? 'border-green-100 text-green-600' 
+                : 'border-red-100 text-red-600'
+            }`}
+          >
+            {toast.type === 'success' ? <Star className="w-5 h-5" /> : <X className="w-5 h-5" />}
+            <span className="text-xs font-bold uppercase tracking-widest">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

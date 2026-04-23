@@ -1,12 +1,13 @@
 import { motion } from 'framer-motion';
 import { twMerge } from 'tailwind-merge';
 
-const GoldButton = ({ children, className, onClick, outline = false }) => {
+const GoldButton = ({ children, className, onClick, outline = false, ...props }) => {
   return (
     <motion.button
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
+      {...props}
       className={twMerge(
         'relative px-6 md:px-8 py-2.5 md:py-3 rounded-full font-bold transition-all duration-500 overflow-hidden group tracking-wide',
         outline 
