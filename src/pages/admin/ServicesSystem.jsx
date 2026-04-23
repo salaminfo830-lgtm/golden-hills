@@ -88,26 +88,29 @@ const ServicesSystem = () => {
       const fileName = `services-${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
-        .from('rooms') // Reusing rooms bucket for simplicity, or we could use 'services'
+        .from('rooms') // Reusing rooms bucket
         .upload(fileName, file, {
           contentType: file.type,
           upsert: true
         });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('Upload error detail:', uploadError);
+        throw new Error(uploadError.message || 'Storage upload failed');
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('rooms')
         .getPublicUrl(fileName);
       
       setNewService(prev => ({ ...prev, image_url: publicUrl }));
-      showToast('Image uploaded successfully', 'success');
+      showToast('Service image updated successfully', 'success');
     } catch (error) {
       console.error('Upload error:', error);
-      showToast('Upload failed: ' + error.message, 'error');
+      showToast('UPLOAD FAILED: ' + error.message, 'error');
     } finally {
       setUploading(false);
-      e.target.value = '';
+      if (e.target) e.target.value = '';
     }
   };
 
@@ -473,11 +476,16 @@ const ServicesSystem = () => {
                  </form>
               </div>
 
-              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
-                 <GoldButton form="add-service-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (editingService ? 'SAVE CHANGES' : 'SAVE TO COLLECTION')}
-                 </GoldButton>
-              </div>
+               <div className="p-8 bg-white border-t border-gray-100 shrink-0">
+                  <GoldButton 
+                    form="add-service-form" 
+                    type="submit" 
+                    disabled={loading || uploading}
+                    className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2"
+                  >
+                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (uploading ? 'UPLOADING...' : (editingService ? 'SAVE CHANGES' : 'SAVE TO COLLECTION'))}
+                  </GoldButton>
+               </div>
            </motion.div>
         </div>
       )}

@@ -89,7 +89,10 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
             upsert: true
           });
 
-        if (uploadError) throw uploadError;
+        if (uploadError) {
+          console.error('Upload error detail:', uploadError);
+          throw new Error(uploadError.message || 'Storage upload failed');
+        }
 
         const { data: { publicUrl } } = supabase.storage
           .from('rooms')
@@ -101,16 +104,17 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
 
       if (isGallery) {
         setNewRoom(prev => ({ ...prev, gallery: [...(prev.gallery || []), ...uploadedUrls] }));
+        showToast(`Added ${uploadedUrls.length} images to gallery`, 'success');
       } else {
         setNewRoom(prev => ({ ...prev, image_url: uploadedUrls[0] }));
+        showToast('Primary sanctuary photo updated', 'success');
       }
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Error uploading image: ' + error.message);
+      showToast('UPLOAD FAILED: ' + error.message, 'error');
     } finally {
       setUploading(false);
-      // Reset input value to allow selecting same file again
-      e.target.value = '';
+      if (e.target) e.target.value = '';
     }
   };
 
@@ -543,8 +547,13 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
 
               {/* Footer */}
               <div className="p-8 bg-white border-t border-gray-100 shrink-0">
-                 <GoldButton form="add-room-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'SAVE ROOM TO SYSTEM'}
+                 <GoldButton 
+                   form="add-room-form" 
+                   type="submit" 
+                   disabled={loading || uploading}
+                   className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2"
+                 >
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (uploading ? 'WAITING FOR UPLOAD...' : 'SAVE ROOM TO SYSTEM')}
                  </GoldButton>
               </div>
            </motion.div>
