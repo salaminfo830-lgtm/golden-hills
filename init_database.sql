@@ -106,6 +106,41 @@ CREATE TABLE IF NOT EXISTS "SecurityLog" (
     "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS "Settings" (
+    "id" TEXT PRIMARY KEY DEFAULT 'global',
+    "hotel_name" TEXT DEFAULT 'Golden Hills Hotel Setif',
+    "address" TEXT,
+    "contact_email" TEXT,
+    "contact_phone" TEXT,
+    "language" TEXT DEFAULT 'English',
+    "timezone" TEXT DEFAULT '(GMT+01:00) Algiers, Casablanca, Tunis',
+    "currency" TEXT DEFAULT 'DZD',
+    "brand_color_primary" TEXT DEFAULT '#D4AF37',
+    "brand_color_secondary" TEXT DEFAULT '#002349',
+    "font_family" TEXT DEFAULT 'Inter',
+    "hero_image_url" TEXT,
+    "logo_url" TEXT,
+    "password_min_length" INTEGER DEFAULT 8,
+    "session_timeout" INTEGER DEFAULT 30,
+    "two_factor_enabled" BOOLEAN DEFAULT FALSE,
+    "data_retention_days" INTEGER DEFAULT 365,
+    "email_notifications_reservations" BOOLEAN DEFAULT TRUE,
+    "email_notifications_stock" BOOLEAN DEFAULT TRUE,
+    "email_notifications_staff" BOOLEAN DEFAULT FALSE,
+    "created_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS "SecuritySystemStatus" (
+    "id" TEXT PRIMARY KEY DEFAULT 'current',
+    "lockdown_active" BOOLEAN DEFAULT FALSE,
+    "biometric_locks" TEXT DEFAULT 'Active',
+    "infrared_scanners" TEXT DEFAULT 'Active',
+    "radio_silent" TEXT DEFAULT 'Inactive',
+    "last_audit" TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    "system_health" INTEGER DEFAULT 100
+);
+
 DROP TABLE IF EXISTS "FinanceTransaction" CASCADE;
 CREATE TABLE IF NOT EXISTS "FinanceTransaction" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -157,18 +192,64 @@ ALTER TABLE "Review" ENABLE ROW LEVEL SECURITY;
 ALTER TABLE "Service" ENABLE ROW LEVEL SECURITY;
 
 -- Create Permissive Policies (FOR DEVELOPMENT)
-CREATE POLICY "Full access for all" ON "Profile" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "Room" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "Reservation" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "Staff" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "Task" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "KitchenOrder" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "StockItem" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "SecurityLog" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "FinanceTransaction" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "Guest" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "Review" FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Full access for all" ON "Service" FOR ALL USING (true) WITH CHECK (true);
+DO $$ 
+BEGIN
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Profile" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Room" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Reservation" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Staff" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Task" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "KitchenOrder" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "StockItem" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "SecurityLog" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "FinanceTransaction" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Guest" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Review" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Service" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "Settings" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+
+    BEGIN
+        CREATE POLICY "Full access for all" ON "SecuritySystemStatus" FOR ALL USING (true) WITH CHECK (true);
+    EXCEPTION WHEN duplicate_object THEN NULL; END;
+END $$;
 
 -- 2. Insert Base Foundational Data
 
@@ -270,7 +351,10 @@ INSERT INTO "Service" ("id", "name", "type", "description", "hours", "location",
 (gen_random_uuid(), 'Numidian Spa', 'Spa', 'Ancient healing rituals using local botanical oils.', '09:00 - 21:00', 'Wellness Level', 'Atlas Stone Massage', 'https://images.unsplash.com/photo-1544161515-436cefb6579a?auto=format&fit=crop&q=80&w=2070')
 ON CONFLICT DO NOTHING;
 
+-- Initial Security Status
+INSERT INTO "SecuritySystemStatus" ("id", "lockdown_active") VALUES ('current', FALSE) ON CONFLICT DO NOTHING;
+
 -- Enable Realtime in Supabase for all these tables
 -- You must run these in the Supabase SQL editor if not done automatically via Prisma
 DROP PUBLICATION IF EXISTS supabase_realtime;
-CREATE PUBLICATION supabase_realtime FOR TABLE "Room", "Reservation", "KitchenOrder", "Staff", "Task", "FinanceTransaction", "Guest", "Review", "Service";
+CREATE PUBLICATION supabase_realtime FOR TABLE "Room", "Reservation", "KitchenOrder", "Staff", "Task", "FinanceTransaction", "Guest", "Review", "Service", "SecurityLog", "Settings", "SecuritySystemStatus";

@@ -227,3 +227,13 @@ model PaymentRequest {
   status    String   @default("Pending")
   created_at DateTime @default(now())
 }
+
+model SecuritySystemStatus {
+  id                String   @id @default("current")
+  lockdown_active   Boolean  @default(false)
+  biometric_locks   String   @default("Active")
+  infrared_scanners String   @default("Active")
+  radio_silent      String   @default("Inactive")
+  last_audit        DateTime @default(now())
+  system_health     Int      @default(100)
+}

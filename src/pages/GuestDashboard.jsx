@@ -49,7 +49,7 @@ const GuestDashboard = () => {
       if (guestData) {
         const { data: reservations } = await supabase
           .from('Reservation')
-          .select('*')
+          .select('*, room:Room(*)')
           .eq('guest_id', guestData.id)
           .order('start_date', { ascending: false });
         setBookings(reservations || []);
@@ -78,7 +78,7 @@ const GuestDashboard = () => {
   }
 
   return (
-    <div className="min-h-screen bg-luxury-cream/20 flex font-sans">
+    <div className="min-h-screen bg-luxury-cream/20 flex font-apple">
       {/* Gilded Sidebar */}
       <aside className="hidden lg:flex w-80 bg-luxury-black flex-col border-r border-white/5">
         <div className="p-10">
@@ -195,7 +195,7 @@ const GuestDashboard = () => {
                        <GlassCard className="bg-white p-0 overflow-hidden border-luxury-gold/10">
                           <div className="flex flex-col lg:flex-row">
                              <div className="lg:w-1/3 aspect-video lg:aspect-auto">
-                                <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070" className="w-full h-full object-cover" alt="Suite" />
+                                <img src={bookings.find(b => new Date(b.start_date) > new Date())?.room?.image_url || "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070"} className="w-full h-full object-cover" alt="Suite" />
                              </div>
                              <div className="flex-1 p-10 flex flex-col justify-between">
                                 <div className="flex justify-between items-start">
@@ -308,7 +308,7 @@ const GuestDashboard = () => {
                        <GlassCard key={booking.id} className="bg-white p-8 group hover:border-luxury-gold/30 transition-all duration-500">
                           <div className="flex items-center gap-10">
                              <div className="w-24 h-24 rounded-[2rem] overflow-hidden shrink-0 border border-gray-100">
-                                <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070" className="w-full h-full object-cover" />
+                                <img src={booking.room?.image_url || "https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070"} className="w-full h-full object-cover" />
                              </div>
                              <div className="flex-1 grid grid-cols-2 lg:grid-cols-4 gap-8">
                                 <div>

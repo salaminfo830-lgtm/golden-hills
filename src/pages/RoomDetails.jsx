@@ -97,16 +97,22 @@ const RoomDetails = () => {
         }
       }
 
+      const roomImages = [];
+      if (data.image_url) roomImages.push(data.image_url);
+      if (data.gallery && Array.isArray(data.gallery)) {
+        data.gallery.forEach(img => {
+          if (img !== data.image_url) roomImages.push(img);
+        });
+      }
+
       const roomData = {
         ...data,
-        images: (data.gallery && Array.isArray(data.gallery) && data.gallery.length > 0) 
-          ? data.gallery 
-          : [
-            data.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
-            'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974',
-            'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070',
-            'https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=2070'
-          ]
+        images: roomImages.length > 0 ? roomImages : [
+          'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
+          'https://images.unsplash.com/photo-1590490360182-c33d59735288?auto=format&fit=crop&q=80&w=1974',
+          'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070',
+          'https://images.unsplash.com/photo-1540518614846-7eded433c457?auto=format&fit=crop&q=80&w=2070'
+        ]
       };
       setRoom(roomData);
       setLoading(false);
@@ -138,7 +144,7 @@ const RoomDetails = () => {
       {/* Premium Header */}
       <nav className="fixed top-0 w-full z-50 transition-all duration-700 bg-white/80 backdrop-blur-2xl border-b border-luxury-gold/10 py-4 md:py-6">
         <div className="container mx-auto px-6 md:px-8 flex justify-between items-center">
-          <Link to="/search" className="flex items-center gap-3 group text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-luxury-black transition-all">
+          <Link to="/search" className="flex items-center gap-3 group text-xs md:text-sm font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-luxury-black transition-all">
             <ArrowLeft className="w-3.5 md:w-4 h-3.5 md:h-4 group-hover:-translate-x-1 transition-transform" /> <span className="hidden sm:inline">Discovery Portal</span>
           </Link>
           <Logo className="scale-75 md:scale-90" />
@@ -146,7 +152,7 @@ const RoomDetails = () => {
              <button className="p-2 md:p-3 hover:bg-gray-50 rounded-2xl transition-colors"><Share2 className="w-4 h-4 md:w-5 md:h-5 text-gray-400" /></button>
              <button className="p-2 md:p-3 hover:bg-gray-50 rounded-2xl transition-colors"><Heart className="w-4 h-4 md:w-5 md:h-5 text-gray-400" /></button>
              <GoldButton 
-               className="hidden sm:flex px-6 md:px-10 py-2.5 md:py-3 text-[9px] md:text-[10px]"
+               className="hidden sm:flex px-6 md:px-10 py-2.5 md:py-3 text-xs md:text-sm"
                onClick={() => navigate(`/book/${id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}
              >
                RESERVE
@@ -168,7 +174,7 @@ const RoomDetails = () => {
                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                  <div className="absolute bottom-6 md:bottom-10 left-6 md:left-10 text-white flex items-center gap-4">
                     <div className="w-10 h-10 md:w-12 md:h-12 rounded-xl md:rounded-2xl glass flex items-center justify-center"><Maximize2 className="w-4 md:w-5 h-4 md:h-5" /></div>
-                    <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.4em]">Expand Sanctuary View</span>
+                    <span className="text-xs md:text-sm font-bold uppercase tracking-[0.4em]">Expand Sanctuary View</span>
                  </div>
               </motion.div>
               <div className="lg:col-span-4 flex lg:grid lg:grid-rows-3 gap-4 lg:gap-8 overflow-x-auto lg:overflow-visible no-scrollbar pb-4 lg:pb-0">
@@ -203,7 +209,7 @@ const RoomDetails = () => {
                           {[1,2,3,4].map(s => <Star key={s} className="w-3 md:w-3.5 h-3 md:h-3.5 fill-current" />)}
                        </div>
                        <div className="h-px w-12 bg-luxury-gold/20" />
-                       <span className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Official 4-Star Gilded Rating</span>
+                       <span className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Official 4-Star Gilded Rating</span>
                     </div>
                     <h1 className="text-4xl md:text-8xl font-serif font-bold text-luxury-black leading-[1.1]">
                        {room.type} <br /> <span className="italic font-normal text-luxury-gold">Sanctuary</span>
@@ -212,22 +218,22 @@ const RoomDetails = () => {
                        <div className="flex items-center gap-3 md:gap-4">
                           <MapPin className="text-luxury-gold w-4 md:w-5 h-4 md:h-5" />
                           <div>
-                             <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400">Location</p>
-                             <p className="text-xs md:text-sm font-bold">North Wing • High Floor</p>
+                             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Location</p>
+                             <p className="text-sm font-bold">North Wing • High Floor</p>
                           </div>
                        </div>
                        <div className="flex items-center gap-3 md:gap-4">
                           <Sun className="text-luxury-gold w-4 md:w-5 h-4 md:h-5" />
                           <div>
-                             <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400">Exposure</p>
-                             <p className="text-xs md:text-sm font-bold">Highland & City Panorama</p>
+                             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Exposure</p>
+                             <p className="text-sm font-bold">Highland & City Panorama</p>
                           </div>
                        </div>
                        <div className="flex items-center gap-3 md:gap-4">
                           <Sparkles className="text-luxury-gold w-4 md:w-5 h-4 md:h-5" />
                           <div>
-                             <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400">Vibe</p>
-                             <p className="text-xs md:text-sm font-bold">Refined Tranquility</p>
+                             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Vibe</p>
+                             <p className="text-sm font-bold">Refined Tranquility</p>
                           </div>
                        </div>
                     </div>
@@ -240,7 +246,7 @@ const RoomDetails = () => {
                     </p>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12">
                        <div className="space-y-6">
-                          <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold flex items-center gap-3">
+                          <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-luxury-gold flex items-center gap-3">
                              <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold" /> Gilded Amenities
                           </h4>
                           <div className="grid grid-cols-1 gap-6">
@@ -259,7 +265,7 @@ const RoomDetails = () => {
                           </div>
                        </div>
                        <div className="space-y-6">
-                          <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold flex items-center gap-3">
+                          <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-luxury-gold flex items-center gap-3">
                              <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold" /> Exclusive Privileges
                           </h4>
                           <ul className="space-y-6">
@@ -287,15 +293,15 @@ const RoomDetails = () => {
                        <div className="space-y-8 md:space-y-10">
                           <div className="flex justify-between items-end">
                              <div>
-                                <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 mb-2">Sanctuary Rate</p>
+                                <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-2">Sanctuary Rate</p>
                                 <h3 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black">{formatPrice(room.price)}</h3>
                              </div>
-                             <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-2">/ Evening</p>
+                             <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">/ Evening</p>
                           </div>
 
                           <div className="space-y-6">
                              <div className="p-5 md:p-6 bg-gray-50 rounded-[1.5rem] md:rounded-[2rem] border border-gray-100 space-y-4">
-                                <div className="flex items-center justify-between text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-gray-400">
                                    <span>Your Stay</span>
                                    <button className="text-luxury-gold hover:underline">Edit</button>
                                 </div>
@@ -308,7 +314,7 @@ const RoomDetails = () => {
                              </div>
                              
                              <div className="p-5 md:p-6 bg-luxury-gold/5 rounded-[1.5rem] md:rounded-[2rem] border border-luxury-gold/10 space-y-4">
-                                <div className="flex items-center justify-between text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-luxury-gold">
+                                <div className="flex items-center justify-between text-xs font-bold uppercase tracking-widest text-luxury-gold">
                                    <span>Included Benefits</span>
                                    <Sparkles className="w-4 h-4" />
                                 </div>
@@ -325,14 +331,14 @@ const RoomDetails = () => {
                                 <span className="text-luxury-gold">{formatPrice(room.price * 6)}</span>
                              </div>
                              <GoldButton 
-                               className="w-full py-5 md:py-6 text-[10px] md:text-xs shadow-2xl"
+                               className="w-full py-5 md:py-6 text-xs md:text-sm shadow-2xl"
                                onClick={() => navigate(`/book/${id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}
                              >
                                  CONFIRM RESERVATION <ArrowRight className="ml-3 w-4 h-4" />
                              </GoldButton>
                           </div>
 
-                          <div className="flex items-center justify-center gap-4 md:gap-6 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-300">
+                          <div className="flex items-center justify-center gap-4 md:gap-6 text-xs font-bold uppercase tracking-widest text-gray-300">
                              <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-luxury-gold/40" /> 100% Secure</span>
                              <span className="flex items-center gap-2"><Clock className="w-4 h-4 text-luxury-gold/40" /> Instant Confirm</span>
                           </div>
@@ -346,7 +352,7 @@ const RoomDetails = () => {
                        </div>
                        <div>
                           <p className="text-xs md:text-sm font-bold text-orange-600 mb-1">High Demand</p>
-                          <p className="text-[10px] md:text-xs text-orange-600/70 font-medium leading-relaxed">This suite is highly coveted. Don't miss your chance.</p>
+                          <p className="text-xs text-orange-600/70 font-medium leading-relaxed">This suite is highly coveted. Don't miss your chance.</p>
                        </div>
                     </div>
                  </div>
@@ -361,12 +367,12 @@ const RoomDetails = () => {
          <div className="container mx-auto px-6 md:px-8 relative z-10">
             <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
                <div>
-                  <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.4em] mb-6">Complete The Vision</h4>
+                  <h4 className="text-luxury-gold font-bold text-xs uppercase tracking-[0.4em] mb-6">Complete The Vision</h4>
                   <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 md:mb-10 leading-tight">Elevate Your <br /> Stay in Setif</h2>
                   <p className="text-white/40 text-lg md:text-xl font-medium leading-relaxed max-w-xl mb-10 md:mb-12 italic">
                      "True luxury is found in the moments between. Curate your experience with our exclusive add-ons."
                   </p>
-                  <GoldButton outline className="px-10 md:px-12 py-4 md:py-5 text-[10px] md:text-xs text-white border-white/20 hover:border-luxury-gold transition-all">DISCOVER ADD-ONS</GoldButton>
+                  <GoldButton outline className="px-10 md:px-12 py-4 md:py-5 text-xs md:text-sm text-white border-white/20 hover:border-luxury-gold transition-all">DISCOVER ADD-ONS</GoldButton>
                </div>
                <div className="grid grid-cols-2 gap-6 md:gap-8">
                   {[

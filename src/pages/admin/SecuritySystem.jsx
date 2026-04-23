@@ -12,21 +12,54 @@ import GoldButton from '../../components/GoldButton';
 const SecuritySystem = () => {
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [statusLoading, setStatusLoading] = useState(true);
+  const [systemStatus, setSystemStatus] = useState({
+    lockdown_active: false,
+    biometric_locks: 'Active',
+    infrared_scanners: 'Active',
+    radio_silent: 'Inactive',
+    system_health: 100,
+    last_audit: new Date().toISOString()
+  });
   const [showAddModal, setShowAddModal] = useState(false);
   const [newLog, setNewLog] = useState({ event: '', location: '', status: 'Info', time: new Date().toISOString() });
 
   useEffect(() => {
     fetchLogs();
+    fetchSystemStatus();
 
-    const subscription = supabase
+    const logSubscription = supabase
       .channel('public:SecurityLog')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'SecurityLog' }, () => fetchLogs())
       .subscribe();
 
+    const statusSubscription = supabase
+      .channel('public:SecuritySystemStatus')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'SecuritySystemStatus' }, (payload) => {
+        if (payload.new && payload.new.id === 'current') {
+          setSystemStatus(payload.new);
+        }
+      })
+      .subscribe();
+
     return () => {
-      supabase.removeChannel(subscription);
+      supabase.removeChannel(logSubscription);
+      supabase.removeChannel(statusSubscription);
     };
   }, []);
+
+  const fetchSystemStatus = async () => {
+    const { data, error } = await supabase
+      .from('SecuritySystemStatus')
+      .select('*')
+      .eq('id', 'current')
+      .single();
+    
+    if (!error && data) {
+      setSystemStatus(data);
+    }
+    setStatusLoading(false);
+  };
 
   const fetchLogs = async () => {
     const { data, error } = await supabase
@@ -62,14 +95,71 @@ const SecuritySystem = () => {
 
   // Emergency Lock function (mock behavior for log)
   const handleEmergencyLock = async () => {
-    if(window.confirm("Activate Emergency Lock Protocol?")) {
+    const nextState = !systemStatus.lockdown_active;
+    const confirmMsg = nextState 
+      ? "ACTIVATE EMERGENCY LOCKDOWN PROTOCOL?\n\nThis will secure all sectors immediately."
+      : "DEACTIVATE LOCKDOWN PROTOCOL?\n\nThis will restore normal operational flow.";
+
+    if(window.confirm(confirmMsg)) {
+      setLoading(true);
+      
+      const { error: statusError } = await supabase
+        .from('SecuritySystemStatus')
+        .update({ lockdown_active: nextState })
+        .eq('id', 'current');
+
+      if (!statusError) {
+        await supabase.from('SecurityLog').insert([{
+          event: nextState ? 'EMERGENCY LOCKDOWN ACTIVATED' : 'LOCKDOWN PROTOCOL DEACTIVATED',
+          location: 'All Sectors',
+          status: nextState ? 'Critical' : 'Info',
+          time: new Date().toISOString()
+        }]);
+        fetchLogs();
+        fetchSystemStatus();
+      }
+      setLoading(false);
+    }
+  };
+
+  const toggleProtocol = async (field, currentVal) => {
+    const nextVal = currentVal === 'Active' ? 'Inactive' : 'Active';
+    const { error } = await supabase
+      .from('SecuritySystemStatus')
+      .update({ [field]: nextVal })
+      .eq('id', 'current');
+    
+    if (!error) {
       await supabase.from('SecurityLog').insert([{
-        event: 'EMERGENCY LOCKDOWN ACTIVATED',
-        location: 'All Sectors',
-        status: 'Critical',
+        event: `PROTOCOL CHANGE: ${field.replace('_', ' ').toUpperCase()} set to ${nextVal}`,
+        location: 'System Core',
+        status: 'Info',
         time: new Date().toISOString()
       }]);
     }
+  };
+
+  const handleSecurityAudit = async () => {
+    setLoading(true);
+    const { error } = await supabase
+      .from('SecuritySystemStatus')
+      .update({ 
+        last_audit: new Date().toISOString(),
+        system_health: 100
+      })
+      .eq('id', 'current');
+    
+    if (!error) {
+      await supabase.from('SecurityLog').insert([{
+        event: 'SECURITY AUDIT COMPLETED',
+        location: 'All Sectors',
+        status: 'Info',
+        time: new Date().toISOString()
+      }]);
+      fetchLogs();
+      fetchSystemStatus();
+    }
+    setLoading(false);
   };
 
   return (
@@ -81,8 +171,16 @@ const SecuritySystem = () => {
         </div>
         <div className="flex gap-4 w-full md:w-auto">
            <GoldButton onClick={() => setShowAddModal(true)} outline className="flex-1 md:flex-none py-3 px-6 text-[10px]"><Plus className="w-4 h-4 inline mr-1" /> INCIDENT REPORT</GoldButton>
-           <GoldButton onClick={handleEmergencyLock} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 border-none text-white">
-             <Zap className="w-4 h-4" /> LOCKDOWN
+           <GoldButton 
+             onClick={handleEmergencyLock} 
+             className={`flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2 border-none text-white transition-all duration-500 ${
+               systemStatus.lockdown_active 
+                 ? 'bg-green-600 hover:bg-green-700 shadow-[0_0_20px_rgba(22,163,74,0.4)]' 
+                 : 'bg-red-600 hover:bg-red-700 shadow-[0_0_20px_rgba(220,38,38,0.4)]'
+             }`}
+           >
+             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Zap className="w-4 h-4" />}
+             {systemStatus.lockdown_active ? 'RELEASE LOCKDOWN' : 'EMERGENCY LOCKDOWN'}
            </GoldButton>
         </div>
       </div>
@@ -160,34 +258,46 @@ const SecuritySystem = () => {
          <div className="space-y-8">
             <GlassCard className="bg-white border-gray-100 p-8">
                <h3 className="text-xl font-bold mb-8">Active Protocols</h3>
-               <div className="space-y-6">
+                <div className="space-y-6">
                   {[
-                    { label: 'Bio-Metric Locks', status: 'Active', icon: <Lock /> },
-                    { label: 'Infrared Scanners', status: 'Active', icon: <Eye /> },
-                    { label: 'Radio Silents', status: 'Inactive', icon: <Radio /> },
+                    { field: 'biometric_locks', label: 'Bio-Metric Locks', status: systemStatus.biometric_locks, icon: <Lock /> },
+                    { field: 'infrared_scanners', label: 'Infrared Scanners', status: systemStatus.infrared_scanners, icon: <Eye /> },
+                    { field: 'radio_silent', label: 'Radio Silents', status: systemStatus.radio_silent, icon: <Radio /> },
                   ].map((proto, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100">
+                    <div 
+                      key={i} 
+                      onClick={() => toggleProtocol(proto.field, proto.status)}
+                      className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100 cursor-pointer hover:bg-white hover:shadow-sm transition-all group"
+                    >
                        <div className="flex items-center gap-4">
-                          <div className="text-luxury-gold">{proto.icon}</div>
+                          <div className={`transition-colors ${proto.status === 'Active' ? 'text-luxury-gold' : 'text-gray-300'}`}>{proto.icon}</div>
                           <span className="text-xs font-bold text-gray-700">{proto.label}</span>
                        </div>
-                       <div className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase ${proto.status === 'Active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
+                       <div className={`px-3 py-1 rounded-full text-[8px] font-bold uppercase transition-all ${proto.status === 'Active' ? 'bg-green-50 text-green-600' : 'bg-gray-100 text-gray-400'}`}>
                           {proto.status}
                        </div>
                     </div>
                   ))}
-               </div>
+                </div>
             </GlassCard>
 
-            <GlassCard className="gold-gradient text-white p-8">
+            <GlassCard className={`${systemStatus.lockdown_active ? 'bg-red-600' : 'gold-gradient'} text-white p-8 transition-colors duration-700`}>
                <div className="flex items-center gap-3 mb-6">
-                  <AlertTriangle className="text-white" />
+                  <AlertTriangle className={`text-white ${systemStatus.lockdown_active ? 'animate-pulse' : ''}`} />
                   <h3 className="font-bold text-lg">System Status</h3>
                </div>
                <p className="text-xs opacity-90 leading-relaxed mb-6 font-medium">
-                  Shield protocol is currently <span className="underline">NOMINAL</span>. Perimeter integrity verified at 04:00 AM.
+                  Shield protocol is currently <span className="underline font-bold">{systemStatus.lockdown_active ? 'LOCKDOWN' : 'NOMINAL'}</span>. 
+                  Last audit performed {new Date(systemStatus.last_audit).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} today.
+                  System health: {systemStatus.system_health}%.
                </p>
-               <GoldButton outline className="w-full border-white/50 text-white hover:bg-white hover:text-luxury-gold">SECURITY AUDIT</GoldButton>
+               <GoldButton 
+                 onClick={handleSecurityAudit}
+                 outline 
+                 className="w-full border-white/50 text-white hover:bg-white hover:text-luxury-gold"
+               >
+                 {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'SECURITY AUDIT'}
+               </GoldButton>
             </GlassCard>
          </div>
       </div>

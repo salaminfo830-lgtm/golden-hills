@@ -30,6 +30,11 @@
   .font-serif {
     font-family: 'Playfair Display', serif;
   }
+
+  .font-apple {
+    font-family: 'apple', sans-serif;
+    letter-spacing: -0.011em;
+  }
 }
 
 @layer components {

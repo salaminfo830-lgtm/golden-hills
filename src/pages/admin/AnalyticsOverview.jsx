@@ -15,6 +15,7 @@ const AnalyticsOverview = () => {
   const [stats, setStats] = useState({ revenue: 0, guests: 0, occupancy: 0, efficiency: 0 });
   const [rooms, setRooms] = useState([]);
   const [arrivals, setArrivals] = useState([]);
+  const [securityStatus, setSecurityStatus] = useState({ lockdown_active: false });
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,7 +25,12 @@ const AnalyticsOverview = () => {
       supabase.channel('public:Room').on('postgres_changes', { event: '*', schema: 'public', table: 'Room' }, fetchAnalytics),
       supabase.channel('public:FinanceTransaction').on('postgres_changes', { event: '*', schema: 'public', table: 'FinanceTransaction' }, fetchAnalytics),
       supabase.channel('public:Reservation').on('postgres_changes', { event: '*', schema: 'public', table: 'Reservation' }, fetchAnalytics),
-      supabase.channel('public:Staff').on('postgres_changes', { event: '*', schema: 'public', table: 'Staff' }, fetchAnalytics)
+      supabase.channel('public:Staff').on('postgres_changes', { event: '*', schema: 'public', table: 'Staff' }, fetchAnalytics),
+      supabase.channel('public:SecuritySystemStatus').on('postgres_changes', { event: '*', schema: 'public', table: 'SecuritySystemStatus' }, (payload) => {
+        if (payload.new && payload.new.id === 'current') {
+           setSecurityStatus(payload.new);
+        }
+      })
     ];
 
     channels.forEach(ch => ch.subscribe());
@@ -36,6 +42,10 @@ const AnalyticsOverview = () => {
 
   const fetchAnalytics = async () => {
     try {
+      // Security Status
+      const { data: secData } = await supabase.from('SecuritySystemStatus').select('*').eq('id', 'current').single();
+      if (secData) setSecurityStatus(secData);
+
       // Rooms
       const { data: roomData } = await supabase.from('Room').select('*').order('number', { ascending: true });
       
@@ -112,7 +122,7 @@ const AnalyticsOverview = () => {
            <div className="flex items-center gap-3 mb-3">
               <span className="px-3 py-1 bg-luxury-gold/10 text-luxury-gold text-[8px] font-bold uppercase tracking-widest rounded-full border border-luxury-gold/20">Executive Suite</span>
               <span className="text-gray-300">•</span>
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Global Status: Active</span>
+              <span className={`text-[10px] font-bold uppercase tracking-widest ${securityStatus.lockdown_active ? 'text-red-500' : 'text-gray-400'}`}>Global Status: {securityStatus.lockdown_active ? 'LOCKDOWN' : 'Active'}</span>
            </div>
            <h1 className="text-4xl md:text-6xl font-serif font-bold text-luxury-black tracking-tight">Intelligence Hub</h1>
            <p className="text-gray-400 font-medium mt-3 text-lg italic">"Precision metrics for the Golden Hills sanctuary operations."</p>

@@ -6,7 +6,7 @@ import {
   ClipboardList, Utensils, 
   Bed, ShieldCheck, Mail, User as UserIcon,
   Menu, X, ChevronRight, Sparkles,
-  Command, Globe, Shield, Activity, Flame
+  Command, Globe, Shield, Activity, Flame, ShieldAlert
 } from 'lucide-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -41,6 +41,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
   const [isMobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState(null);
   const [scrolled, setScrolled] = useState(false);
+  const [lockdownActive, setLockdownActive] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -61,13 +62,32 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
     };
     fetchUser();
 
+    // Security Status Subscription
+    const fetchSecurityStatus = async () => {
+      const { data } = await supabase.from('SecuritySystemStatus').select('lockdown_active').eq('id', 'current').single();
+      if (data) setLockdownActive(data.lockdown_active);
+    };
+    fetchSecurityStatus();
+
+    const securitySubscription = supabase
+      .channel('public:SecuritySystemStatus')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'SecuritySystemStatus' }, (payload) => {
+        if (payload.new && payload.new.id === 'current') {
+          setLockdownActive(payload.new.lockdown_active);
+        }
+      })
+      .subscribe();
+
     const handleScroll = (e) => {
       setScrolled(e.target.scrollTop > 20);
     };
     
     const container = document.getElementById('dashboard-main-content');
     if (container) container.addEventListener('scroll', handleScroll);
-    return () => container?.removeEventListener('scroll', handleScroll);
+    return () => {
+      container?.removeEventListener('scroll', handleScroll);
+      supabase.removeChannel(securitySubscription);
+    };
   }, []);
 
   const handleLogout = async () => {
@@ -79,7 +99,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
   const menuItems = userType?.toUpperCase() === 'ADMIN' ? adminItems : staffItems;
 
   return (
-    <div className="flex h-screen bg-[#FDFCFB] overflow-hidden font-sans text-luxury-black">
+    <div className="flex h-screen bg-[#FDFCFB] overflow-hidden font-apple text-luxury-black">
       {/* Premium Sidebar */}
       <motion.aside 
         initial={false}
@@ -207,10 +227,12 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
                  <p className="text-[9px] font-bold text-luxury-gold uppercase tracking-[0.4em] mb-1">Golden Hills Internal Systems</p>
                  <div className="flex items-center gap-3">
                     <h2 className="text-xl font-serif font-bold text-luxury-black">Operations Enclave</h2>
-                    <div className="flex items-center gap-2 px-2 py-0.5 bg-green-50 rounded-full border border-green-100">
-                       <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
-                       <span className="text-[8px] font-bold text-green-600 uppercase tracking-tighter">System Nominal</span>
-                    </div>
+                     <div className={`flex items-center gap-2 px-2 py-0.5 rounded-full border ${lockdownActive ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${lockdownActive ? 'bg-red-500' : 'bg-green-500'}`} />
+                        <span className={`text-[8px] font-bold uppercase tracking-tighter ${lockdownActive ? 'text-red-600' : 'text-green-600'}`}>
+                          {lockdownActive ? 'EMERGENCY LOCKDOWN' : 'System Nominal'}
+                        </span>
+                     </div>
                  </div>
               </div>
             </div>

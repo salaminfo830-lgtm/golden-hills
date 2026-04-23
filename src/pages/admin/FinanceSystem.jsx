@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   DollarSign, TrendingUp, TrendingDown, 
   CreditCard, PieChart, ArrowUpRight, 
-  Loader2, Calendar, Plus, X, Trash2
+  Loader2, Calendar, Plus, X, Trash2, Edit3
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -19,6 +19,11 @@ const FinanceSystem = () => {
   const [paymentRequests, setPaymentRequests] = useState([]);
   const [bankAccounts, setBankAccounts] = useState([]);
   const [activeTab, setActiveTab] = useState('Ledger'); // Ledger, Payments, Accounts
+  const [showAccountModal, setShowAccountModal] = useState(false);
+  const [editingAccount, setEditingAccount] = useState(null);
+  const [accountForm, setAccountForm] = useState({
+    bank_name: '', account_holder: '', iban: '', is_active: true
+  });
 
   useEffect(() => {
     fetchFinanceData();
@@ -124,6 +129,73 @@ const FinanceSystem = () => {
   const handleRejectPayment = async (id) => {
     await supabase.from('PaymentRequest').update({ status: 'Rejected' }).eq('id', id);
     fetchPaymentRequests();
+  };
+
+  const handleSaveAccount = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (editingAccount) {
+      const { error } = await supabase
+        .from('BankAccount')
+        .update(accountForm)
+        .eq('id', editingAccount.id);
+      if (!error) {
+        setShowAccountModal(false);
+        setEditingAccount(null);
+        fetchBankAccounts();
+      } else {
+        alert("Error updating account: " + error.message);
+      }
+    } else {
+      const { error } = await supabase
+        .from('BankAccount')
+        .insert([accountForm]);
+      if (!error) {
+        setShowAccountModal(false);
+        fetchBankAccounts();
+      } else {
+        alert("Error adding account: " + error.message);
+      }
+    }
+    setLoading(false);
+  };
+
+  const handleDeleteAccount = async (id) => {
+    if (window.confirm("Are you sure you want to delete this bank account?")) {
+      setLoading(true);
+      const { error } = await supabase
+        .from('BankAccount')
+        .delete()
+        .eq('id', id);
+      if (!error) {
+        fetchBankAccounts();
+      } else {
+        alert("Error deleting account: " + error.message);
+      }
+      setLoading(false);
+    }
+  };
+
+  const openAccountModal = (account = null) => {
+    if (account) {
+      setEditingAccount(account);
+      setAccountForm({
+        bank_name: account.bank_name,
+        account_holder: account.account_holder,
+        iban: account.iban,
+        is_active: account.is_active
+      });
+    } else {
+      setEditingAccount(null);
+      setAccountForm({
+        bank_name: '',
+        account_holder: '',
+        iban: '',
+        is_active: true
+      });
+    }
+    setShowAccountModal(true);
   };
 
   return (
@@ -294,23 +366,42 @@ const FinanceSystem = () => {
       {activeTab === 'Accounts' && (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
            {bankAccounts.map(acc => (
-              <GlassCard key={acc.id} className="bg-white border-gray-100 p-8 space-y-6">
+              <GlassCard key={acc.id} className="bg-white border-gray-100 p-8 space-y-6 group relative">
                  <div className="flex justify-between items-start">
                     <div>
                        <h4 className="font-bold text-lg">{acc.bank_name}</h4>
                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{acc.account_holder}</p>
                     </div>
-                    <div className={`w-3 h-3 rounded-full ${acc.is_active ? 'bg-green-500' : 'bg-gray-300'}`} />
+                    <div className="flex items-center gap-2">
+                       <div className={`w-3 h-3 rounded-full ${acc.is_active ? 'bg-green-500' : 'bg-gray-300'}`} title={acc.is_active ? 'Active' : 'Inactive'} />
+                    </div>
                  </div>
                  <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                     <p className="text-[10px] font-bold text-gray-400 uppercase mb-1">IBAN / RIB</p>
                     <p className="text-sm font-mono font-bold text-luxury-gold break-all">{acc.iban}</p>
                  </div>
+                 <div className="flex gap-4 pt-4 border-t border-gray-50 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <button 
+                      onClick={() => openAccountModal(acc)}
+                      className="flex-1 py-2 px-4 bg-gray-100 hover:bg-luxury-gold hover:text-white rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-2"
+                    >
+                       <Edit3 className="w-3 h-3" /> EDIT
+                    </button>
+                    <button 
+                      onClick={() => handleDeleteAccount(acc.id)}
+                      className="flex-1 py-2 px-4 bg-gray-100 hover:bg-red-500 hover:text-white rounded-xl text-[10px] font-bold transition-all flex items-center justify-center gap-2"
+                    >
+                       <Trash2 className="w-3 h-3" /> DELETE
+                    </button>
+                 </div>
               </GlassCard>
            ))}
-           <GlassCard className="bg-gray-50 border-dashed border-2 border-gray-200 p-8 flex flex-col items-center justify-center text-gray-400 cursor-not-allowed">
-              <Plus className="w-8 h-8 mb-2 opacity-20" />
-              <p className="text-[10px] font-bold uppercase tracking-widest">Add Business Account</p>
+           <GlassCard 
+             onClick={() => openAccountModal()}
+             className="bg-gray-50 border-dashed border-2 border-gray-200 p-8 flex flex-col items-center justify-center text-gray-400 cursor-pointer hover:bg-gray-100 hover:border-luxury-gold/30 transition-all group"
+           >
+              <Plus className="w-8 h-8 mb-2 opacity-20 group-hover:opacity-100 group-hover:text-luxury-gold transition-all" />
+              <p className="text-[10px] font-bold uppercase tracking-widest group-hover:text-luxury-gold transition-all">Add Business Account</p>
            </GlassCard>
         </div>
       )}
@@ -352,6 +443,44 @@ const FinanceSystem = () => {
                   </select>
                 </div>
                 <GoldButton type="submit" className="w-full mt-6 py-3">RECORD TRANSACTION</GoldButton>
+              </form>
+           </GlassCard>
+        </div>
+      )}
+
+      {showAccountModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+           <GlassCard className="bg-white w-full max-w-md p-6 relative">
+              <button onClick={() => setShowAccountModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+                <X className="w-5 h-5"/>
+              </button>
+              <h3 className="text-xl font-bold font-serif mb-6">{editingAccount ? 'Edit' : 'Add'} Bank Account</h3>
+              <form onSubmit={handleSaveAccount} className="space-y-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Bank Name</label>
+                  <input required value={accountForm.bank_name} onChange={e=>setAccountForm({...accountForm, bank_name: e.target.value})} type="text" placeholder="e.g. BNP Paribas, BEA..." className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Account Holder</label>
+                  <input required value={accountForm.account_holder} onChange={e=>setAccountForm({...accountForm, account_holder: e.target.value})} type="text" placeholder="e.g. GOLDEN HILLS SARL" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div>
+                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">IBAN / RIB</label>
+                  <input required value={accountForm.iban} onChange={e=>setAccountForm({...accountForm, iban: e.target.value})} type="text" placeholder="Official account number" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                </div>
+                <div className="flex items-center gap-3 pt-2">
+                   <input 
+                     type="checkbox" 
+                     id="is_active"
+                     checked={accountForm.is_active} 
+                     onChange={e=>setAccountForm({...accountForm, is_active: e.target.checked})}
+                     className="w-4 h-4 accent-luxury-gold"
+                   />
+                   <label htmlFor="is_active" className="text-xs font-bold text-gray-500 uppercase tracking-widest">Active Account</label>
+                </div>
+                <GoldButton type="submit" disabled={loading} className="w-full mt-6 py-3">
+                   {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (editingAccount ? 'UPDATE ACCOUNT' : 'CREATE ACCOUNT')}
+                </GoldButton>
               </form>
            </GlassCard>
         </div>

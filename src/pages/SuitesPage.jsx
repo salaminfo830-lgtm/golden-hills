@@ -17,7 +17,7 @@ const SuitesPage = () => {
       id: 'r1',
       type: 'Royal Atlas Suite',
       price: 1200,
-      desc: 'Our flagship residence, offering 180-degree views of the Sétif highlands. A masterpiece of gilded marble and handcrafted cedar.',
+      description: 'Our flagship residence, offering 180-degree views of the Sétif highlands. A masterpiece of gilded marble and handcrafted cedar.',
       image_url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&q=80&w=2070',
       features: ['Private Terrace', 'Personal Butler', 'Hammam-style Bath']
     },
@@ -25,7 +25,7 @@ const SuitesPage = () => {
       id: 'r2',
       type: 'Golden Hill Oasis',
       price: 850,
-      desc: 'A sanctuary of peace designed for deep rejuvenation. Features a private meditation courtyard and direct spa access.',
+      description: 'A sanctuary of peace designed for deep rejuvenation. Features a private meditation courtyard and direct spa access.',
       image_url: 'https://images.unsplash.com/photo-1590490359683-658d3d23f972?auto=format&fit=crop&q=80&w=2070',
       features: ['Zen Garden', 'Organic Mini-bar', 'Silk Bedding']
     }
@@ -121,8 +121,8 @@ const SuitesPage = () => {
                     <img src={suite.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[3s]" alt={suite.type} />
                     <div className="absolute top-6 md:top-10 right-6 md:right-10 flex flex-col gap-3">
                        <div className="px-6 md:px-8 py-3 md:py-4 bg-white/10 backdrop-blur-2xl rounded-2xl border border-white/20 flex flex-col items-center justify-center text-white">
-                          <span className="text-xs md:text-sm font-bold tracking-widest">{formatPrice(suite.price)}</span>
-                          <span className="text-[6px] md:text-[7px] font-bold uppercase tracking-widest opacity-60">Per Night</span>
+                          <span className="text-sm md:text-base font-bold tracking-widest">{formatPrice(suite.price)}</span>
+                          <span className="text-[10px] md:text-xs font-bold uppercase tracking-widest opacity-80">Per Night</span>
                        </div>
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
@@ -131,7 +131,7 @@ const SuitesPage = () => {
                  <div className="space-y-10">
                     <div className="flex justify-between items-end">
                        <div>
-                          <span className="text-luxury-gold text-[10px] font-bold uppercase tracking-[0.5em] mb-3 block">{suite.type} Selection</span>
+                          <span className="text-luxury-gold text-xs font-bold uppercase tracking-[0.5em] mb-3 block">{suite.type} Selection</span>
                           <h3 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black group-hover:italic transition-all duration-700 leading-none">{suite.type}</h3>
                        </div>
                        <div className="flex gap-1">
@@ -140,33 +140,33 @@ const SuitesPage = () => {
                     </div>
                     
                     <p className="text-lg md:text-xl text-gray-500 leading-relaxed max-w-xl font-medium">
-                       {suite.desc}
+                       {suite.description}
                     </p>
 
                     <div className="flex flex-wrap gap-6 md:gap-10 pt-6 border-t border-gray-100">
                        <div className="flex items-center gap-4">
                           <Maximize2 className="w-4 md:w-5 h-4 md:h-5 text-luxury-gold opacity-50" />
-                          <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">{suite.size || '85m²'} Sanctuary</span>
+                          <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">{suite.size || '85m²'} Sanctuary</span>
                        </div>
                        <div className="flex items-center gap-4">
                           <Wind className="w-4 md:w-5 h-4 md:h-5 text-luxury-gold opacity-50" />
-                          <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Pure Air System</span>
+                          <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">Pure Air System</span>
                        </div>
                        <div className="flex items-center gap-4">
                           <ShieldCheck className="w-4 md:w-5 h-4 md:h-5 text-luxury-gold opacity-50" />
-                          <span className="text-[10px] md:text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Total Privacy</span>
+                          <span className="text-xs font-bold uppercase tracking-[0.2em] text-gray-400">Total Privacy</span>
                        </div>
                     </div>
 
                     <div className="pt-10 flex flex-col sm:flex-row gap-6 items-center justify-between">
                        <div className="flex flex-wrap gap-3">
                           {(suite.features || []).map(f => (
-                            <span key={f} className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest bg-luxury-cream/50 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-luxury-gold border border-luxury-gold/10">{f}</span>
+                            <span key={f} className="text-[10px] md:text-xs font-bold uppercase tracking-widest bg-luxury-cream/50 px-3 md:px-4 py-1.5 md:py-2 rounded-full text-luxury-gold border border-luxury-gold/10">{f}</span>
                           ))}
                        </div>
                        <Link 
                          to={`/room/${suite.id}`} 
-                         className="flex items-center gap-3 text-luxury-black font-bold uppercase tracking-[0.4em] text-[10px] hover:text-luxury-gold transition-colors group/link"
+                         className="flex items-center gap-3 text-luxury-black font-bold uppercase tracking-[0.4em] text-xs hover:text-luxury-gold transition-colors group/link"
                        >
                           DISCOVERY PROFILE <ArrowRight className="w-5 h-5 group-hover/link:translate-x-2 transition-transform" />
                        </Link>
@@ -207,7 +207,7 @@ const SuitesPage = () => {
                      ].map((service, i) => (
                        <div key={i} className="flex items-center gap-6 group cursor-default">
                           <div className="w-px h-10 bg-luxury-gold/30 group-hover:h-16 transition-all duration-500" />
-                          <span className="text-[10px] md:text-xs font-bold uppercase tracking-[0.5em] text-white/60 group-hover:text-luxury-gold transition-colors">{service}</span>
+                          <span className="text-xs md:text-sm font-bold uppercase tracking-[0.5em] text-white/60 group-hover:text-luxury-gold transition-colors">{service}</span>
                        </div>
                      ))}
                   </div>
@@ -225,7 +225,7 @@ const SuitesPage = () => {
                    <div className="static lg:absolute -bottom-8 lg:-bottom-12 -left-8 lg:-left-12 w-full lg:w-72 h-auto lg:h-72 bg-white/5 backdrop-blur-3xl rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-12 border border-white/10 flex flex-col justify-center mt-10 lg:mt-0">
                       <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-luxury-gold mb-6" />
                       <p className="text-luxury-gold text-4xl md:text-5xl font-serif font-bold italic mb-4">99%</p>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/40 leading-relaxed">Guest Delight index 2025</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.4em] text-white/40 leading-relaxed">Guest Delight index 2025</p>
                    </div>
                </motion.div>
             </div>
@@ -251,12 +251,12 @@ const SuitesPage = () => {
                       <Logo textVisible={false} className="w-8 md:w-12 h-8 md:h-12" />
                    </div>
                 </div>
-                <div className="absolute bottom-10 md:bottom-16 left-1/2 -translate-x-1/2 bg-luxury-black text-white px-8 md:px-10 py-4 md:py-5 rounded-xl md:rounded-2xl text-[9px] md:text-[11px] font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] shadow-2xl w-max">
+                <div className="absolute bottom-10 md:bottom-16 left-1/2 -translate-x-1/2 bg-luxury-black text-white px-8 md:px-10 py-4 md:py-5 rounded-xl md:rounded-2xl text-xs font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] shadow-2xl w-max">
                    Discover Our Vicinity
                 </div>
             </motion.div>
             <div className="mt-20">
-               <GoldButton outline onClick={() => navigate('/search')} className="px-16 py-6 text-[10px]">EXPLORE ALL RESIDENCES</GoldButton>
+               <GoldButton outline onClick={() => navigate('/search')} className="px-16 py-6 text-xs">EXPLORE ALL RESIDENCES</GoldButton>
             </div>
          </div>
       </section>

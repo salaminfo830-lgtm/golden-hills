@@ -159,7 +159,7 @@ const BookingFlow = () => {
       {/* Precision Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/90 backdrop-blur-2xl border-b border-luxury-gold/10 py-6">
         <div className="container mx-auto px-8 flex justify-between items-center">
-          <button onClick={() => navigate(-1)} className="group flex items-center gap-3 text-gray-400 hover:text-luxury-black font-bold text-[10px] uppercase tracking-[0.3em] transition-all">
+          <button onClick={() => navigate(-1)} className="group flex items-center gap-3 text-gray-400 hover:text-luxury-black font-bold text-xs uppercase tracking-[0.3em] transition-all">
             <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> Back to Selection
           </button>
           <Logo className="scale-90" />
@@ -167,7 +167,7 @@ const BookingFlow = () => {
             <div className="hidden md:flex gap-3 mr-6">
               {[1, 2, 3].map(s => (
                 <div key={s} className="flex items-center gap-2">
-                   <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-[10px] font-bold transition-all ${step >= s ? 'bg-luxury-gold border-luxury-gold text-white shadow-gold' : 'bg-white border-gray-100 text-gray-300'}`}>
+                   <div className={`w-8 h-8 rounded-full border flex items-center justify-center text-xs font-bold transition-all ${step >= s ? 'bg-luxury-gold border-luxury-gold text-white shadow-gold' : 'bg-white border-gray-100 text-gray-300'}`}>
                       {step > s ? <CheckCircle2 className="w-4 h-4" /> : s}
                    </div>
                    {s < 3 && <div className={`w-8 h-px ${step > s ? 'bg-luxury-gold' : 'bg-gray-100'}`} />}
@@ -204,7 +204,7 @@ const BookingFlow = () => {
                         <form className="space-y-8" onSubmit={(e) => { e.preventDefault(); setStep(2); window.scrollTo(0, 0); }}>
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                               <div className="space-y-3">
-                                 <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Full Legal Name</label>
+                                 <label className="text-xs uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Full Legal Name</label>
                                  <div className="relative group">
                                     <User className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
                                     <input 
@@ -218,7 +218,7 @@ const BookingFlow = () => {
                                  </div>
                               </div>
                               <div className="space-y-3">
-                                 <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Email Address</label>
+                                 <label className="text-xs uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Email Address</label>
                                  <div className="relative group">
                                     <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
                                     <input 
@@ -233,7 +233,7 @@ const BookingFlow = () => {
                               </div>
                            </div>
                            <div className="space-y-3">
-                              <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Mobile Connection</label>
+                              <label className="text-xs uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Mobile Connection</label>
                               <div className="relative group">
                                  <Phone className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
                                  <input 
@@ -247,7 +247,7 @@ const BookingFlow = () => {
                               </div>
                            </div>
                            <div className="space-y-3">
-                              <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2 flex items-center justify-between">
+                              <label className="text-xs uppercase font-bold text-gray-400 tracking-[0.4em] pl-2 flex items-center justify-between">
                                  Concierge Requests (Optional)
                                  <span className="flex items-center gap-1.5"><MessageSquare className="w-3 h-3 text-luxury-gold" /> Personalized Care</span>
                               </label>
@@ -278,12 +278,12 @@ const BookingFlow = () => {
                            <GlassCard className="bg-white border-gray-100 p-10 rounded-[3rem] space-y-10 shadow-sm">
                               <div className="grid grid-cols-2 gap-10">
                                  <div className="space-y-2">
-                                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em]">Primary Guest</p>
+                                    <p className="text-xs uppercase font-bold text-gray-400 tracking-[0.4em]">Primary Guest</p>
                                     <p className="text-2xl font-serif font-bold text-luxury-black">{formData.fullName}</p>
                                     <p className="text-sm font-medium text-gray-400">{formData.email}</p>
                                  </div>
                                  <div className="space-y-2">
-                                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em]">Timeline</p>
+                                    <p className="text-xs uppercase font-bold text-gray-400 tracking-[0.4em]">Timeline</p>
                                     <p className="text-2xl font-serif font-bold text-luxury-black">{checkInStr} — {checkOutStr}</p>
                                     <p className="text-sm font-medium text-luxury-gold uppercase tracking-widest">{nights} Luxury Evenings</p>
                                  </div>
@@ -293,9 +293,9 @@ const BookingFlow = () => {
                                  <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-4 text-luxury-gold">
                                        <CreditCard className="w-6 h-6" />
-                                       <h4 className="text-[10px] font-bold uppercase tracking-[0.4em]">Financial Settlement</h4>
+                                       <h4 className="text-xs font-bold uppercase tracking-[0.4em]">Financial Settlement</h4>
                                     </div>
-                                    <span className="text-[10px] font-bold text-green-600 bg-green-50 px-4 py-1.5 rounded-full uppercase tracking-widest">No Prepayment Required</span>
+                                    <span className="text-xs font-bold text-green-600 bg-green-50 px-4 py-1.5 rounded-full uppercase tracking-widest">No Prepayment Required</span>
                                  </div>
 
                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -310,7 +310,7 @@ const BookingFlow = () => {
                                           {formData.paymentMethod === 'property' && <div className="w-5 h-5 rounded-full bg-luxury-gold flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>}
                                        </div>
                                        <h5 className="font-bold text-luxury-black mb-1">Pay at Property</h5>
-                                       <p className="text-[10px] text-gray-400 uppercase tracking-widest leading-relaxed">Secure your booking now and settle the balance upon arrival in Setif.</p>
+                                       <p className="text-xs text-gray-400 uppercase tracking-widest leading-relaxed">Secure your booking now and settle the balance upon arrival in Setif.</p>
                                     </div>
                                     <div 
                                       onClick={() => setFormData({...formData, paymentMethod: 'bank'})}
@@ -323,7 +323,7 @@ const BookingFlow = () => {
                                           {formData.paymentMethod === 'bank' && <div className="w-5 h-5 rounded-full bg-luxury-gold flex items-center justify-center"><CheckCircle2 className="w-4 h-4 text-white" /></div>}
                                        </div>
                                        <h5 className="font-bold text-luxury-black mb-1">Bank Transfer</h5>
-                                       <p className="text-[10px] text-gray-400 uppercase tracking-widest leading-relaxed">Transfer directly to our corporate account and upload proof.</p>
+                                       <p className="text-xs text-gray-400 uppercase tracking-widest leading-relaxed">Transfer directly to our corporate account and upload proof.</p>
                                     </div>
                                  </div>
                               </div>
@@ -339,7 +339,7 @@ const BookingFlow = () => {
                            <div className="flex gap-6">
                               <button 
                                 onClick={() => setStep(1)}
-                                className="px-12 h-16 bg-white border-2 border-gray-100 rounded-[2rem] text-[10px] font-bold uppercase tracking-[0.3em] hover:bg-gray-50 transition-colors"
+                                className="px-12 h-16 bg-white border-2 border-gray-100 rounded-[2rem] text-xs font-bold uppercase tracking-[0.3em] hover:bg-gray-50 transition-colors"
                               >
                                 Back
                               </button>
@@ -369,7 +369,7 @@ const BookingFlow = () => {
                          <div className="space-y-10">
                             <div>
                                <h3 className="text-3xl font-serif font-bold text-luxury-black mb-2">{room.type}</h3>
-                               <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">
+                               <div className="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-[0.3em]">
                                   <MapPin className="w-4 h-4 text-luxury-gold/50" /> Golden Hills • Setif, DZ
                                </div>
                             </div>
@@ -384,13 +384,13 @@ const BookingFlow = () => {
                                   <span className="font-bold text-luxury-black">{formatPrice(room.price * nights * 0.1)}</span>
                                </div>
                                <div className="flex justify-between items-center text-sm text-green-600 bg-green-50/50 p-4 rounded-2xl border border-green-100">
-                                  <span className="font-bold uppercase tracking-widest text-[9px]">GHE Web Privilege</span>
+                                  <span className="font-bold uppercase tracking-widest text-xs">GHE Web Privilege</span>
                                   <span className="font-bold">- {formatPrice(room.price * nights * 0.05)}</span>
                                </div>
                                
                                <div className="flex justify-between items-end pt-10 border-t border-gray-100">
                                   <div>
-                                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-1">Total Sanctuary Investment</p>
+                                     <p className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400 mb-1">Total Sanctuary Investment</p>
                                      <p className="text-4xl font-serif font-bold text-luxury-gold">{formatPrice(room.price * nights * 1.05)}</p>
                                   </div>
                                </div>
@@ -399,10 +399,10 @@ const BookingFlow = () => {
                       </GlassCard>
 
                       <div className="grid grid-cols-2 gap-4 px-6">
-                         <div className="flex items-center gap-3 text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                         <div className="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
                             <ShieldCheck className="w-5 h-5 text-luxury-gold/40" /> SSL SECURED
                          </div>
-                         <div className="flex items-center gap-3 text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                         <div className="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-widest">
                             <Calendar className="w-5 h-5 text-luxury-gold/40" /> INSTANT CONFIRM
                          </div>
                       </div>
@@ -443,17 +443,17 @@ const BookingFlow = () => {
                        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 py-12 border-y border-gray-50 relative z-10">
                           <div className="space-y-2">
                              <PlaneTakeoff className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
-                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Confirmation Key</p>
+                             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Confirmation Key</p>
                              <p className="text-xl font-bold font-serif">#GH-{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
                           </div>
                           <div className="space-y-2">
                              <Bell className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
-                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Payment Status</p>
+                             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Payment Status</p>
                              <p className="text-sm font-bold">{formData.paymentMethod === 'bank' ? 'Pending Transfer' : 'Pay at Property'}</p>
                           </div>
                           <div className="space-y-2">
                              <ShieldCheck className="w-6 h-6 text-luxury-gold mx-auto mb-2" />
-                             <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Arrival Support</p>
+                             <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Arrival Support</p>
                              <p className="text-sm font-bold">24/7 Gilded Concierge</p>
                           </div>
                        </div>
@@ -463,26 +463,26 @@ const BookingFlow = () => {
                             <h4 className="text-xl font-serif font-bold text-luxury-black">Bank Transfer Credentials</h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                                <div>
-                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Bank Name</p>
+                                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Bank Name</p>
                                   <p className="text-sm font-bold text-gray-700">{bankAccount.bank_name}</p>
                                </div>
                                <div>
-                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Account Holder</p>
+                                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Account Holder</p>
                                   <p className="text-sm font-bold text-gray-700">{bankAccount.account_holder}</p>
                                </div>
                                <div className="md:col-span-2">
-                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">IBAN (Official)</p>
+                                  <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">IBAN (Official)</p>
                                   <p className="text-sm font-mono font-bold text-luxury-gold bg-white p-4 rounded-xl border border-luxury-gold/10 break-all">{bankAccount.iban}</p>
                                </div>
                             </div>
-                            <p className="text-[10px] text-gray-400 italic">Please upload your transfer proof in the member portal or email it to reserve@goldenhills.dz</p>
+                            <p className="text-xs text-gray-400 italic">Please upload your transfer proof in the member portal or email it to reserve@goldenhills.dz</p>
                          </div>
                        )}
                     </div>
 
                     <div className="flex flex-col sm:flex-row justify-center gap-6 relative z-10">
                        <GoldButton className="px-16 py-6 text-xs shadow-2xl" onClick={() => navigate('/')}>RETURN TO PUBLIC PORTAL</GoldButton>
-                       <Link to="/register" className="px-16 py-6 bg-white border-2 border-gray-100 rounded-[2rem] text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all flex items-center justify-center">ENABLE MEMBER PRIVILEGES</Link>
+                       <Link to="/register" className="px-16 py-6 bg-white border-2 border-gray-100 rounded-[2rem] text-xs font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all flex items-center justify-center">ENABLE MEMBER PRIVILEGES</Link>
                     </div>
                  </div>
               </motion.div>
