@@ -22,11 +22,13 @@ const SettingsSystem = () => {
 
   const handleChange = async (field, value) => {
     setSaveStatus('saving');
-    const { success } = await updateSettings({ [field]: value });
+    const { success, error } = await updateSettings({ [field]: value });
     
     if (success) {
        setTimeout(() => setSaveStatus('saved'), 500);
     } else {
+       console.error('Settings update error:', error);
+       alert('CRITICAL ERROR: Could not save settings. ' + (error?.message || 'Unknown error'));
        setSaveStatus('error');
     }
   };
@@ -40,7 +42,7 @@ const SettingsSystem = () => {
     
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `settings/${field}-${Math.random()}.${fileExt}`;
+      const fileName = `${field}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage

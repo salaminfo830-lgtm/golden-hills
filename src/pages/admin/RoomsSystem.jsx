@@ -73,7 +73,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
       const uploadedUrls = [];
       for (const file of Array.from(files)) {
         const fileExt = file.name.split('.').pop();
-        const fileName = `rooms/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
         const filePath = fileName;
 
         const { error: uploadError } = await supabase.storage
@@ -112,34 +112,36 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
     e.preventDefault();
     setLoading(true);
     
-    if (editingRoom && editingRoom.id) {
-      const { error } = await supabase
-        .from('Room')
-        .update({ ...newRoom, updated_at: new Date().toISOString() })
-        .eq('id', editingRoom.id);
-      
-      if (!error) {
+    try {
+      if (editingRoom && editingRoom.id) {
+        const { error } = await supabase
+          .from('Room')
+          .update({ ...newRoom, updated_at: new Date().toISOString() })
+          .eq('id', editingRoom.id);
+        
+        if (error) throw error;
+        
         setShowAddModal(false);
         setEditingRoom(null);
         setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
         fetchRooms();
       } else {
-        alert("Error updating room: " + error.message);
-        setLoading(false);
-      }
-    } else {
-      const { error } = await supabase.from('Room').insert([{ 
-        ...newRoom, 
-        updated_at: new Date().toISOString() 
-      }]);
-      if (!error) {
+        const { error } = await supabase.from('Room').insert([{ 
+          ...newRoom, 
+          updated_at: new Date().toISOString() 
+        }]);
+        
+        if (error) throw error;
+        
         setShowAddModal(false);
         setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
         fetchRooms();
-      } else {
-        alert("Error adding room: " + error.message);
-        setLoading(false);
       }
+    } catch (error) {
+      console.error('Error saving room:', error);
+      alert('CRITICAL ERROR: Could not save to database. ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
