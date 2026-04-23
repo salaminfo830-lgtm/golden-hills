@@ -432,12 +432,12 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                      </div>
 
                      <div>
-                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Category</label>
+                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Name</label>
                        <input 
                          list="room-categories"
                          value={newRoom.type} 
                          onChange={e=>setNewRoom({...newRoom, type: e.target.value})} 
-                         placeholder="e.g. Heritage Deluxe"
+                         placeholder="e.g. Sapphire Garden View"
                          className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm"
                        />
                        <datalist id="room-categories">

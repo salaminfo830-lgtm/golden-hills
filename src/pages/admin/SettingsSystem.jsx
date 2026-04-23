@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { 
   Globe, Bell, Shield, Database, Palette, Save, 
   Loader2, CheckCircle2, Upload, Monitor,
   Mail, Smartphone, ShieldAlert, Key, Clock,
   Link as LinkIcon
 } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';
 
@@ -14,6 +15,10 @@ const SettingsSystem = () => {
   const { settings, loading, updateSettings } = useSettings();
   const [activeTab, setActiveTab] = useState('General Info');
   const [saveStatus, setSaveStatus] = useState('saved'); // saved, saving, error
+  const [uploading, setUploading] = useState(false);
+  
+  const logoInputRef = useRef(null);
+  const heroInputRef = useRef(null);
 
   const handleChange = async (field, value) => {
     setSaveStatus('saving');
@@ -26,10 +31,32 @@ const SettingsSystem = () => {
     }
   };
 
-  const handleImageUpload = async (field) => {
-    const url = prompt(`Enter the new URL for ${field.replace('_', ' ')}:`, settings[field]);
-    if (url && url !== settings[field]) {
-      handleChange(field, url);
+  const handleImageUpload = async (e, field) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${field}-${Math.random()}.${fileExt}`;
+      const filePath = `branding/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('branding')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('branding')
+        .getPublicUrl(filePath);
+
+      handleChange(field, publicUrl);
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Error uploading image: ' + error.message);
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -139,8 +166,21 @@ const SettingsSystem = () => {
                                 {settings.logo_url ? <img src={settings.logo_url} className="w-full h-full object-cover" /> : 'G'}
                              </div>
                              <div className="space-y-2">
-                                <GoldButton outline className="px-6 py-2 text-[10px] flex items-center gap-2" onClick={() => handleImageUpload('logo_url')}>
-                                   <Upload className="w-3 h-3" /> UPLOAD LOGO
+                                <input 
+                                  type="file" 
+                                  hidden 
+                                  ref={logoInputRef} 
+                                  onChange={(e) => handleImageUpload(e, 'logo_url')}
+                                  accept="image/*"
+                                />
+                                <GoldButton 
+                                  outline 
+                                  className="px-6 py-2 text-[10px] flex items-center gap-2" 
+                                  onClick={() => logoInputRef.current.click()}
+                                  disabled={uploading}
+                                >
+                                   {uploading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Upload className="w-3 h-3" />} 
+                                   {uploading ? 'UPLOADING...' : 'UPLOAD LOGO'}
                                 </GoldButton>
                                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">SVG, PNG Recommended</p>
                              </div>
@@ -159,14 +199,26 @@ const SettingsSystem = () => {
                     <div className="space-y-8">
                        <div className="space-y-4">
                           <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest pl-1">Hero Section Image</label>
-                          <div className="aspect-video w-full rounded-2xl overflow-hidden border border-gray-100 relative group cursor-pointer" onClick={() => handleImageUpload('hero_image_url')}>
-                             <img src={settings.hero_image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                           <div className="aspect-video w-full rounded-2xl overflow-hidden border border-gray-100 relative group cursor-pointer" onClick={() => heroInputRef.current.click()}>
+                             <input 
+                               type="file" 
+                               hidden 
+                               ref={heroInputRef} 
+                               onChange={(e) => handleImageUpload(e, 'hero_image_url')}
+                               accept="image/*"
+                             />
+                             {settings.hero_image_url ? (
+                               <img src={settings.hero_image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+                             ) : (
+                               <div className="w-full h-full gold-gradient" />
+                             )}
                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span className="text-white text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">
-                                   <Monitor className="w-4 h-4" /> Change Background
+                                   {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Monitor className="w-4 h-4" />} 
+                                   {uploading ? 'Uploading...' : 'Change Background'}
                                 </span>
                              </div>
-                          </div>
+                           </div>
                        </div>
                     </div>
                  </div>
