@@ -4,7 +4,7 @@ import {
   Plus, Search, MoreVertical, 
   Bed, CheckCircle2,
   Loader2, User, Droplets, Hammer,
-  X, Trash2, Edit3, Upload
+  X, Trash2, Edit3, Upload, Sparkles
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -134,7 +134,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
         showToast('Room updated successfully!', 'success');
         setShowAddModal(false);
         setEditingRoom(null);
-        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
+        resetForm();
         fetchRooms();
       } else {
         const { error } = await supabase.from('Room').insert([{ 
@@ -146,7 +146,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
         
         showToast('New room added to inventory!', 'success');
         setShowAddModal(false);
-        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
+        resetForm();
         fetchRooms();
       }
     } catch (error) {
@@ -155,6 +155,22 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setNewRoom({ 
+      number: '', 
+      type: 'Heritage Deluxe', 
+      price: 320, 
+      status: 'Vacant', 
+      occupancy: 'Clean', 
+      housekeeper: '', 
+      image_url: '', 
+      description: '', 
+      capacity: 2, 
+      gallery: [],
+      features: []
+    });
   };
 
   const handleEditRoom = (room) => {
@@ -211,7 +227,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
         <div className="flex gap-4 w-full md:w-auto">
            <GoldButton outline onClick={fetchRooms} className="flex-1 md:flex-none py-3 px-6 text-[10px]">REFRESH</GoldButton>
            {userType === 'Admin' && (
-             <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
+             <GoldButton onClick={() => { setEditingRoom(null); resetForm(); setShowAddModal(true); }} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
                <Plus className="w-4 h-4" /> ADD ROOM
              </GoldButton>
            )}
@@ -381,10 +397,10 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
               {/* Header */}
               <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
                  <div>
-                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Add New Room</h3>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Inventory Management</p>
+                    <h3 className="text-2xl font-bold font-serif text-luxury-black">{editingRoom ? 'Edit Sanctuary' : 'Add New Room'}</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">{editingRoom ? `Modifying Room ${editingRoom.number}` : 'Inventory Management'}</p>
                  </div>
-                 <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
+                 <button onClick={() => { setShowAddModal(false); setEditingRoom(null); }} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
                    <X className="w-5 h-5"/>
                  </button>
               </div>
@@ -423,15 +439,26 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                      </div>
 
                       <div>
-                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Primary Sanctuary Photo</label>
+                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Primary Sanctuary Photo (Main Banner)</label>
                          <div className="flex gap-4">
-                            <input 
-                              placeholder="https://images.unsplash.com/photo-..." 
-                              value={newRoom.image_url} 
-                              onChange={e=>setNewRoom({...newRoom, image_url: e.target.value})} 
-                              type="text" 
-                              className="flex-1 bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" 
-                            />
+                            <div className="relative flex-1">
+                              <input 
+                                placeholder="https://images.unsplash.com/photo-..." 
+                                value={newRoom.image_url} 
+                                onChange={e=>setNewRoom({...newRoom, image_url: e.target.value})} 
+                                type="text" 
+                                className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm pr-12" 
+                              />
+                              {newRoom.image_url && (
+                                <button 
+                                  type="button"
+                                  onClick={() => setNewRoom({...newRoom, image_url: ''})}
+                                  className="absolute right-4 top-1/2 -translate-y-1/2 text-red-400 hover:text-red-600 p-1"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              )}
+                            </div>
                             <input
                               type="file"
                               hidden
@@ -457,13 +484,29 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                             {newRoom.gallery && newRoom.gallery.map((img, idx) => (
                               <div key={idx} className="relative aspect-video rounded-xl overflow-hidden group border border-gray-100">
                                 <img src={img} className="w-full h-full object-cover" />
-                                <button 
-                                  type="button"
-                                  onClick={() => setNewRoom(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== idx) }))}
-                                  className="absolute top-1 right-1 bg-black/60 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                                >
-                                  <X className="w-3 h-3" />
-                                </button>
+                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                                  <button 
+                                    type="button"
+                                    onClick={() => setNewRoom(prev => ({ ...prev, image_url: img }))}
+                                    title="Set as Primary"
+                                    className="bg-white text-luxury-gold p-2 rounded-lg hover:scale-110 transition-transform"
+                                  >
+                                    <Sparkles className="w-4 h-4" />
+                                  </button>
+                                  <button 
+                                    type="button"
+                                    onClick={() => setNewRoom(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== idx) }))}
+                                    title="Remove from Gallery"
+                                    className="bg-white text-red-500 p-2 rounded-lg hover:scale-110 transition-transform"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </button>
+                                </div>
+                                {newRoom.image_url === img && (
+                                  <div className="absolute top-2 left-2 bg-luxury-gold text-white text-[8px] font-bold px-2 py-0.5 rounded-full uppercase tracking-widest">
+                                    Primary
+                                  </div>
+                                )}
                               </div>
                             ))}
                             <label className="aspect-video rounded-xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:border-luxury-gold/30 hover:bg-gray-50 transition-all">
