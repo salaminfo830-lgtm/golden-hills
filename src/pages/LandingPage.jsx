@@ -14,6 +14,7 @@ import Logo from '../components/Logo';
 import Navbar from '../components/Navbar';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { useSettings } from '../context/SettingsContext';
 
 const LandingPage = () => {
   const { settings } = useSettings();
