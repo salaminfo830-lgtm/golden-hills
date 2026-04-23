@@ -18,7 +18,13 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
   const [showAddModal, setShowAddModal] = useState(false);
   
   const [uploading, setUploading] = useState(false);
+  const [toast, setToast] = useState(null); // { message, type }
   const fileInputRef = useRef(null);
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 5000);
+  };
 
   // Add Room Form State
   const [newRoom, setNewRoom] = useState({
@@ -121,6 +127,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
         
         if (error) throw error;
         
+        showToast('Room updated successfully!', 'success');
         setShowAddModal(false);
         setEditingRoom(null);
         setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
@@ -133,13 +140,14 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
         
         if (error) throw error;
         
+        showToast('New room added to inventory!', 'success');
         setShowAddModal(false);
         setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
         fetchRooms();
       }
     } catch (error) {
       console.error('Error saving room:', error);
-      alert('CRITICAL ERROR: Could not save to database. ' + error.message);
+      showToast('FAILED TO SAVE: ' + error.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -542,6 +550,25 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
            </motion.div>
         </div>
       )}
+      </AnimatePresence>
+
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className={`fixed bottom-10 right-10 z-[300] px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-4 border ${
+              toast.type === 'success' 
+                ? 'bg-white border-green-100 text-green-600' 
+                : 'bg-white border-red-100 text-red-600'
+            }`}
+          >
+            {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <X className="w-5 h-5" />}
+            <span className="text-xs font-bold uppercase tracking-widest">{toast.message}</span>
+          </motion.div>
+        )}
       </AnimatePresence>
 
     </div>

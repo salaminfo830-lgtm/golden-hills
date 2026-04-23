@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Globe, Bell, Shield, Database, Palette, Save, 
   Loader2, CheckCircle2, Upload, Monitor,
@@ -16,6 +17,12 @@ const SettingsSystem = () => {
   const [activeTab, setActiveTab] = useState('General Info');
   const [saveStatus, setSaveStatus] = useState('saved'); // saved, saving, error
   const [uploading, setUploading] = useState(false);
+  const [toast, setToast] = useState(null); // { message, type }
+
+  const showToast = (message, type = 'success') => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 5000);
+  };
   
   const logoInputRef = useRef(null);
   const heroInputRef = useRef(null);
@@ -26,9 +33,10 @@ const SettingsSystem = () => {
     
     if (success) {
        setTimeout(() => setSaveStatus('saved'), 500);
+       // showToast('Settings updated', 'success'); // Optional, since there's already a status indicator
     } else {
        console.error('Settings update error:', error);
-       alert('CRITICAL ERROR: Could not save settings. ' + (error?.message || 'Unknown error'));
+       showToast('CRITICAL ERROR: ' + (error?.message || 'Could not save settings'), 'error');
        setSaveStatus('error');
     }
   };
@@ -63,7 +71,7 @@ const SettingsSystem = () => {
       setSaveStatus('saved');
     } catch (error) {
       console.error('Upload error:', error);
-      alert('Error uploading image: ' + error.message);
+      showToast('UPLOAD FAILED: ' + error.message, 'error');
       setSaveStatus('error');
     } finally {
       setUploading(false);
@@ -367,6 +375,24 @@ const SettingsSystem = () => {
            )}
         </div>
       </div>
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {toast && (
+          <motion.div 
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            className={`fixed bottom-10 right-10 z-[300] px-8 py-4 rounded-3xl shadow-2xl flex items-center gap-4 border bg-white ${
+              toast.type === 'success' 
+                ? 'border-green-100 text-green-600' 
+                : 'border-red-100 text-red-600'
+            }`}
+          >
+            {toast.type === 'success' ? <CheckCircle2 className="w-5 h-5" /> : <ShieldAlert className="w-5 h-5" />}
+            <span className="text-xs font-bold uppercase tracking-widest">{toast.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
