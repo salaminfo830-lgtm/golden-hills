@@ -3,7 +3,7 @@ import {
   Users, Search, Filter, Mail, 
   Phone, Calendar, Star, MoreVertical,
   Download, Plus, UserCircle, Loader2,
-  Trash2, Edit, ChevronRight, X
+  Trash2, Edit, ChevronRight, X, Globe
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
@@ -210,9 +210,9 @@ const GuestsSystem = () => {
                     <thead>
                        <tr className="bg-gray-50/50 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 border-b border-gray-100">
                           <th className="px-8 py-5">Guest Information</th>
+                          <th className="px-8 py-5">Origin</th>
+                          <th className="px-8 py-5">Identity</th>
                           <th className="px-8 py-5">Status</th>
-                          <th className="px-8 py-5">History</th>
-                          <th className="px-8 py-5">Rating</th>
                           <th className="px-8 py-5 text-right">Actions</th>
                        </tr>
                     </thead>
@@ -239,15 +239,18 @@ const GuestsSystem = () => {
                                </div>
                             </td>
                             <td className="px-8 py-6">
+                               <div className="flex items-center gap-2">
+                                  <Globe className="w-3.5 h-3.5 text-luxury-gold" />
+                                  <span className="text-xs font-bold text-gray-600">{guest.nationality || 'Unknown'}</span>
+                                </div>
+                            </td>
+                            <td className="px-8 py-6">
+                               <span className="text-[10px] font-bold text-gray-400 font-mono tracking-tighter">{guest.id_number || 'NO-ID-REC'}</span>
+                            </td>
+                            <td className="px-8 py-6">
                                <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${getGuestStatus(guest.reservations).color}`}>
                                   {getGuestStatus(guest.reservations).label}
                                 </span>
-                            </td>
-                            <td className="px-8 py-6">
-                               <div className="flex flex-col">
-                                  <span className="text-xs font-bold text-gray-700">{guest.reservations?.length || 0} Bookings</span>
-                                  <span className="text-[10px] text-gray-400 font-medium italic">Joined {new Date(guest.created_at).toLocaleDateString()}</span>
-                               </div>
                             </td>
                             <td className="px-8 py-6">
                                <div className="flex items-center gap-1.5">

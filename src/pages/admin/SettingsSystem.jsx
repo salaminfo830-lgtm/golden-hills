@@ -1,62 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { 
   Globe, Bell, Shield, Database, Palette, Save, 
   Loader2, CheckCircle2, Upload, Monitor,
   Mail, Smartphone, ShieldAlert, Key, Clock,
   Link as LinkIcon
 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';
 
+import { useSettings } from '../../context/SettingsContext';
+
 const SettingsSystem = () => {
+  const { settings, loading, updateSettings } = useSettings();
   const [activeTab, setActiveTab] = useState('General Info');
-  const [settings, setSettings] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [saveStatus, setSaveStatus] = useState('saved'); // saved, saving, error
 
-  useEffect(() => {
-    fetchSettings();
-
-    const subscription = supabase
-      .channel('public:Settings')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'Settings' }, payload => {
-        setSettings(payload.new);
-      })
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(subscription);
-    };
-  }, []);
-
-  const fetchSettings = async () => {
-    const { data, error } = await supabase
-      .from('Settings')
-      .select('*')
-      .eq('id', 'global')
-      .single();
-    
-    if (data) {
-      setSettings(data);
-    }
-    setLoading(false);
-  };
-
   const handleChange = async (field, value) => {
-    const updatedSettings = { ...settings, [field]: value };
-    setSettings(updatedSettings); // Optimistic update
-    
     setSaveStatus('saving');
-    const { error } = await supabase
-      .from('Settings')
-      .update({ [field]: value })
-      .eq('id', 'global');
+    const { success } = await updateSettings({ [field]: value });
     
-    if (!error) {
+    if (success) {
        setTimeout(() => setSaveStatus('saved'), 500);
     } else {
        setSaveStatus('error');
+    }
+  };
+
+  const handleImageUpload = async (field) => {
+    const url = prompt(`Enter the new URL for ${field.replace('_', ' ')}:`, settings[field]);
+    if (url && url !== settings[field]) {
+      handleChange(field, url);
     }
   };
 
@@ -166,7 +139,7 @@ const SettingsSystem = () => {
                                 {settings.logo_url ? <img src={settings.logo_url} className="w-full h-full object-cover" /> : 'G'}
                              </div>
                              <div className="space-y-2">
-                                <GoldButton outline className="px-6 py-2 text-[10px] flex items-center gap-2">
+                                <GoldButton outline className="px-6 py-2 text-[10px] flex items-center gap-2" onClick={() => handleImageUpload('logo_url')}>
                                    <Upload className="w-3 h-3" /> UPLOAD LOGO
                                 </GoldButton>
                                 <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">SVG, PNG Recommended</p>
@@ -186,7 +159,7 @@ const SettingsSystem = () => {
                     <div className="space-y-8">
                        <div className="space-y-4">
                           <label className="text-[10px] uppercase font-bold text-gray-400 tracking-widest pl-1">Hero Section Image</label>
-                          <div className="aspect-video w-full rounded-2xl overflow-hidden border border-gray-100 relative group cursor-pointer">
+                          <div className="aspect-video w-full rounded-2xl overflow-hidden border border-gray-100 relative group cursor-pointer" onClick={() => handleImageUpload('hero_image_url')}>
                              <img src={settings.hero_image_url} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                 <span className="text-white text-[10px] font-bold uppercase tracking-[0.2em] flex items-center gap-2">

@@ -238,9 +238,9 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
           <thead className="bg-[#fafafa] border-b border-gray-100">
             <tr>
               <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Room Info</th>
+              <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Capacity</th>
               <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Status</th>
-              <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Occupancy</th>
-              <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Assigned Staff</th>
+              <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Description</th>
               <th className="px-8 py-5 text-[10px] font-bold uppercase tracking-widest text-gray-400">Actions</th>
             </tr>
           </thead>
@@ -272,6 +272,9 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                    </div>
                 </td>
                 <td className="px-8 py-6">
+                   <span className="text-sm font-bold text-gray-600">{room.capacity || 2} Pax</span>
+                </td>
+                <td className="px-8 py-6">
                    <button 
                      onClick={() => handleStatusChange(room.id, room.status)}
                      className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase border hover:opacity-80 transition-opacity ${statusColors[room.status] || 'bg-gray-100'}`}>
@@ -279,17 +282,9 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                    </button>
                 </td>
                 <td className="px-8 py-6">
-                   <p className={`text-sm font-bold ${room.status === 'Occupied' ? 'text-luxury-gold' : 'text-gray-400'}`}>
-                     {room.status === 'Occupied' ? 'Occupied' : 'Vacant'}
+                   <p className="text-[10px] text-gray-400 font-medium max-w-[150px] truncate italic">
+                     {room.description || 'No description provided...'}
                    </p>
-                </td>
-                <td className="px-8 py-6">
-                   <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center border border-gray-100">
-                        <User className="w-3 h-3 text-gray-400" />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700">{room.housekeeper || 'Unassigned'}</span>
-                   </div>
                 </td>
                 <td className="px-8 py-6">
                    {userType === 'Admin' ? (

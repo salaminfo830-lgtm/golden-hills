@@ -8,8 +8,10 @@ import {
 } from 'lucide-react';
 import Logo from './Logo';
 import Navbar from './Navbar';
+import { useSettings } from '../context/SettingsContext';
 
 const BrochureLayout = ({ children }) => {
+  const { settings } = useSettings();
   const [subscribed, setSubscribed] = useState(false);
   const [email, setEmail] = useState('');
 
@@ -85,15 +87,15 @@ const BrochureLayout = ({ children }) => {
                   <div className="space-y-6">
                      <div className="flex items-start gap-4">
                         <MapPin className="w-5 h-5 text-luxury-gold shrink-0" />
-                        <p className="text-sm text-white/40 leading-relaxed">Boulevard des Champs d'azur, <br/>Setif 19000, Algeria</p>
+                        <p className="text-sm text-white/40 leading-relaxed">{settings?.address || "Boulevard des Champs d'azur, Setif 19000, Algeria"}</p>
                      </div>
                      <div className="flex items-center gap-4">
                         <Phone className="w-5 h-5 text-luxury-gold shrink-0" />
-                        <p className="text-sm text-white/40">+213 36 12 34 56</p>
+                        <p className="text-sm text-white/40">{settings?.contact_phone || "+213 36 12 34 56"}</p>
                      </div>
                      <div className="flex items-center gap-4">
                         <Mail className="w-5 h-5 text-luxury-gold shrink-0" />
-                        <p className="text-sm text-white/40">reserve@goldenhills.dz</p>
+                        <p className="text-sm text-white/40">{settings?.contact_email || "reserve@goldenhills.dz"}</p>
                      </div>
                   </div>
                </div>
@@ -141,7 +143,7 @@ const BrochureLayout = ({ children }) => {
             </div>
 
             <div className="pt-12 md:pt-16 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-8 md:gap-12 text-center md:text-left">
-               <p className="text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">© 2026 Golden Hills Hotel & Spa.</p>
+               <p className="text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">© {new Date().getFullYear()} {settings?.hotel_name || "Golden Hills Hotel & Spa"}.</p>
                <div className="flex flex-wrap justify-center gap-6 md:gap-10">
                   {['Privacy', 'Terms', 'Security', 'FAQ'].map(item => (
                     <Link key={item} to={`/${item.toLowerCase()}`} className="text-[9px] font-bold text-white/20 uppercase tracking-widest hover:text-luxury-gold transition-colors">{item}</Link>

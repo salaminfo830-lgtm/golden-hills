@@ -4,8 +4,10 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Globe, User } from 'lucide-react';
 import Logo from './Logo';
 import GoldButton from './GoldButton';
+import { useSettings } from '../context/SettingsContext';
 
 const Navbar = ({ transparent = false }) => {
+  const { settings } = useSettings();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const location = useLocation();
@@ -43,18 +45,18 @@ const Navbar = ({ transparent = false }) => {
              <Logo 
                textVisible={false} 
                inverse={isTransparentActive} 
-               className={`transition-transform duration-700 ${isScrolled ? 'scale-90' : 'scale-110'}`} 
+               className={`transition-transform duration-700 ${isScrolled ? 'scale-90' : 'scale-100'}`} 
              />
              <div className="overflow-hidden">
                 <span className={`block font-serif font-bold text-xl md:text-2xl tracking-tighter transition-all duration-700 ${
                   isTransparentActive ? 'text-white' : 'text-luxury-black'
-                } group-hover:tracking-[0.1em]`}>
-                   GOLDEN HILLS
+                } group-hover:tracking-[0.1em] uppercase`}>
+                   {settings?.hotel_name || "GOLDEN HILLS"}
                 </span>
                 <span className={`block text-[7px] md:text-[8px] font-bold uppercase tracking-[0.3em] md:tracking-[0.4em] transition-all duration-700 ${
                   isTransparentActive ? 'text-white/60 translate-y-2 opacity-0' : 'text-gray-400 opacity-100 translate-y-0'
                 } ${isScrolled ? 'opacity-100 translate-y-0' : ''}`}>
-                   Setif • Algeria
+                   {settings?.address?.split(',')[1] || "Setif"} • {settings?.address?.split(',')[2] || "Algeria"}
                 </span>
              </div>
           </Link>

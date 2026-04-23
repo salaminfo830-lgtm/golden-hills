@@ -3,8 +3,10 @@ import { Star, MapPin, Award, History, Users, Globe, ShieldCheck, ChevronRight }
 import GlassCard from '../components/GlassCard';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
+import { useSettings } from '../context/SettingsContext';
 
 const AboutPage = () => {
+  const { settings } = useSettings();
   return (
     <BrochureLayout>
       {/* Hero Header */}
@@ -14,7 +16,7 @@ const AboutPage = () => {
            animate={{ scale: 1, opacity: 0.5 }}
            transition={{ duration: 2 }}
            className="absolute inset-0 bg-cover bg-center grayscale-[0.2]"
-           style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2070")' }}
+           style={{ backgroundImage: `url("${settings?.hero_image_url || "https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?auto=format&fit=crop&q=80&w=2070"}")` }}
          />
          <div className="absolute inset-0 bg-gradient-to-t from-luxury-cream/10 via-transparent to-transparent" />
          <div className="container mx-auto px-12 pb-20 relative z-10 text-center">
@@ -38,7 +40,7 @@ const AboutPage = () => {
                  <h2 className="text-5xl md:text-7xl font-serif font-bold text-luxury-black leading-tight">A Legacy of <br/><span className="italic text-luxury-gold">Gilded Hospitality.</span></h2>
               </div>
               <p className="text-xl text-gray-500 leading-relaxed font-medium">
-                Golden Hills Hotel Setif was born from a singular ambition: to anchor world-class luxury in the heart of Algeria&apos;s ancient landscape. For over a quarter-century, we have been more than a hotel—we have been a sanctuary for diplomats, a stage for celebrations, and a silent witness to the history of Setif.
+                {settings?.hotel_name || "Golden Hills Hotel Setif"} was born from a singular ambition: to anchor world-class luxury in the heart of Algeria&apos;s ancient landscape. For over a quarter-century, we have been more than a hotel—we have been a sanctuary for diplomats, a stage for celebrations, and a silent witness to the history of Setif.
               </p>
               <div className="grid grid-cols-2 gap-12 pt-10">
                  <div className="space-y-2 border-l-2 border-luxury-gold pl-8">

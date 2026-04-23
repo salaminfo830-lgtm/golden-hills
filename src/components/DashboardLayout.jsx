@@ -87,7 +87,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
         className="hidden lg:flex bg-luxury-black flex-col z-30 transition-all duration-500 relative border-r border-white/5 shadow-[20px_0_50px_-20px_rgba(0,0,0,0.2)]"
       >
         <div className="p-10 mb-6 flex items-center justify-center">
-             <Logo inverse textVisible={isSidebarOpen} className={isSidebarOpen ? 'scale-110' : 'scale-125'} />
+             <Logo inverse textVisible={isSidebarOpen} className={isSidebarOpen ? 'scale-100' : 'scale-110'} />
         </div>
 
         <nav className="flex-1 px-6 space-y-2 overflow-y-auto no-scrollbar">

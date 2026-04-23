@@ -283,14 +283,20 @@ const HRSystem = () => {
                     </div>
 
                     <div className="space-y-4 mb-8">
-                       <div className="flex items-center gap-4 text-xs">
-                          <div className="p-2.5 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold transition-colors"><Mail className="w-4 h-4" /></div>
-                          <span className="font-bold text-gray-600 truncate">{person.email || 'internal@goldenhills.dz'}</span>
-                       </div>
-                       <div className="flex items-center gap-4 text-xs">
-                          <div className="p-2.5 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold transition-colors"><Phone className="w-4 h-4" /></div>
-                          <span className="font-bold text-gray-600">{person.phone || '+213 XXX XXX XXX'}</span>
-                       </div>
+                        <div className="flex items-center gap-4 text-xs">
+                           <div className="p-2.5 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold transition-colors"><Mail className="w-4 h-4" /></div>
+                           <span className="font-bold text-gray-600 truncate">{person.email || 'internal@goldenhills.dz'}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                           <div className="p-4 bg-gray-50 rounded-[1.5rem] flex flex-col gap-1 border border-gray-100/50">
+                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Monthly Salary</span>
+                              <span className="text-sm font-bold text-luxury-black">{person.salary ? `${person.salary} DZD` : 'TBD'}</span>
+                           </div>
+                           <div className="p-4 bg-gray-50 rounded-[1.5rem] flex flex-col gap-1 border border-gray-100/50">
+                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Joined</span>
+                              <span className="text-xs font-bold text-gray-600">{person.joined_date ? new Date(person.joined_date).toLocaleDateString() : 'New'}</span>
+                           </div>
+                        </div>
                     </div>
 
                     <div className="flex justify-between items-center pt-8 border-t border-gray-50">

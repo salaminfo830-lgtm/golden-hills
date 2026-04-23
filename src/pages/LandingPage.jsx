@@ -16,6 +16,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 
 const LandingPage = () => {
+  const { settings } = useSettings();
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -73,7 +74,7 @@ const LandingPage = () => {
           animate={{ scale: 1, opacity: 0.6 }}
           transition={{ duration: 2.5, ease: "easeOut" }}
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: 'url("/golden_hills_setif_hero_1776878839733.png")' }}
+          style={{ backgroundImage: `url("${settings?.hero_image_url || "/golden_hills_setif_hero_1776878839733.png"}")` }}
         >
           <div className="absolute inset-0 bg-gradient-to-b from-luxury-black/80 via-transparent to-luxury-cream/10" />
         </motion.div>
@@ -89,15 +90,15 @@ const LandingPage = () => {
               <h4 className="text-luxury-gold font-bold text-[10px] md:text-sm tracking-[0.4em] md:tracking-[0.8em] uppercase text-center">Setif&apos;s Gilded Masterpiece</h4>
               <div className="hidden sm:block h-px w-20 bg-luxury-gold/50" />
             </div>
-            <h1 className="text-5xl sm:text-7xl md:text-9xl lg:text-[11rem] font-serif font-bold text-white tracking-tighter leading-[1] sm:leading-[0.8] mb-8 md:mb-12">
-               <span className="text-mask">GOLDEN</span> <br /> 
-               <span className="italic font-normal text-luxury-gold/90 drop-shadow-2xl">Hills</span>
+            <h1 className="text-4xl sm:text-6xl md:text-8xl lg:text-[9rem] font-serif font-bold text-white tracking-tighter leading-[1] sm:leading-[0.8] mb-8 md:mb-12 uppercase">
+               <span className="text-mask">{(settings?.hotel_name || "GOLDEN HILLS").split(' ')[0]}</span> <br /> 
+               <span className="italic font-normal text-luxury-gold/90 drop-shadow-2xl">{(settings?.hotel_name || "GOLDEN HILLS").split(' ').slice(1).join(' ')}</span>
             </h1>
             <p className="text-lg md:text-2xl text-white/70 max-w-2xl mx-auto mb-16 font-medium leading-relaxed italic">
                Where ancient heritage meets the height of contemporary luxury. A sanctuary crafted for the world&apos;s most discerning travelers.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 md:gap-8 justify-center items-center">
-              <GoldButton className="px-10 md:px-20 py-5 md:py-8 text-[10px] md:text-xs shadow-gold hover:scale-105 transition-all w-full sm:w-auto" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
+              <GoldButton className="px-8 md:px-14 py-4 md:py-6 text-[10px] md:text-xs shadow-gold hover:scale-105 transition-all w-full sm:w-auto" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
               <button className="flex items-center gap-4 text-[10px] font-bold tracking-[0.4em] text-white uppercase hover:text-luxury-gold transition-all group">
                 <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
                    <PlayCircle className="w-8 h-8" />
@@ -187,7 +188,7 @@ const LandingPage = () => {
         <div className="grid lg:grid-cols-2 gap-32 items-center">
            <motion.div {...fadeInUp}>
               <span className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-8 block">The Soul of Setif</span>
-              <h2 className="text-4xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9] mb-8 md:mb-12">Rugged Beauty, <br/><span className="italic text-luxury-gold">Refined.</span></h2>
+              <h2 className="text-3xl md:text-7xl font-serif font-bold text-luxury-black leading-[0.9] mb-8 md:mb-12">Rugged Beauty, <br/><span className="italic text-luxury-gold">Refined.</span></h2>
               <p className="text-xl text-gray-500 leading-relaxed font-medium mb-16 max-w-xl">
                  Perched upon the highest point of Champs d&apos;azur, Golden Hills is more than a hotel. It is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of five-star excellence.
               </p>
@@ -208,7 +209,7 @@ const LandingPage = () => {
                  ))}
               </div>
               <div className="pt-10 md:pt-20">
-                 <GoldButton outline className="px-10 md:px-16 py-4 md:py-6" onClick={() => navigate('/about')}>DISCOVER OUR STORY</GoldButton>
+                 <GoldButton outline className="px-8 md:px-12 py-3 md:py-5" onClick={() => navigate('/about')}>DISCOVER OUR STORY</GoldButton>
               </div>
            </motion.div>
 
@@ -240,7 +241,7 @@ const LandingPage = () => {
          <div className="container mx-auto px-6 md:px-12">
             <motion.div {...fadeInUp} className="text-center mb-32">
                <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-6">World Class</h4>
-               <h2 className="text-5xl md:text-7xl font-serif font-bold text-luxury-black">Signature Enclaves</h2>
+               <h2 className="text-4xl md:text-6xl font-serif font-bold text-luxury-black">Signature Enclaves</h2>
             </motion.div>
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -275,7 +276,7 @@ const LandingPage = () => {
             <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-32">
                <motion.div {...fadeInUp} className="max-w-2xl">
                   <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.5em] mb-6">Accommodations</h4>
-                  <h2 className="text-6xl font-serif font-bold text-luxury-black leading-[0.9]">Sanctuaries of <br/><span className="italic">Profound Stillness</span></h2>
+                  <h2 className="text-5xl font-serif font-bold text-luxury-black leading-[0.9]">Sanctuaries of <br/><span className="italic">Profound Stillness</span></h2>
                </motion.div>
                <Link to="/suites" className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 hover:text-luxury-gold transition-colors group">
                   EXPLORE ALL SUITES <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
@@ -319,13 +320,13 @@ const LandingPage = () => {
                <motion.div {...fadeInUp} className="space-y-16">
                   <div className="space-y-6">
                      <h4 className="text-luxury-gold font-serif italic text-2xl">The Gastronomy</h4>
-                     <h2 className="text-6xl md:text-8xl font-serif font-bold leading-[0.9] tracking-tighter">The Saffron <br/>Theater.</h2>
+                     <h2 className="text-5xl md:text-7xl font-serif font-bold leading-[0.9] tracking-tighter">The Saffron <br/>Theater.</h2>
                      <p className="text-white/40 text-xl leading-relaxed max-w-xl">
                         A sensory journey through the heart of Algeria. Experience the theater of fine dining where each dish is a masterpiece of hill-grown spices and artisanal precision.
                      </p>
                   </div>
                   <div className="flex gap-8">
-                     <GoldButton className="px-12 py-5 text-[10px]" onClick={() => navigate('/dining')}>VIEW VENUES</GoldButton>
+                     <GoldButton className="px-10 py-4 text-[10px]" onClick={() => navigate('/dining')}>VIEW VENUES</GoldButton>
                      <button className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors" onClick={() => navigate('/dining')}>
                         Discovery Menu <ArrowRight className="w-4 h-4 text-luxury-gold" />
                      </button>
@@ -365,7 +366,7 @@ const LandingPage = () => {
                <motion.div {...fadeInUp} className="space-y-16 order-1 lg:order-2">
                   <div className="space-y-6">
                      <h4 className="text-luxury-gold font-serif italic text-2xl">The Rituals</h4>
-                     <h2 className="text-6xl md:text-8xl font-serif font-bold leading-[0.9] tracking-tighter text-right">Pure <br/>Atmosphere.</h2>
+                     <h2 className="text-5xl md:text-7xl font-serif font-bold leading-[0.9] tracking-tighter text-right">Pure <br/>Atmosphere.</h2>
                      <p className="text-white/40 text-xl leading-relaxed max-w-xl ml-auto text-right">
                         Immerse yourself in the ancient wisdom of the hills. Our spa rituals are choreographies of silence, steam, and restoration.
                      </p>
@@ -374,7 +375,7 @@ const LandingPage = () => {
                      <button className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors" onClick={() => navigate('/spa')}>
                         Explore Rituals <ArrowRight className="w-4 h-4 text-luxury-gold" />
                      </button>
-                     <GoldButton className="px-12 py-5 text-[10px]" onClick={() => navigate('/spa')}>BOOK WELLNESS</GoldButton>
+                     <GoldButton className="px-10 py-4 text-[10px]" onClick={() => navigate('/spa')}>BOOK WELLNESS</GoldButton>
                   </div>
                </motion.div>
             </div>
@@ -385,7 +386,7 @@ const LandingPage = () => {
       <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
          <motion.div {...fadeInUp} className="text-center mb-32">
             <Sparkles className="w-12 h-12 text-luxury-gold mx-auto mb-8" />
-            <h2 className="text-6xl font-serif font-bold text-luxury-black">Voices of the Hills</h2>
+            <h2 className="text-5xl font-serif font-bold text-luxury-black">Voices of the Hills</h2>
          </motion.div>
          <div className="grid md:grid-cols-3 gap-12">
             {[
@@ -420,7 +421,7 @@ const LandingPage = () => {
          <div className="container mx-auto px-6 md:px-12 relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-24 mb-20 md:mb-32">
                <div className="space-y-10">
-                  <Logo inverse className="scale-125 origin-left" />
+                  <Logo inverse className="scale-110 origin-left" />
                   <p className="text-white/40 text-sm leading-relaxed italic">
                      "Elevating the hospitality standards of Setif through a perfect blend of heritage and modern luxury."
                   </p>
@@ -447,9 +448,9 @@ const LandingPage = () => {
                <div className="space-y-10">
                   <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-luxury-gold">Contact Enclave</h4>
                    <div className="space-y-6 text-sm text-white/40 font-medium">
-                      <p className="leading-relaxed">Boulevard des Champs d&apos;azur, Sétif 19000, Algeria</p>
-                      <p>+213 36 12 34 56</p>
-                      <p className="text-luxury-gold">reserve@goldenhills.dz</p>
+                      <p className="leading-relaxed">{settings?.address || "Boulevard des Champs d'azur, Sétif 19000, Algeria"}</p>
+                      <p>{settings?.contact_phone || "+213 36 12 34 56"}</p>
+                      <p className="text-luxury-gold">{settings?.contact_email || "reserve@goldenhills.dz"}</p>
                    </div>
                </div>
 
@@ -462,7 +463,7 @@ const LandingPage = () => {
                </div>
             </div>
             <div className="pt-10 md:pt-20 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] font-bold text-white/20 uppercase tracking-[0.4em] text-center md:text-left">
-               <p>© 2026 Golden Hills Hotel. Crafted with Absolute Excellence.</p>
+               <p>© {new Date().getFullYear()} {settings?.hotel_name || "Golden Hills Hotel"}. Crafted with Absolute Excellence.</p>
                <div className="flex gap-6 md:gap-10">
                   <span className="hover:text-white transition-colors cursor-pointer">Privacy</span>
                   <span className="hover:text-white transition-colors cursor-pointer">Terms</span>
