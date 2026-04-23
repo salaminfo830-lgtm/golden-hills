@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Plus, Search, MoreVertical, 
   Bed, CheckCircle2,
   Loader2, User, Droplets, Hammer,
-  X, Trash2, Edit3
+  X, Trash2, Edit3, Upload
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -17,6 +17,9 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
   const [editingRoom, setEditingRoom] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef(null);
+
   // Add Room Form State
   const [newRoom, setNewRoom] = useState({
     number: '',
@@ -54,6 +57,45 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
       setRooms(data || []);
     }
     setLoading(false);
+  };
+
+  const handleFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setUploading(true);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `rooms/${fileName}`;
+
+    try {
+      // Ensure bucket exists or just try to upload
+      const { error: uploadError } = await supabase.storage
+        .from('rooms')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        if (uploadError.message === 'Bucket not found') {
+           // Attempt to create bucket if it doesn't exist (might fail due to permissions)
+           await supabase.storage.createBucket('rooms', { public: true });
+           const { error: retryError } = await supabase.storage.from('rooms').upload(filePath, file);
+           if (retryError) throw retryError;
+        } else {
+           throw uploadError;
+        }
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('rooms')
+        .getPublicUrl(filePath);
+
+      setNewRoom(prev => ({ ...prev, image_url: publicUrl }));
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Error uploading image: ' + error.message);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleAddRoom = async (e) => {
@@ -358,8 +400,32 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                      </div>
 
                      <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Image URL</label>
-                        <input placeholder="https://images.unsplash.com/photo-..." value={newRoom.image_url} onChange={e=>setNewRoom({...newRoom, image_url: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Photography</label>
+                        <div className="flex gap-4">
+                           <input 
+                             placeholder="https://images.unsplash.com/photo-..." 
+                             value={newRoom.image_url} 
+                             onChange={e=>setNewRoom({...newRoom, image_url: e.target.value})} 
+                             type="text" 
+                             className="flex-1 bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" 
+                           />
+                           <input
+                             type="file"
+                             hidden
+                             ref={fileInputRef}
+                             onChange={handleFileUpload}
+                             accept="image/*"
+                           />
+                           <GoldButton 
+                             type="button"
+                             outline 
+                             onClick={() => fileInputRef.current.click()}
+                             className="px-6 py-4 flex items-center justify-center gap-2 whitespace-nowrap min-w-[140px]"
+                           >
+                             {uploading ? <Loader2 className="w-4 h-4 animate-spin text-luxury-gold" /> : <Upload className="w-4 h-4" />}
+                             <span className="text-[10px] font-bold uppercase tracking-widest">{uploading ? 'Uploading...' : 'Upload'}</span>
+                           </GoldButton>
+                        </div>
                      </div>
 
                      <div>
