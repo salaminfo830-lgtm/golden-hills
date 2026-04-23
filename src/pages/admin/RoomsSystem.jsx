@@ -73,8 +73,8 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
       const uploadedUrls = [];
       for (const file of Array.from(files)) {
         const fileExt = file.name.split('.').pop();
-        const fileName = `${Math.random()}.${fileExt}`;
-        const filePath = `rooms/${fileName}`;
+        const fileName = `rooms/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const filePath = fileName;
 
         const { error: uploadError } = await supabase.storage
           .from('rooms')
@@ -99,6 +99,8 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
       alert('Error uploading image: ' + error.message);
     } finally {
       setUploading(false);
+      // Reset input value to allow selecting same file again
+      e.target.value = '';
     }
   };
 
@@ -402,34 +404,63 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                         </div>
                      </div>
 
-                     <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Photography</label>
-                        <div className="flex gap-4">
-                           <input 
-                             placeholder="https://images.unsplash.com/photo-..." 
-                             value={newRoom.image_url} 
-                             onChange={e=>setNewRoom({...newRoom, image_url: e.target.value})} 
-                             type="text" 
-                             className="flex-1 bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" 
-                           />
-                           <input
-                             type="file"
-                             hidden
-                             ref={fileInputRef}
-                             onChange={handleFileUpload}
-                             accept="image/*"
-                           />
-                           <GoldButton 
-                             type="button"
-                             outline 
-                             onClick={() => fileInputRef.current.click()}
-                             className="px-6 py-4 flex items-center justify-center gap-2 whitespace-nowrap min-w-[140px]"
-                           >
-                             {uploading ? <Loader2 className="w-4 h-4 animate-spin text-luxury-gold" /> : <Upload className="w-4 h-4" />}
-                             <span className="text-[10px] font-bold uppercase tracking-widest">{uploading ? 'Uploading...' : 'Upload'}</span>
-                           </GoldButton>
-                        </div>
-                     </div>
+                      <div>
+                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Primary Sanctuary Photo</label>
+                         <div className="flex gap-4">
+                            <input 
+                              placeholder="https://images.unsplash.com/photo-..." 
+                              value={newRoom.image_url} 
+                              onChange={e=>setNewRoom({...newRoom, image_url: e.target.value})} 
+                              type="text" 
+                              className="flex-1 bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" 
+                            />
+                            <input
+                              type="file"
+                              hidden
+                              ref={fileInputRef}
+                              onChange={(e) => handleFileUpload(e, false)}
+                              accept="image/*"
+                            />
+                            <GoldButton 
+                              type="button"
+                              outline 
+                              onClick={() => fileInputRef.current.click()}
+                              className="px-6 py-4 flex items-center justify-center gap-2 whitespace-nowrap min-w-[140px]"
+                            >
+                              {uploading ? <Loader2 className="w-4 h-4 animate-spin text-luxury-gold" /> : <Upload className="w-4 h-4" />}
+                              <span className="text-[10px] font-bold uppercase tracking-widest">{uploading ? 'Uploading...' : 'Upload'}</span>
+                            </GoldButton>
+                         </div>
+                      </div>
+
+                      <div>
+                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Sanctuary Gallery</label>
+                         <div className="grid grid-cols-4 gap-4 mb-4">
+                            {newRoom.gallery && newRoom.gallery.map((img, idx) => (
+                              <div key={idx} className="relative aspect-video rounded-xl overflow-hidden group border border-gray-100">
+                                <img src={img} className="w-full h-full object-cover" />
+                                <button 
+                                  type="button"
+                                  onClick={() => setNewRoom(prev => ({ ...prev, gallery: prev.gallery.filter((_, i) => i !== idx) }))}
+                                  className="absolute top-1 right-1 bg-black/60 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                                >
+                                  <X className="w-3 h-3" />
+                                </button>
+                              </div>
+                            ))}
+                            <label className="aspect-video rounded-xl border-2 border-dashed border-gray-100 flex flex-col items-center justify-center cursor-pointer hover:border-luxury-gold/30 hover:bg-gray-50 transition-all">
+                               <input 
+                                 type="file" 
+                                 hidden 
+                                 multiple 
+                                 onChange={(e) => handleFileUpload(e, true)}
+                                 accept="image/*"
+                               />
+                               <Plus className="w-5 h-5 text-gray-300 mb-1" />
+                               <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Add Images</span>
+                            </label>
+                         </div>
+                      </div>
 
                      <div>
                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Name</label>

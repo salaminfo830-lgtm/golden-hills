@@ -36,10 +36,12 @@ const SettingsSystem = () => {
     if (!file) return;
 
     setUploading(true);
+    setSaveStatus('saving');
+    
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${field}-${Math.random()}.${fileExt}`;
-      const filePath = `branding/${fileName}`;
+      const fileName = `settings/${field}-${Math.random()}.${fileExt}`;
+      const filePath = fileName;
 
       const { error: uploadError } = await supabase.storage
         .from('branding')
@@ -50,11 +52,13 @@ const SettingsSystem = () => {
       const { data: { publicUrl } } = supabase.storage
         .from('branding')
         .getPublicUrl(filePath);
-
-      handleChange(field, publicUrl);
+      
+      await handleChange(field, publicUrl);
+      setSaveStatus('saved');
     } catch (error) {
       console.error('Upload error:', error);
       alert('Error uploading image: ' + error.message);
+      setSaveStatus('error');
     } finally {
       setUploading(false);
     }
