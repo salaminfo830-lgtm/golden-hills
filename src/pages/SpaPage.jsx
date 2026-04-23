@@ -83,8 +83,8 @@ const SpaPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1 }}
             >
-               <h4 className="text-luxury-gold font-serif italic text-3xl mb-4">The Rituals</h4>
-               <h1 className="text-7xl md:text-9xl font-serif font-bold tracking-tighter leading-none">Pure Atmosphere</h1>
+               <h4 className="text-luxury-gold text-3xl mb-4">The Rituals</h4>
+               <h1 className="text-7xl md:text-9xl font-bold tracking-tight leading-none">Pure Atmosphere</h1>
             </motion.div>
          </div>
          {/* Wave Overlay (Subtle) */}
@@ -95,7 +95,7 @@ const SpaPage = () => {
       <section className="py-60 container mx-auto px-12 bg-luxury-cream/30">
          <div className="grid lg:grid-cols-2 gap-32 items-center">
             <motion.div {...fadeInUp} className="space-y-12">
-               <h2 className="text-6xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9]">Wellness, <br/><span className="italic text-luxury-gold">Redefined.</span></h2>
+               <h2 className="text-6xl md:text-8xl font-bold text-luxury-black leading-[1.1]">Wellness, <br/><span className="text-luxury-gold">Redefined.</span></h2>
                <p className="text-2xl text-gray-500 leading-relaxed font-medium max-w-xl">
                   Immerse yourself in the ancient wisdom of the hills. Our spa rituals are choreographies of silence, steam, and restoration, designed to reconnect the body with the soul.
                </p>
@@ -107,7 +107,7 @@ const SpaPage = () => {
                     <div key={i} className="space-y-4">
                        <div className="text-luxury-gold">{item.icon}</div>
                        <h5 className="font-bold uppercase tracking-[0.4em] text-xs">{item.title}</h5>
-                       <p className="text-gray-400 text-sm italic">{item.desc}</p>
+                       <p className="text-gray-400 text-sm">{item.desc}</p>
                     </div>
                   ))}
                </div>
@@ -127,7 +127,7 @@ const SpaPage = () => {
                  className="absolute -top-12 -left-12 bg-white p-12 rounded-[3rem] shadow-2xl border border-luxury-gold/10 hidden xl:flex flex-col items-center text-center"
                >
                   <Sparkles className="w-10 h-10 text-luxury-gold mb-4" />
-                  <p className="text-3xl font-serif font-bold text-luxury-black italic leading-none">Numidian <br/>Legacy</p>
+                  <p className="text-3xl font-bold text-luxury-black leading-none">Numidian <br/>Legacy</p>
                </motion.div>
             </motion.div>
          </div>
@@ -138,7 +138,7 @@ const SpaPage = () => {
          <div className="container mx-auto px-12">
             <motion.div {...fadeInUp} className="text-center mb-32">
                <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.6em] mb-6">Discovery</h4>
-               <h2 className="text-6xl md:text-8xl font-serif font-bold text-luxury-black leading-none">The Treatment Menu</h2>
+               <h2 className="text-6xl md:text-8xl font-bold text-luxury-black leading-none">The Treatment Menu</h2>
             </motion.div>
             
             <div className="grid md:grid-cols-2 gap-24">
@@ -158,7 +158,7 @@ const SpaPage = () => {
                        <div className="flex justify-between items-start">
                           <div>
                              <span className="text-luxury-gold font-bold uppercase tracking-[0.5em] text-[10px] mb-3 block">{service.location}</span>
-                             <h3 className="text-5xl font-serif font-bold text-luxury-black group-hover:italic transition-all duration-700 leading-none">{service.name}</h3>
+                             <h3 className="text-5xl font-bold text-luxury-black group-hover: transition-all duration-700 leading-none">{service.name}</h3>
                           </div>
                           <div className="w-16 h-16 rounded-full border border-luxury-gold/20 flex items-center justify-center text-luxury-gold group-hover:bg-luxury-gold group-hover:text-white transition-all">
                              <Heart className="w-6 h-6" />
@@ -188,7 +188,7 @@ const SpaPage = () => {
          <div className="container mx-auto px-12 relative z-10 text-center">
             <motion.div {...fadeInUp}>
                <ShieldCheck className="w-20 h-20 text-luxury-gold mx-auto mb-12" />
-               <h2 className="text-6xl md:text-9xl font-serif font-bold mb-10 italic leading-none tracking-tighter">The Gilded Circle</h2>
+               <h2 className="text-6xl md:text-9xl font-bold mb-10 leading-none tracking-tight">The Gilded Circle</h2>
                <p className="text-white/40 max-w-3xl mx-auto text-2xl leading-relaxed mb-20 font-medium">
                   Join our exclusive wellness membership for priority booking, private hammam sessions, and bespoke botanical blends crafted specifically for your skin profile.
                </p>

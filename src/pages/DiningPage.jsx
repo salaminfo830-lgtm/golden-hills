@@ -126,8 +126,8 @@ const DiningPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1 }}
             >
-               <h4 className="text-luxury-gold font-serif italic text-2xl md:text-3xl mb-4">Epicurean Journeys</h4>
-               <h1 className="text-5xl md:text-9xl font-serif font-bold text-white tracking-tighter leading-none">The Gastronomy</h1>
+               <h4 className="text-luxury-gold text-2xl md:text-3xl mb-4">Epicurean Journeys</h4>
+               <h1 className="text-5xl md:text-9xl font-bold text-white tracking-tight leading-none">The Gastronomy</h1>
             </motion.div>
          </div>
       </section>
@@ -136,17 +136,17 @@ const DiningPage = () => {
       <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
          <div className="grid lg:grid-cols-2 gap-20 md:gap-32 items-center">
             <motion.div {...fadeInUp} className="space-y-10 md:space-y-12 text-center lg:text-left">
-               <h2 className="text-4xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9]">From the Earth, <br/><span className="italic text-luxury-gold">To the Soul.</span></h2>
+               <h2 className="text-4xl md:text-8xl font-bold text-luxury-black leading-[1.1]">From the Earth, <br/><span className="text-luxury-gold">To the Soul.</span></h2>
                <p className="text-lg md:text-2xl text-gray-500 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0">
                   At Golden Hills, we believe that luxury is found in the purity of ingredients. Our executive chef works directly with local farmers to harvest the finest saffron and spices, ensuring every dish tells a story of the Algerian terroir.
                </p>
                <div className="flex justify-center lg:justify-start gap-10 md:gap-20 pt-8">
                   <div className="space-y-2">
-                     <p className="text-4xl md:text-5xl font-serif font-bold text-luxury-black">0</p>
+                     <p className="text-4xl md:text-5xl font-bold text-luxury-black">0</p>
                      <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Kilometer Sourcing</p>
                   </div>
                   <div className="space-y-2">
-                     <p className="text-4xl md:text-5xl font-serif font-bold text-luxury-black">12</p>
+                     <p className="text-4xl md:text-5xl font-bold text-luxury-black">12</p>
                      <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Heritage Awards</p>
                   </div>
                </div>
@@ -167,7 +167,7 @@ const DiningPage = () => {
                  className="static lg:absolute -bottom-16 -right-16 bg-luxury-gold p-8 md:p-12 rounded-[2rem] md:rounded-[3rem] text-white shadow-2xl max-w-sm mt-10 lg:mt-0 mx-auto"
                >
                   <Star className="w-8 md:w-10 h-8 md:h-10 mb-4 md:mb-6 mx-auto lg:mx-0" />
-                  <p className="text-lg md:text-xl font-serif font-bold italic leading-relaxed text-center lg:text-left">"We don't just serve food; we serve memories forged in the fire of Algerian hospitality."</p>
+                  <p className="text-lg md:text-xl font-bold leading-relaxed text-center lg:text-left">"We don't just serve food; we serve memories forged in the fire of Algerian hospitality."</p>
                </motion.div>
             </motion.div>
          </div>
@@ -194,7 +194,7 @@ const DiningPage = () => {
                  <motion.div {...fadeInUp} className="flex-1 space-y-8 md:space-y-12">
                     <div className="space-y-4 md:space-y-6">
                        <span className="text-luxury-gold font-bold uppercase tracking-[0.6em] text-[10px]">{venue.type} Sanctuary</span>
-                       <h2 className="text-4xl md:text-7xl font-serif font-bold text-luxury-black leading-none">{venue.name}</h2>
+                       <h2 className="text-4xl md:text-7xl font-bold text-luxury-black leading-none">{venue.name}</h2>
                     </div>
                     <p className="text-lg md:text-2xl text-gray-500 leading-relaxed font-medium">
                        {venue.description}
@@ -251,7 +251,7 @@ const DiningPage = () => {
          <div className="container mx-auto px-6 md:px-12 relative z-10">
             <motion.div {...fadeInUp}>
                <UtensilsCrossed className="w-16 md:w-20 h-16 md:h-20 text-luxury-gold mx-auto mb-8 md:mb-12" />
-               <h2 className="text-4xl md:text-9xl font-serif font-bold mb-8 md:mb-10 italic leading-none tracking-tighter">Sanctuary Dining</h2>
+               <h2 className="text-4xl md:text-9xl font-bold mb-8 md:mb-10 leading-none tracking-tight">Sanctuary Dining</h2>
                <p className="text-white/40 max-w-3xl mx-auto text-lg md:text-2xl leading-relaxed mb-12 md:mb-20 font-medium">
                   For the ultimate in privacy, our chefs can curate a bespoke menu served in your private suite terrace or our exclusive desert-edge pavilion.
                </p>
@@ -301,7 +301,7 @@ const DiningPage = () => {
               <div className="p-8 md:p-16">
                 <div className="flex justify-between items-start mb-8 md:mb-12">
                   <div>
-                    <h3 className="text-2xl md:text-3xl font-serif font-bold text-luxury-black mb-2">Reserve at {selectedVenue?.name}</h3>
+                    <h3 className="text-2xl md:text-3xl font-bold text-luxury-black mb-2">Reserve at {selectedVenue?.name}</h3>
                     <p className="text-[10px] uppercase font-bold text-luxury-gold tracking-[0.3em]">Epicurean Reservation</p>
                   </div>
                   <button onClick={() => setShowBookingModal(false)} className="p-3 md:p-4 rounded-full bg-gray-50 text-gray-400 hover:text-luxury-black transition-colors">
@@ -318,7 +318,7 @@ const DiningPage = () => {
                     <div className="w-16 md:w-20 h-16 md:h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500">
                       <Star className="w-8 md:w-10 h-8 md:h-10 fill-current" />
                     </div>
-                    <h4 className="text-xl md:text-2xl font-serif font-bold">Table Confirmed</h4>
+                    <h4 className="text-xl md:text-2xl font-bold">Table Confirmed</h4>
                     <p className="text-sm md:text-base text-gray-400">Your table has been orchestrated. We await your arrival.</p>
                   </motion.div>
                 ) : (

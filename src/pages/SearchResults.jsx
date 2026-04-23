@@ -198,7 +198,7 @@ const SearchResults = () => {
                       <ShieldCheck className="text-luxury-gold w-5 lg:w-6 h-5 lg:h-6" />
                     </div>
                     <div>
-                      <h4 className="text-xl lg:text-2xl font-serif font-bold mb-2">Gilded Privilege</h4>
+                      <h4 className="text-xl lg:text-2xl font-bold mb-2">Gilded Privilege</h4>
                       <p className="text-white/40 text-[10px] lg:text-xs leading-relaxed">Members enjoy 15% lower rates and complimentary late check-out.</p>
                     </div>
                     <button 
@@ -217,7 +217,7 @@ const SearchResults = () => {
           <main className="flex-1 space-y-8 lg:space-y-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
               <div className="w-full md:w-auto">
-                <h2 className="text-3xl lg:text-5xl font-serif font-bold text-luxury-black mb-2 lg:mb-4">Discovery</h2>
+                <h2 className="text-3xl lg:text-5xl font-bold text-luxury-black mb-2 lg:mb-4">Discovery</h2>
                 <p className="text-gray-400 font-medium text-sm lg:text-lg">Found {filteredRooms.length} available sanctuaries.</p>
               </div>
               <div className="flex items-center gap-4 lg:gap-6 text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 bg-white px-6 lg:px-8 py-3 lg:py-4 rounded-2xl border border-gray-100 shadow-sm w-full md:w-auto justify-between md:justify-start">
@@ -271,7 +271,7 @@ const SearchResults = () => {
                         <div className="space-y-6">
                           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                             <div>
-                              <h3 className="text-2xl lg:text-4xl font-serif font-bold text-luxury-black mb-2 lg:mb-4">{room.type}</h3>
+                              <h3 className="text-2xl lg:text-4xl font-bold text-luxury-black mb-2 lg:mb-4">{room.type}</h3>
                               <div className="flex flex-wrap gap-4 lg:gap-6 text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
                                 <span className="flex items-center gap-2"><Users className="w-4 h-4 text-luxury-gold" /> {room.capacity || 2} Guests</span>
                                 <span className="flex items-center gap-2"><Wind className="w-4 h-4 text-luxury-gold" /> Climate Controlled</span>
@@ -279,12 +279,12 @@ const SearchResults = () => {
                               </div>
                             </div>
                             <div className="text-left sm:text-right">
-                              <p className="text-3xl lg:text-4xl font-serif font-bold text-luxury-gold mb-1">{formatPrice(room.price)}</p>
+                              <p className="text-3xl lg:text-4xl font-bold text-luxury-gold mb-1">{formatPrice(room.price)}</p>
                               <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Per Evening</p>
                             </div>
                           </div>
 
-                          <p className="text-gray-500 text-base lg:text-lg leading-relaxed line-clamp-2 italic">
+                          <p className="text-gray-500 text-base lg:text-lg leading-relaxed line-clamp-2">
                             {room.description || 'Experience a sanctuary where timeless Algerian elegance meets modern 4-star refinement.'}
                           </p>
 
@@ -326,7 +326,7 @@ const SearchResults = () => {
                     <Search className="w-10 h-10 text-gray-200" />
                   </div>
                   <div>
-                    <h3 className="text-3xl font-serif font-bold text-luxury-black mb-4">No Sanctuaries Available</h3>
+                    <h3 className="text-3xl font-bold text-luxury-black mb-4">No Sanctuaries Available</h3>
                     <p className="text-gray-400 max-w-md mx-auto mb-8">All suites are currently reserved for the selected dates. Please consider alternative dates for your stay.</p>
                   </div>
                   <button 

@@ -105,7 +105,7 @@ const LoginPage = () => {
         
         <div className="relative z-10 p-24 text-center">
           <Logo inverse className="mx-auto mb-12 scale-150" />
-          <h2 className="text-6xl font-serif font-bold text-white mb-6 leading-tight">Welcome Back to <br /> <span className="italic font-normal">the Sanctuary</span></h2>
+          <h2 className="text-6xl font-bold text-white mb-6 leading-tight">Welcome Back to <br /> <span className="font-normal">the Sanctuary</span></h2>
           <p className="text-white/40 text-lg max-w-md mx-auto font-medium leading-relaxed uppercase tracking-[0.2em]">Authentic Algerian Grandeur • Setif</p>
         </div>
 
@@ -123,7 +123,7 @@ const LoginPage = () => {
 
         <div className="w-full max-w-md space-y-12">
           <div className="text-center md:text-left space-y-3 md:space-y-4">
-            <h1 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black">Authorized Access</h1>
+            <h1 className="text-3xl md:text-5xl font-bold text-luxury-black">Authorized Access</h1>
             <p className="text-gray-400 font-medium text-base md:text-lg">Secure your session with your credentials.</p>
           </div>
 

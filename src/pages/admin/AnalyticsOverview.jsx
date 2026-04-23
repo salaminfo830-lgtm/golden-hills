@@ -22,11 +22,11 @@ const AnalyticsOverview = () => {
     fetchAnalytics();
 
     const channels = [
-      supabase.channel('public:Room').on('postgres_changes', { event: '*', schema: 'public', table: 'Room' }, fetchAnalytics),
-      supabase.channel('public:FinanceTransaction').on('postgres_changes', { event: '*', schema: 'public', table: 'FinanceTransaction' }, fetchAnalytics),
-      supabase.channel('public:Reservation').on('postgres_changes', { event: '*', schema: 'public', table: 'Reservation' }, fetchAnalytics),
-      supabase.channel('public:Staff').on('postgres_changes', { event: '*', schema: 'public', table: 'Staff' }, fetchAnalytics),
-      supabase.channel('public:SecuritySystemStatus').on('postgres_changes', { event: '*', schema: 'public', table: 'SecuritySystemStatus' }, (payload) => {
+      supabase.channel('analytics-room').on('postgres_changes', { event: '*', schema: 'public', table: 'Room' }, fetchAnalytics),
+      supabase.channel('analytics-finance').on('postgres_changes', { event: '*', schema: 'public', table: 'FinanceTransaction' }, fetchAnalytics),
+      supabase.channel('analytics-reservation').on('postgres_changes', { event: '*', schema: 'public', table: 'Reservation' }, fetchAnalytics),
+      supabase.channel('analytics-staff').on('postgres_changes', { event: '*', schema: 'public', table: 'Staff' }, fetchAnalytics),
+      supabase.channel('analytics-security-status').on('postgres_changes', { event: '*', schema: 'public', table: 'SecuritySystemStatus' }, (payload) => {
         if (payload.new && payload.new.id === 'current') {
            setSecurityStatus(payload.new);
         }

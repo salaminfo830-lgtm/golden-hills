@@ -70,7 +70,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
     fetchSecurityStatus();
 
     const securitySubscription = supabase
-      .channel('public:SecuritySystemStatus')
+      .channel('dashboard-security-status')
       .on('postgres_changes', { event: '*', schema: 'public', table: 'SecuritySystemStatus' }, (payload) => {
         if (payload.new && payload.new.id === 'current') {
           setLockdownActive(payload.new.lockdown_active);

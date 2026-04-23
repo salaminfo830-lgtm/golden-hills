@@ -113,7 +113,7 @@ const RegisterPage = () => {
           <div className="w-20 h-20 md:w-24 md:h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-8 md:mb-10">
             <CheckCircle className="w-10 h-10 md:w-12 md:h-12 text-green-500" />
           </div>
-          <h2 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black mb-6">
+          <h2 className="text-3xl md:text-5xl font-bold text-luxury-black mb-6">
             {identity === 'guest' ? 'Welcome to the Sanctuary' : 'Application Received'}
           </h2>
           <p className="text-gray-500 text-base md:text-lg mb-10 md:mb-12 max-w-md mx-auto leading-relaxed">
@@ -154,7 +154,7 @@ const RegisterPage = () => {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <h2 className="text-4xl font-serif font-bold text-white leading-tight">
+              <h2 className="text-4xl font-bold text-white leading-tight">
                 {step === 1 && "Choose Your Path"}
                 {step === 2 && "Identity & Security"}
                 {step === 3 && "Personal Details"}
@@ -195,7 +195,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-12"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black">Begin Your Journey</h3>
+                  <h3 className="text-3xl md:text-5xl font-bold text-luxury-black">Begin Your Journey</h3>
                   <p className="text-gray-500 text-base md:text-lg">Select your account type.</p>
                 </div>
 
@@ -239,7 +239,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-10"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-4xl font-serif font-bold text-luxury-black">Security Credentials</h3>
+                  <h3 className="text-3xl md:text-4xl font-bold text-luxury-black">Security Credentials</h3>
                   <p className="text-gray-500 text-sm md:text-base">Provide your secure access key.</p>
                 </div>
 
@@ -307,7 +307,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-10"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-4xl font-serif font-bold text-luxury-black">Identity</h3>
+                  <h3 className="text-3xl md:text-4xl font-bold text-luxury-black">Identity</h3>
                   <p className="text-gray-500 text-sm md:text-base">How should we address you?</p>
                 </div>
 
@@ -369,7 +369,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-12"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-4xl font-serif font-bold text-luxury-black">Preferences</h3>
+                  <h3 className="text-3xl md:text-4xl font-bold text-luxury-black">Preferences</h3>
                   <p className="text-gray-400 text-sm md:text-base">Tailor your experience.</p>
                 </div>
 
@@ -392,7 +392,7 @@ const RegisterPage = () => {
 
                    <div className="p-6 md:p-8 bg-luxury-gold/5 rounded-[1.5rem] md:rounded-[2rem] border border-luxury-gold/10 flex items-start gap-4">
                       <ShieldCheck className="text-luxury-gold w-5 md:w-6 h-5 md:h-6 shrink-0 mt-1" />
-                      <p className="text-[10px] md:text-xs text-luxury-gold/80 font-medium leading-relaxed italic">
+                      <p className="text-[10px] md:text-xs text-luxury-gold/80 font-medium leading-relaxed">
                         By registering, you agree to our Terms of Excellence.
                       </p>
                    </div>

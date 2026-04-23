@@ -89,8 +89,8 @@ const SuitesPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5, duration: 1 }}
             >
-               <h4 className="text-luxury-gold font-serif italic text-2xl mb-4">Accommodations</h4>
-               <h1 className="text-4xl md:text-8xl font-serif font-bold text-white tracking-tighter leading-none">The Sanctuaries</h1>
+               <h4 className="text-luxury-gold text-2xl mb-4">Accommodations</h4>
+               <h1 className="text-4xl md:text-8xl font-bold text-white tracking-tight leading-none">The Sanctuaries</h1>
             </motion.div>
          </div>
       </section>
@@ -98,8 +98,8 @@ const SuitesPage = () => {
       {/* Intro Context */}
       <section className="py-20 md:py-40 container mx-auto px-6 md:px-12">
          <div className="max-w-5xl">
-            <motion.p {...fadeInUp} className="text-2xl md:text-5xl font-serif text-luxury-black leading-[1.1]">
-               Every residence at Golden Hills is a <span className="italic text-luxury-gold">masterpiece of architectural soul</span>, blending the rugged beauty of Algeria with the delicate touch of high-craft luxury.
+            <motion.p {...fadeInUp} className="text-2xl md:text-5xl text-luxury-black leading-[1.1]">
+               Every residence at Golden Hills is a <span className="text-luxury-gold">masterpiece of architectural soul</span>, blending the rugged beauty of Algeria with the delicate touch of high-craft luxury.
             </motion.p>
          </div>
       </section>
@@ -132,7 +132,7 @@ const SuitesPage = () => {
                     <div className="flex justify-between items-end">
                        <div>
                           <span className="text-luxury-gold text-xs font-bold uppercase tracking-[0.5em] mb-3 block">{suite.type} Selection</span>
-                          <h3 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black group-hover:italic transition-all duration-700 leading-none">{suite.type}</h3>
+                          <h3 className="text-3xl md:text-5xl font-bold text-luxury-black group-hover: transition-all duration-700 leading-none">{suite.type}</h3>
                        </div>
                        <div className="flex gap-1">
                           {[1,2,3,4].map(s => <Star key={s} className="w-4 h-4 text-luxury-gold fill-current" />)}
@@ -192,8 +192,8 @@ const SuitesPage = () => {
             <div className="grid lg:grid-cols-2 gap-20 md:gap-40 items-center">
                <motion.div {...fadeInUp} className="space-y-12 md:space-y-16">
                   <div className="space-y-4 md:space-y-6">
-                     <h4 className="text-luxury-gold font-serif italic text-2xl md:text-3xl">The Golden Standard</h4>
-                     <h2 className="text-4xl md:text-8xl font-serif font-bold leading-[0.9]">Crafted for the <br/>Discerning Traveler</h2>
+                     <h4 className="text-luxury-gold text-2xl md:text-3xl">The Golden Standard</h4>
+                     <h2 className="text-4xl md:text-8xl font-bold leading-[1.1]">Crafted for the <br/>Discerning Traveler</h2>
                   </div>
                   <p className="text-white/40 text-lg md:text-2xl leading-relaxed font-medium">
                      Our service model is invisible yet omnipresent. From the moment you land in Setif until your final departure, every detail is anticipated by your dedicated suite concierge.
@@ -224,7 +224,7 @@ const SuitesPage = () => {
                    </div>
                    <div className="static lg:absolute -bottom-8 lg:-bottom-12 -left-8 lg:-left-12 w-full lg:w-72 h-auto lg:h-72 bg-white/5 backdrop-blur-3xl rounded-[2rem] lg:rounded-[3rem] p-8 lg:p-12 border border-white/10 flex flex-col justify-center mt-10 lg:mt-0">
                       <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-luxury-gold mb-6" />
-                      <p className="text-luxury-gold text-4xl md:text-5xl font-serif font-bold italic mb-4">99%</p>
+                      <p className="text-luxury-gold text-4xl md:text-5xl font-bold mb-4">99%</p>
                       <p className="text-xs font-bold uppercase tracking-[0.4em] text-white/40 leading-relaxed">Guest Delight index 2025</p>
                    </div>
                </motion.div>
@@ -237,7 +237,7 @@ const SuitesPage = () => {
          <div className="container mx-auto px-6 md:px-12 text-center">
             <motion.div {...fadeInUp}>
                <Map className="w-16 h-16 text-luxury-gold mx-auto mb-10" />
-               <h2 className="text-4xl md:text-5xl font-serif font-bold mb-12 md:mb-20 leading-none">Located in the heart of Heritage</h2>
+               <h2 className="text-4xl md:text-5xl font-bold mb-12 md:mb-20 leading-none">Located in the heart of Heritage</h2>
             </motion.div>
             <motion.div 
               initial={{ opacity: 0, y: 50 }}

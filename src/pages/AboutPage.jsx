@@ -33,8 +33,8 @@ const AboutPage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
             >
-               <h4 className="text-luxury-gold font-serif italic text-2xl md:text-3xl mb-6 tracking-widest">Since 1998</h4>
-               <h1 className="text-6xl md:text-[10rem] font-serif font-bold text-white tracking-tighter leading-none uppercase">The Legacy</h1>
+               <h4 className="text-luxury-gold text-2xl md:text-3xl mb-6 tracking-widest">Since 1998</h4>
+               <h1 className="text-6xl md:text-[10rem] font-bold text-white tracking-tight leading-none uppercase">The Legacy</h1>
             </motion.div>
          </div>
       </section>
@@ -45,10 +45,10 @@ const AboutPage = () => {
            <motion.div {...fadeInUp} className="space-y-12 md:space-y-16">
               <div className="space-y-6">
                  <span className="text-luxury-gold font-bold uppercase tracking-[0.6em] text-[10px] block">Our Origin</span>
-                 <h2 className="text-5xl md:text-8xl font-serif font-bold text-luxury-black leading-[0.9]">Sculpted in <br/><span className="italic text-luxury-gold">Stone & Gold.</span></h2>
+                 <h2 className="text-5xl md:text-8xl font-bold text-luxury-black leading-[1.1]">Sculpted in <br/><span className="text-luxury-gold">Stone & Gold.</span></h2>
               </div>
               <div className="space-y-8">
-                <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium italic">
+                <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium">
                   "At Golden Hills, we believe true luxury is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of handcrafted excellence."
                 </p>
                 <p className="text-lg text-gray-400 leading-relaxed font-medium">
@@ -57,11 +57,11 @@ const AboutPage = () => {
               </div>
               <div className="grid grid-cols-2 gap-12 pt-10">
                  <div className="space-y-3 border-l-2 border-luxury-gold pl-8">
-                    <p className="text-5xl md:text-6xl font-serif font-bold text-luxury-black">28</p>
+                    <p className="text-5xl md:text-6xl font-bold text-luxury-black">28</p>
                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Years of Mastery</p>
                  </div>
                  <div className="space-y-3 border-l-2 border-luxury-gold pl-8">
-                    <p className="text-5xl md:text-6xl font-serif font-bold text-luxury-black">4☆</p>
+                    <p className="text-5xl md:text-6xl font-bold text-luxury-black">4☆</p>
                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Gilded Rating</p>
                  </div>
               </div>
@@ -83,7 +83,7 @@ const AboutPage = () => {
                 transition={{ delay: 0.5, duration: 1 }}
                 className="absolute -top-12 -right-12 p-12 bg-white/80 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl border border-luxury-gold/10 z-20 hidden xl:block"
               >
-                 <p className="text-6xl font-serif font-bold text-luxury-gold mb-2 italic">100%</p>
+                 <p className="text-6xl font-bold text-luxury-gold mb-2">100%</p>
                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Authentic Numidian Spirit</p>
               </motion.div>
            </div>
@@ -95,7 +95,7 @@ const AboutPage = () => {
          <div className="container mx-auto px-6 md:px-12">
             <motion.div {...fadeInUp} className="text-center mb-32">
                <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.6em] mb-8">The Foundations</h4>
-               <h2 className="text-4xl md:text-7xl font-serif font-bold text-luxury-black">Our Three Pillars</h2>
+               <h2 className="text-4xl md:text-7xl font-bold text-luxury-black">Our Three Pillars</h2>
             </motion.div>
             
             <div className="grid md:grid-cols-3 gap-16 lg:gap-24">
@@ -116,8 +116,8 @@ const AboutPage = () => {
                        <div className="scale-150">{item.icon}</div>
                     </div>
                     <div className="space-y-6">
-                       <h4 className="text-2xl md:text-3xl font-serif font-bold text-luxury-black">{item.title}</h4>
-                       <p className="text-gray-400 font-medium leading-relaxed max-w-xs mx-auto italic">{item.desc}</p>
+                       <h4 className="text-2xl md:text-3xl font-bold text-luxury-black">{item.title}</h4>
+                       <p className="text-gray-400 font-medium leading-relaxed max-w-xs mx-auto">{item.desc}</p>
                     </div>
                  </motion.div>
                ))}
@@ -130,7 +130,7 @@ const AboutPage = () => {
          <div className="absolute top-1/2 left-0 w-full h-px bg-gray-100 hidden md:block" />
          <div className="max-w-6xl mx-auto space-y-32">
             <motion.div {...fadeInUp} className="text-center relative z-10">
-               <h3 className="text-5xl md:text-8xl font-serif font-bold italic mb-6">The Golden Timeline</h3>
+               <h3 className="text-5xl md:text-8xl font-bold mb-6">The Golden Timeline</h3>
                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.5em]">Chronicles of Grandeur</p>
             </motion.div>
 
@@ -143,8 +143,8 @@ const AboutPage = () => {
                ].map((event, i) => (
                  <div key={i} className={`flex flex-col md:flex-row gap-12 md:gap-20 items-center ${i % 2 !== 0 ? 'md:flex-row-reverse text-right' : ''}`}>
                     <div className="md:w-1/2 space-y-6">
-                       <span className="text-8xl md:text-[12rem] font-serif font-bold text-luxury-gold/10 block leading-none">{event.year}</span>
-                       <h4 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black">{event.title}</h4>
+                       <span className="text-8xl md:text-[12rem] font-bold text-luxury-gold/10 block leading-none">{event.year}</span>
+                       <h4 className="text-3xl md:text-5xl font-bold text-luxury-black">{event.title}</h4>
                        <p className="text-lg md:text-xl text-gray-500 leading-relaxed font-medium max-w-xl mx-auto md:mx-0">{event.desc}</p>
                     </div>
                     <div className="hidden md:flex w-24 h-24 rounded-full bg-white border border-luxury-gold items-center justify-center text-luxury-gold shadow-gold relative">
@@ -164,8 +164,8 @@ const AboutPage = () => {
          <div className="container mx-auto px-6 md:px-12 relative z-10">
             <motion.div {...fadeInUp}>
               <Users className="w-16 h-16 text-luxury-gold mx-auto mb-10" />
-              <h2 className="text-5xl md:text-8xl font-serif font-bold mb-10 italic leading-none">The Custodians</h2>
-              <p className="text-white/40 max-w-3xl mx-auto text-xl md:text-2xl leading-relaxed mb-24 font-medium italic">
+              <h2 className="text-5xl md:text-8xl font-bold mb-10 leading-none">The Custodians</h2>
+              <p className="text-white/40 max-w-3xl mx-auto text-xl md:text-2xl leading-relaxed mb-24 font-medium">
                 "Our staff are not merely employees; they are the guardians of your experience. Every gesture is choreographed to anticipate your silent desires."
               </p>
             </motion.div>
@@ -188,7 +188,7 @@ const AboutPage = () => {
                        <img src={member.img} className="w-full h-full object-cover rounded-full grayscale group-hover:grayscale-0 transition-all duration-1000" alt={member.name} />
                        <div className="absolute inset-0 bg-luxury-gold/20 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <h5 className="text-2xl font-serif font-bold tracking-tight">{member.name}</h5>
+                    <h5 className="text-2xl font-bold tracking-tight">{member.name}</h5>
                     <p className="text-[10px] font-bold text-luxury-gold uppercase tracking-[0.5em] mt-3">{member.role}</p>
                  </motion.div>
                ))}
@@ -199,7 +199,7 @@ const AboutPage = () => {
       {/* Call to Action */}
       <section className="py-20 md:py-60 container mx-auto px-6 md:px-12 text-center">
          <motion.div {...fadeInUp} className="max-w-4xl mx-auto space-y-16">
-            <h2 className="text-5xl md:text-8xl font-serif font-bold text-luxury-black italic leading-[0.9]">Become Part <br/> of the Legacy.</h2>
+            <h2 className="text-5xl md:text-8xl font-bold text-luxury-black leading-[1.1]">Become Part <br/> of the Legacy.</h2>
             <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium">
                Whether you are visiting for a night or staying for a season, your presence adds a new chapter to our story. We invite you to experience the hills as they were meant to be seen.
             </p>
