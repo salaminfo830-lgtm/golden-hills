@@ -17,7 +17,17 @@ const GuestsSystem = () => {
   const [selectedGuest, setSelectedGuest] = useState(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingGuest, setEditingGuest] = useState(null);
-  const [newGuest, setNewGuest] = useState({ full_name: '', email: '', phone: '', avatar_url: '' });
+  const [newGuest, setNewGuest] = useState({ 
+    full_name: '', 
+    email: '', 
+    phone: '', 
+    avatar_url: '',
+    nationality: '',
+    id_number: '',
+    dob: '',
+    address: '',
+    notes: ''
+  });
 
   useEffect(() => {
     fetchGuests();
@@ -60,7 +70,10 @@ const GuestsSystem = () => {
       if (!error) {
         setShowAddModal(false);
         setEditingGuest(null);
-        setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' });
+        setNewGuest({ 
+          full_name: '', email: '', phone: '', avatar_url: '',
+          nationality: '', id_number: '', dob: '', address: '', notes: ''
+        });
         fetchGuests();
       } else {
         alert("Error updating guest: " + error.message);
@@ -70,7 +83,10 @@ const GuestsSystem = () => {
       const { error } = await supabase.from('Guest').insert([newGuest]);
       if (!error) {
         setShowAddModal(false);
-        setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' });
+        setNewGuest({ 
+          full_name: '', email: '', phone: '', avatar_url: '',
+          nationality: '', id_number: '', dob: '', address: '', notes: ''
+        });
         fetchGuests();
       } else {
         alert("Error adding guest: " + error.message);
@@ -85,7 +101,12 @@ const GuestsSystem = () => {
       full_name: guest.full_name,
       email: guest.email,
       phone: guest.phone || '',
-      avatar_url: guest.avatar_url || ''
+      avatar_url: guest.avatar_url || '',
+      nationality: guest.nationality || '',
+      id_number: guest.id_number || '',
+      dob: guest.dob ? new Date(guest.dob).toISOString().split('T')[0] : '',
+      address: guest.address || '',
+      notes: guest.notes || ''
     });
     setShowAddModal(true);
   };
@@ -126,7 +147,7 @@ const GuestsSystem = () => {
           <button className="px-6 py-3 bg-white border border-gray-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-gray-50 transition-all shadow-sm">
             <Download className="w-4 h-4" /> Export Data
           </button>
-          <GoldButton onClick={() => { setEditingGuest(null); setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '' }); setShowAddModal(true); }} className="px-6 py-3 text-[10px] flex items-center gap-2 shadow-lg">
+          <GoldButton onClick={() => { setEditingGuest(null); setNewGuest({ full_name: '', email: '', phone: '', avatar_url: '', nationality: '', id_number: '', dob: '', address: '', notes: '' }); setShowAddModal(true); }} className="px-6 py-3 text-[10px] flex items-center gap-2 shadow-lg">
             <Plus className="w-4 h-4" /> ADD GUEST
           </GoldButton>
         </div>
@@ -352,6 +373,28 @@ const GuestsSystem = () => {
                 <div>
                   <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Avatar URL</label>
                   <input value={newGuest.avatar_url} onChange={e=>setNewGuest({...newGuest, avatar_url: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Nationality</label>
+                    <input value={newGuest.nationality} onChange={e=>setNewGuest({...newGuest, nationality: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                  </div>
+                  <div>
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Date of Birth</label>
+                    <input value={newGuest.dob} onChange={e=>setNewGuest({...newGuest, dob: e.target.value})} type="date" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">ID / Passport Number</label>
+                  <input value={newGuest.id_number} onChange={e=>setNewGuest({...newGuest, id_number: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Full Address</label>
+                  <textarea value={newGuest.address} onChange={e=>setNewGuest({...newGuest, address: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm resize-none" rows="2" />
+                </div>
+                <div>
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2 block">Internal Notes</label>
+                  <textarea value={newGuest.notes} onChange={e=>setNewGuest({...newGuest, notes: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-2xl px-5 py-3 outline-none focus:border-luxury-gold transition-colors font-bold text-sm resize-none" rows="3" />
                 </div>
                 <GoldButton type="submit" className="w-full py-4 shadow-lg text-[10px]">
                   {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : (editingGuest ? 'SAVE CHANGES' : 'CREATE GUEST RECORD')}

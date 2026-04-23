@@ -28,7 +28,11 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
     status: 'Vacant',
     occupancy: 'Clean',
     housekeeper: '',
-    image_url: ''
+    image_url: '',
+    description: '',
+    capacity: 2,
+    gallery: [],
+    features: []
   });
 
   useEffect(() => {
@@ -59,37 +63,37 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
     setLoading(false);
   };
 
-  const handleFileUpload = async (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
+  const handleFileUpload = async (e, isGallery = false) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     setUploading(true);
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `rooms/${fileName}`;
-
+    
     try {
-      // Ensure bucket exists or just try to upload
-      const { error: uploadError } = await supabase.storage
-        .from('rooms')
-        .upload(filePath, file);
+      const uploadedUrls = [];
+      for (const file of Array.from(files)) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Math.random()}.${fileExt}`;
+        const filePath = `rooms/${fileName}`;
 
-      if (uploadError) {
-        if (uploadError.message === 'Bucket not found') {
-           // Attempt to create bucket if it doesn't exist (might fail due to permissions)
-           await supabase.storage.createBucket('rooms', { public: true });
-           const { error: retryError } = await supabase.storage.from('rooms').upload(filePath, file);
-           if (retryError) throw retryError;
-        } else {
-           throw uploadError;
-        }
+        const { error: uploadError } = await supabase.storage
+          .from('rooms')
+          .upload(filePath, file);
+
+        if (uploadError) throw uploadError;
+
+        const { data: { publicUrl } } = supabase.storage
+          .from('rooms')
+          .getPublicUrl(filePath);
+        
+        uploadedUrls.push(publicUrl);
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('rooms')
-        .getPublicUrl(filePath);
-
-      setNewRoom(prev => ({ ...prev, image_url: publicUrl }));
+      if (isGallery) {
+        setNewRoom(prev => ({ ...prev, gallery: [...(prev.gallery || []), ...uploadedUrls] }));
+      } else {
+        setNewRoom(prev => ({ ...prev, image_url: uploadedUrls[0] }));
+      }
     } catch (error) {
       console.error('Upload error:', error);
       alert('Error uploading image: ' + error.message);
@@ -111,7 +115,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
       if (!error) {
         setShowAddModal(false);
         setEditingRoom(null);
-        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '' });
+        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
         fetchRooms();
       } else {
         alert("Error updating room: " + error.message);
@@ -124,7 +128,7 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
       }]);
       if (!error) {
         setShowAddModal(false);
-        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '' });
+        setNewRoom({ number: '', type: 'Heritage Deluxe', price: 320, status: 'Vacant', occupancy: 'Clean', housekeeper: '', image_url: '', description: '', capacity: 2, gallery: [] });
         fetchRooms();
       } else {
         alert("Error adding room: " + error.message);
@@ -142,7 +146,11 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
       status: room.status,
       occupancy: room.occupancy,
       housekeeper: room.housekeeper || '',
-      image_url: room.image_url || ''
+      image_url: room.image_url || '',
+      description: room.description || '',
+      capacity: room.capacity || 2,
+      gallery: room.gallery || [],
+      features: room.features || []
     });
     setShowAddModal(true);
   };
@@ -439,6 +447,34 @@ const RoomsSystem = ({ userType = 'Admin' }) => {
                          <option>Imperial Family Wing</option>
                        </select>
                      </div>
+
+                      <div>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Room Features & Amenities</label>
+                        <div className="flex flex-wrap gap-2 mb-3">
+                           {newRoom.features && newRoom.features.map((feat, idx) => (
+                             <span key={idx} className="px-3 py-1 bg-luxury-gold/10 text-luxury-gold text-[10px] font-bold rounded-full flex items-center gap-2">
+                                {feat}
+                                <button type="button" onClick={() => setNewRoom(prev => ({ ...prev, features: prev.features.filter((_, i) => i !== idx) }))}>
+                                   <X className="w-3 h-3" />
+                                </button>
+                             </span>
+                           ))}
+                        </div>
+                        <input 
+                          type="text" 
+                          placeholder="Type and press Enter to add features" 
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              if (e.target.value.trim()) {
+                                setNewRoom(prev => ({ ...prev, features: [...(prev.features || []), e.target.value.trim()] }));
+                                e.target.value = '';
+                              }
+                            }
+                          }}
+                          className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm mb-6" 
+                        />
+                      </div>
 
                      <div className="grid grid-cols-2 gap-6">
                         <div>

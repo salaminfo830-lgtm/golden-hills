@@ -19,7 +19,8 @@ const HRSystem = () => {
   const [editingStaff, setEditingStaff] = useState(null);
 
   const [newStaff, setNewStaff] = useState({
-    name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: ''
+    name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: '',
+    avatar_url: '', dob: '', address: '', id_number: '', joined_date: new Date().toISOString().split('T')[0], salary: ''
   });
 
   useEffect(() => {
@@ -57,10 +58,54 @@ const HRSystem = () => {
 
     if (!error) {
       setShowAddModal(false);
-      setNewStaff({ name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: '' });
+      setNewStaff({ 
+        name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: '',
+        avatar_url: '', dob: '', address: '', id_number: '', joined_date: new Date().toISOString().split('T')[0], salary: ''
+      });
       fetchStaff();
     } else {
       console.error("Error adding staff:", error.message);
+      setLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (e, isEditing = false) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    setLoading(true);
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `staff/${fileName}`;
+
+    try {
+      const { error: uploadError } = await supabase.storage
+        .from('staff')
+        .upload(filePath, file);
+
+      if (uploadError) {
+        if (uploadError.message === 'Bucket not found') {
+           await supabase.storage.createBucket('staff', { public: true });
+           const { error: retryError } = await supabase.storage.from('staff').upload(filePath, file);
+           if (retryError) throw retryError;
+        } else {
+           throw uploadError;
+        }
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('staff')
+        .getPublicUrl(filePath);
+
+      if (isEditing) {
+        setEditingStaff(prev => ({ ...prev, avatar_url: publicUrl }));
+      } else {
+        setNewStaff(prev => ({ ...prev, avatar_url: publicUrl }));
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Error uploading image: ' + error.message);
+    } finally {
       setLoading(false);
     }
   };
@@ -75,7 +120,13 @@ const HRSystem = () => {
         role: editingStaff.role,
         department: editingStaff.department,
         phone: editingStaff.phone,
-        email: editingStaff.email
+        email: editingStaff.email,
+        avatar_url: editingStaff.avatar_url,
+        dob: editingStaff.dob,
+        address: editingStaff.address,
+        id_number: editingStaff.id_number,
+        joined_date: editingStaff.joined_date,
+        salary: editingStaff.salary
       })
       .eq('id', editingStaff.id);
 
@@ -308,9 +359,19 @@ const HRSystem = () => {
                         </select>
                      </div>
                   </div>
+                  <div className="grid grid-cols-2 gap-6">
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (USD)</label>
+                        <input type="number" value={editingStaff.salary || ''} onChange={e=>setEditingStaff({...editingStaff, salary: Number(e.target.value)})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                     </div>
+                     <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Joined Date</label>
+                        <input type="date" value={editingStaff.joined_date ? new Date(editingStaff.joined_date).toISOString().split('T')[0] : ''} onChange={e=>setEditingStaff({...editingStaff, joined_date: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                     </div>
+                  </div>
                   <div className="space-y-2">
-                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email Liaison</label>
-                     <input required type="email" value={editingStaff.email || ''} onChange={e=>setEditingStaff({...editingStaff, email: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Full Address</label>
+                     <textarea value={editingStaff.address || ''} onChange={e=>setEditingStaff({...editingStaff, address: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all resize-none" rows="2" />
                   </div>
                   
                   <GoldButton type="submit" className="w-full py-4 shadow-xl mt-4">SAVE CHANGES</GoldButton>
@@ -361,6 +422,20 @@ const HRSystem = () => {
                     <div className="space-y-2">
                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email Interface</label>
                       <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" placeholder="user@goldenhills.dz" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-6">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (USD)</label>
+                        <input type="number" value={newStaff.salary} onChange={e=>setNewStaff({...newStaff, salary: Number(e.target.value)})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" placeholder="2500" />
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Joined Date</label>
+                        <input type="date" value={newStaff.joined_date} onChange={e=>setNewStaff({...newStaff, joined_date: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Address</label>
+                       <textarea value={newStaff.address} onChange={e=>setNewStaff({...newStaff, address: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm resize-none" rows="2" placeholder="Street, City..." />
                     </div>
                  </form>
               </div>

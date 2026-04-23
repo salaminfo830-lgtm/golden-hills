@@ -28,11 +28,15 @@ model Room {
   housekeeper  String?
   image_url    String?
   description  String?
+  capacity     Int?          @default(2)
+  gallery      Json?         @default("[]")
+  features     Json?         @default("[]")
   created_at   DateTime      @default(now())
   updated_at   DateTime      @updatedAt
   reservations Reservation[]
   amenities    Amenity[]
   reviews      Review[]
+  tasks        Task[]
 }
 
 model Amenity {
@@ -48,6 +52,11 @@ model Guest {
   full_name    String
   phone        String?
   avatar_url   String?
+  nationality  String?
+  id_number    String?
+  dob          DateTime?
+  address      String?
+  notes        String?
   created_at   DateTime      @default(now())
   reservations Reservation[]
   reviews      Review[]
@@ -76,10 +85,10 @@ model Review {
   rating     Int      @default(5)
   comment    String?
   guest_id   String
-  room_id    Int
+  room_id    Int?
   created_at DateTime @default(now())
   guest      Guest    @relation(fields: [guest_id], references: [id])
-  room       Room     @relation(fields: [room_id], references: [id])
+  room       Room?    @relation(fields: [room_id], references: [id])
 }
 
 model Settings {
@@ -126,6 +135,11 @@ model Staff {
   phone       String?
   email       String?
   avatar_url  String?
+  dob         DateTime?
+  address     String?
+  id_number   String?
+  joined_date DateTime? @default(now())
+  salary      Float?
   created_at  DateTime @default(now())
   permissions Json?
   tasks       Task[]
@@ -133,15 +147,19 @@ model Staff {
 
 model Task {
   id         String   @id @default(uuid())
-  title      String
-  area       String
-  time       String?
-  priority   String   @default("Normal")
-  type       String
-  completed  Boolean  @default(false)
-  staff_id   String?
-  created_at DateTime @default(now())
-  staff      Staff?   @relation(fields: [staff_id], references: [id])
+  title       String
+  description String?
+  area        String?
+  time        String?
+  priority    String   @default("Normal")
+  status      String   @default("Pending")
+  type        String?
+  completed   Boolean  @default(false)
+  staff_id    String?
+  room_id     Int?
+  created_at  DateTime @default(now())
+  staff       Staff?   @relation(fields: [staff_id], references: [id])
+  room        Room?    @relation(fields: [room_id], references: [id])
 }
 
 model KitchenOrder {
@@ -181,4 +199,31 @@ model FinanceTransaction {
   is_up    Boolean  @default(true)
   trend    String?
   date     DateTime @default(now())
+}
+
+model Service {
+  id          String   @id @default(uuid())
+  name        String
+  type        String
+  description String?
+  image_url   String?
+  hours       String?
+  location    String?
+  specialty   String?
+  price       String?
+  created_at  DateTime @default(now())
+}
+
+model BankAccount {
+  id             String @id @default(uuid())
+  account_number String
+  bank_name      String
+  balance        Float  @default(0)
+}
+
+model PaymentRequest {
+  id        String   @id @default(uuid())
+  amount    Float
+  status    String   @default("Pending")
+  created_at DateTime @default(now())
 }
