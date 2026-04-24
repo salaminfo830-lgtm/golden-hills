@@ -215,6 +215,7 @@ const BookingFlow = () => {
       }]);
 
       setStep(4); 
+      window.scrollTo(0, 0);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -625,14 +626,14 @@ const BookingFlow = () => {
                     <div className="space-y-8 relative z-10">
                       <h2 className="text-7xl md:text-8xl font-serif font-medium text-luxury-black tracking-tighter leading-[0.9]">Presence <br /> <span className="italic text-luxury-gold">Secured</span></h2>
                       <p className="text-gray-500 text-xl md:text-2xl font-medium max-w-2xl mx-auto italic leading-relaxed">
-                        "Your arrival is highly anticipated, {formData.fullName.split(' ')[0]}. A master suite is currently being prepared to your exact specifications."
+                        {`"Your arrival is highly anticipated, ${formData.fullName.split(' ')[0] || 'Guest'}. A master suite is currently being prepared to your exact specifications."`}
                       </p>
                       
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-12 py-16 border-y border-gray-100 relative z-10">
                         <div className="space-y-3">
                           <PlaneTakeoff className="w-7 h-7 text-luxury-gold mx-auto" />
                           <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-300">Sanctuary Key</p>
-                          <p className="text-2xl font-serif font-bold text-luxury-black tracking-widest uppercase">#GH-{Math.random().toString(36).substr(2, 6).toUpperCase()}</p>
+                          <p className="text-2xl font-serif font-bold text-luxury-black tracking-widest uppercase">#GH-{Math.random().toString(36).slice(2, 8).toUpperCase()}</p>
                         </div>
                         <div className="space-y-3">
                           <Bell className="w-7 h-7 text-luxury-gold mx-auto" />
@@ -665,7 +666,7 @@ const BookingFlow = () => {
 
                     <div className="flex flex-col sm:flex-row justify-center gap-8 relative z-10 pt-8">
                       <GoldButton className="px-20 py-7 text-[10px] tracking-[0.4em] shadow-2xl" onClick={() => navigate('/')}>RETURN TO PUBLIC PORTAL</GoldButton>
-                      <button onClick={() => navigate('/GuestDashboard')} className="px-20 py-7 bg-white border border-gray-100 rounded-[2.5rem] text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all shadow-sm">PRIVATE MEMBER DASHBOARD</button>
+                      <button onClick={() => navigate('/dashboard')} className="px-20 py-7 bg-white border border-gray-100 rounded-[2.5rem] text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all shadow-sm">PRIVATE MEMBER DASHBOARD</button>
                     </div>
                   </div>
                 </motion.div>
