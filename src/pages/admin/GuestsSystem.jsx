@@ -80,7 +80,7 @@ const GuestsSystem = () => {
         setLoading(false);
       }
     } else {
-      const { error } = await supabase.from('Guest').insert([newGuest]);
+      const { error } = await supabase.from('Guest').insert([{ id: crypto.randomUUID(), ...newGuest }]);
       if (!error) {
         setShowAddModal(false);
         setNewGuest({ 

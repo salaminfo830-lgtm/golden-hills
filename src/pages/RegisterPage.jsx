@@ -40,6 +40,27 @@ const RegisterPage = () => {
 
     if (formData.password !== formData.confirmPassword) {
       setError("Passwords do not match.");
+      setLoading(false);
+      return;
+    }
+
+    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!strongPasswordRegex.test(formData.password)) {
+      setError("Password must be at least 8 characters and include uppercase, lowercase, number, and special character.");
+      setLoading(false);
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError("Please provide a valid biometric email identity.");
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.firstName || !formData.lastName || !formData.phone) {
+      setError("All identity fields are mandatory for entry.");
+      setLoading(false);
       return;
     }
 
@@ -154,7 +175,7 @@ const RegisterPage = () => {
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              <h2 className="text-4xl font-bold text-white leading-tight">
+              <h2 className="text-3xl md:text-4xl font-medium text-white leading-tight">
                 {step === 1 && "Choose Your Path"}
                 {step === 2 && "Identity & Security"}
                 {step === 3 && "Personal Details"}
@@ -163,7 +184,7 @@ const RegisterPage = () => {
               <p className="text-white/60 text-base font-light leading-relaxed">
                 {step === 1 && "Select how you would like to experience Golden Hills."}
                 {step === 2 && "Secure your access to our exclusive sanctuary."}
-                {step === 3 && "Tell us more about yourself."}
+                {step === 3 && (identity === 'staff' ? "Select your department and provide your identity." : "Tell us more about yourself.")}
                 {step === 4 && "Tailor your experience."}
               </p>
             </motion.div>
@@ -195,7 +216,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-12"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-5xl font-bold text-luxury-black">Begin Your Journey</h3>
+                  <h3 className="text-3xl md:text-4xl font-medium text-luxury-black">Begin Your Journey</h3>
                   <p className="text-gray-500 text-base md:text-lg">Select your account type.</p>
                 </div>
 
@@ -239,7 +260,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-10"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-4xl font-bold text-luxury-black">Security Credentials</h3>
+                  <h3 className="text-2xl md:text-3xl font-medium text-luxury-black">Security Credentials</h3>
                   <p className="text-gray-500 text-sm md:text-base">Provide your secure access key.</p>
                 </div>
 
@@ -254,7 +275,7 @@ const RegisterPage = () => {
                         value={formData.email}
                         onChange={(e) => setFormData({...formData, email: e.target.value})}
                         className="input-luxury w-full pl-14 md:pl-16 h-14 md:h-16 text-sm md:text-base" 
-                        placeholder="excellence@goldenhills.dz" 
+                        placeholder={identity === 'staff' ? "personnel@goldenhills.dz" : "excellence@goldenhills.dz"} 
                       />
                     </div>
                   </div>
@@ -307,7 +328,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-10"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-4xl font-bold text-luxury-black">Identity</h3>
+                  <h3 className="text-2xl md:text-3xl font-medium text-luxury-black">Identity</h3>
                   <p className="text-gray-500 text-sm md:text-base">How should we address you?</p>
                 </div>
 
@@ -350,6 +371,27 @@ const RegisterPage = () => {
                       />
                     </div>
                   </div>
+
+                  {identity === 'staff' && (
+                    <div className="space-y-2">
+                      <label className="text-[9px] md:text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-2">Department Assignment</label>
+                      <div className="relative">
+                        <Briefcase className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                        <select 
+                          value={formData.department}
+                          onChange={(e) => setFormData({...formData, department: e.target.value})}
+                          className="input-luxury w-full pl-14 md:pl-16 h-14 md:h-16 text-sm appearance-none cursor-pointer"
+                        >
+                          <option>Front Desk</option>
+                          <option>Housekeeping</option>
+                          <option>Kitchen</option>
+                          <option>Security</option>
+                          <option>Finance</option>
+                          <option>Administration</option>
+                        </select>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-4 md:gap-6 pt-4">
@@ -369,7 +411,7 @@ const RegisterPage = () => {
                 className="space-y-8 md:space-y-12"
               >
                 <div className="space-y-3 md:space-y-4">
-                  <h3 className="text-3xl md:text-4xl font-bold text-luxury-black">Preferences</h3>
+                  <h3 className="text-2xl md:text-3xl font-medium text-luxury-black">Preferences</h3>
                   <p className="text-gray-400 text-sm md:text-base">Tailor your experience.</p>
                 </div>
 

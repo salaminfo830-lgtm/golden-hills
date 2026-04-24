@@ -9,7 +9,7 @@ const GoldButton = ({ children, className, onClick, outline = false, ...props })
       onClick={onClick}
       {...props}
       className={twMerge(
-        'relative px-6 md:px-8 py-2.5 md:py-3 rounded-full font-bold transition-all duration-500 overflow-hidden group tracking-wide',
+        'relative px-5 md:px-7 py-2 md:py-2.5 rounded-full font-semibold transition-all duration-500 overflow-hidden group tracking-widest text-[11px] uppercase',
         outline 
           ? 'border-2 border-luxury-gold text-luxury-gold hover:bg-luxury-gold hover:text-white shadow-sm'
           : 'bg-gradient-to-r from-luxury-gold-vibrant via-luxury-gold-shimmer to-luxury-gold text-white shadow-xl shadow-luxury-gold/30 hover:shadow-luxury-gold/50',

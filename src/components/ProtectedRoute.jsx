@@ -3,7 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Loader2 } from 'lucide-react';
 
-const ProtectedRoute = ({ children, requiredRole }) => {
+const ProtectedRoute = ({ children, requiredRole, public: isPublic }) => {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -67,19 +67,36 @@ const ProtectedRoute = ({ children, requiredRole }) => {
   }
 
   if (!session) {
+    if (isPublic) return children;
     return <Navigate to="/login" replace state={{ from: window.location.pathname }} />;
   }
 
-  if (profile?.status === 'Pending Approval') {
-    return <Navigate to="/login" state={{ error: 'Your account is currently awaiting administrative approval.' }} replace />;
+  // If public route but user is logged in, redirect Admin/Staff to their panels
+  if (isPublic && profile) {
+    if (profile.role === 'admin') return <Navigate to="/admin" replace />;
+    if (profile.role === 'staff') {
+      if (profile.status === 'Pending Approval' || profile.status === 'Rejected') {
+        return <Navigate to="/status" replace />;
+      }
+      return <Navigate to="/staff" replace />;
+    }
+    // Guests can stay on public routes
+    return children;
+  }
+
+  // Handle Staff Status
+  if (profile?.role === 'staff' && (profile?.status === 'Pending Approval' || profile?.status === 'Rejected')) {
+    if (window.location.pathname !== '/status') {
+      return <Navigate to="/status" replace />;
+    }
   }
 
   if (requiredRole && profile?.role !== requiredRole) {
-    // If they are a staff member trying to access /admin, send them to their dashboard
-    if (profile?.role === 'staff') {
-      return <Navigate to="/staff" replace />;
-    }
-    // Otherwise fallback to home
+    // Redirect based on identity if accessing unauthorized route
+    if (profile?.role === 'admin') return <Navigate to="/admin" replace />;
+    if (profile?.role === 'staff') return <Navigate to="/staff" replace />;
+    if (profile?.role === 'guest') return <Navigate to="/dashboard" replace />;
+    
     return <Navigate to="/" replace />;
   }
 

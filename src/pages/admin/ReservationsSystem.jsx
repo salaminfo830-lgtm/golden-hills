@@ -43,14 +43,55 @@ const ReservationsSystem = () => {
     
     if (!error) {
       setReservations(data || []);
+      runIntegrityCheck(data || []);
     }
     setLoading(false);
+  };
+
+  const runIntegrityCheck = async (data) => {
+    const now = new Date();
+    const { data: settings } = await supabase.from('Settings').select('*').eq('id', 'global').single();
+    const noShowThreshold = settings?.no_show_threshold_hours || 18; // 6 PM
+    const bankDeadline = settings?.bank_transfer_deadline_hours || 24;
+
+    for (const res of data) {
+      // 1. No-Show Check (Pay at Hotel)
+      if (res.status === 'Confirmed' && res.payment_method === 'Pay at Hotel') {
+        const arrivalDate = new Date(res.start_date);
+        arrivalDate.setHours(noShowThreshold, 0, 0, 0);
+        
+        if (now > arrivalDate) {
+          await handleMarkNoShow(res.id, true); // true for auto-process
+        }
+      }
+
+      // 2. Late Payment Check (Bank Transfer)
+      if (res.payment_status === 'Unpaid' && res.payment_method === 'Bank Transfer') {
+        const createdDate = new Date(res.created_at);
+        const deadlineDate = new Date(createdDate.getTime() + bankDeadline * 60 * 60 * 1000);
+        
+        if (now > deadlineDate) {
+          await supabase.from('Reservation').update({ 
+            status: 'Cancelled',
+            payment_status: 'Failed'
+          }).eq('id', res.id);
+          
+          await supabase.from('AuditLog').insert([{
+            action: 'Auto-Cancelled: Late Payment',
+            entity_type: 'Reservation',
+            entity_id: res.id,
+            details: { reason: 'Bank transfer proof not received within deadline.' }
+          }]);
+        }
+      }
+    }
   };
 
   const handleCreateBooking = async (e) => {
     e.preventDefault();
     setLoading(true);
     const { error } = await supabase.from('Reservation').insert([{
+      id: crypto.randomUUID(),
       ...newRes,
       start_date: new Date(newRes.start_date).toISOString(),
       end_date: new Date(newRes.end_date).toISOString()
@@ -77,10 +118,39 @@ const ReservationsSystem = () => {
   };
 
   const handleProcessStatus = async (id, currentStatus) => {
-    const flow = ['Pending Approval', 'Confirmed', 'Checked-in', 'Checked-out', 'Cancelled'];
+    const flow = ['Pending Approval', 'Confirmed', 'Checked-in', 'Checked-out', 'Cancelled', 'No-Show'];
     const nextIdx = (flow.indexOf(currentStatus) + 1) % flow.length;
-    await supabase.from('Reservation').update({ status: flow[nextIdx] }).eq('id', id);
-    fetchReservations();
+    const nextStatus = flow[nextIdx];
+    
+    const { error } = await supabase.from('Reservation').update({ status: nextStatus }).eq('id', id);
+    if (!error) {
+      await supabase.from('AuditLog').insert([{
+        action: 'Reservation Status Changed',
+        entity_type: 'Reservation',
+        entity_id: id,
+        details: { from: currentStatus, to: nextStatus }
+      }]);
+      fetchReservations();
+    }
+  };
+
+  const handleMarkNoShow = async (id, auto = false) => {
+    if (auto || window.confirm("Mark this guest as No-Show? This will release the room.")) {
+      const { error } = await supabase.from('Reservation').update({ 
+        status: 'No-Show',
+        payment_status: 'Unpaid'
+      }).eq('id', id);
+      
+      if (!error) {
+        await supabase.from('AuditLog').insert([{
+          action: auto ? 'Auto-Marked No-Show' : 'Marked No-Show',
+          entity_type: 'Reservation',
+          entity_id: id,
+          details: { timestamp: new Date().toISOString(), trigger: auto ? 'System Integrity Check' : 'Manual' }
+        }]);
+        if (!auto) fetchReservations();
+      }
+    }
   };
 
   return (
@@ -183,15 +253,32 @@ const ReservationsSystem = () => {
                              <p className="text-luxury-gold">{new Date(req.start_date).toLocaleDateString()}</p>
                           </div>
                        </div>
-                       <div className="flex items-center justify-between w-full md:w-auto gap-3 sm:pl-[72px] md:pl-0">
+                       <div className="flex flex-col items-end gap-2">
                           <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border transition-all ${
-                            req.status === 'Confirmed' ? 'bg-green-50 text-green-600 border-green-100' : 'bg-white border-gray-100 text-gray-400'
+                            req.status === 'Confirmed' ? 'bg-green-50 text-green-600 border-green-100' : 
+                            req.status === 'No-Show' ? 'bg-red-50 text-red-600 border-red-100' :
+                            'bg-white border-gray-100 text-gray-400'
                           }`}>
                              {req.status}
                           </span>
-                          <GoldButton onClick={() => handleProcessStatus(req.id, req.status)} outline className="px-6 py-2 text-[10px]">PROCESS</GoldButton>
-                          <button onClick={() => handleDelete(req.id)} className="text-gray-400 hover:text-red-500 p-2"><Trash2 className="w-4 h-4"/></button>
+                          <span className={`text-[9px] font-bold uppercase tracking-widest ${
+                            req.payment_status === 'Paid' ? 'text-green-500' : 'text-orange-400'
+                          }`}>
+                             {req.payment_status || 'Unpaid'} • {req.payment_method || 'N/A'}
+                          </span>
                        </div>
+                       <div className="flex gap-2">
+                          <GoldButton onClick={() => handleProcessStatus(req.id, req.status)} outline className="px-4 py-2 text-[10px]">PROCESS</GoldButton>
+                          {req.status === 'Confirmed' && req.payment_method === 'Pay at Hotel' && (
+                            <button 
+                              onClick={() => handleMarkNoShow(req.id)}
+                              className="px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-bold hover:bg-red-500 hover:text-white transition-all"
+                            >
+                              NO-SHOW
+                            </button>
+                          )}
+                       </div>
+                       <button onClick={() => handleDelete(req.id)} className="text-gray-300 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4"/></button>
                     </div>
                   ))}
                </div>

@@ -24,6 +24,10 @@ const FinanceSystem = () => {
   const [accountForm, setAccountForm] = useState({
     bank_name: '', account_holder: '', iban: '', is_active: true
   });
+  const [selectedProof, setSelectedProof] = useState(null);
+  const [rejectionReason, setRejectionReason] = useState('');
+  const [showRejectionModal, setShowRejectionModal] = useState(false);
+  const [processingRequest, setProcessingRequest] = useState(null);
 
   useEffect(() => {
     fetchFinanceData();
@@ -126,9 +130,35 @@ const FinanceSystem = () => {
     }
   };
 
-  const handleRejectPayment = async (id) => {
-    await supabase.from('PaymentRequest').update({ status: 'Rejected' }).eq('id', id);
-    fetchPaymentRequests();
+  const handleRejectPayment = async () => {
+    if (!rejectionReason.trim()) {
+      alert("Please provide a reason for rejection.");
+      return;
+    }
+
+    const { error } = await supabase.from('PaymentRequest').update({ 
+      status: 'Rejected',
+      notes: rejectionReason
+    }).eq('id', processingRequest.id);
+
+    if (!error) {
+      await supabase.from('Reservation').update({ 
+        status: 'Cancelled',
+        payment_status: 'Refunded' // Or just Failed
+      }).eq('id', processingRequest.reservation_id);
+
+      await supabase.from('AuditLog').insert([{
+        action: 'Payment Rejected',
+        entity_type: 'PaymentRequest',
+        entity_id: processingRequest.id,
+        details: { reason: rejectionReason }
+      }]);
+
+      setShowRejectionModal(false);
+      setRejectionReason('');
+      setProcessingRequest(null);
+      fetchPaymentRequests();
+    }
   };
 
   const handleSaveAccount = async (e) => {
@@ -343,19 +373,38 @@ const FinanceSystem = () => {
                       <div>
                          <h4 className="font-bold">{req.reservation?.guest_name || 'Guest'}</h4>
                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Amount: {req.amount.toLocaleString()} DZD</p>
+                         <p className="text-[10px] text-gray-400 italic">Ref: #{req.id.slice(0, 8)}</p>
                       </div>
                    </div>
-                   <div className="flex gap-3">
-                      {req.status === 'Pending' ? (
-                         <>
-                            <GoldButton onClick={() => handleVerifyPayment(req.id, req.reservation_id, req.amount)} className="px-6 py-2 text-[10px]">VERIFY</GoldButton>
-                            <button onClick={() => handleRejectPayment(req.id)} className="px-6 py-2 border border-gray-200 rounded-xl text-[10px] font-bold text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors">REJECT</button>
-                         </>
-                      ) : (
-                         <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${req.status === 'Verified' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                            {req.status}
-                         </span>
+                   <div className="flex gap-4 items-center">
+                      {req.proof_url && (
+                        <button 
+                          onClick={() => setSelectedProof(req.proof_url)}
+                          className="flex items-center gap-2 px-4 py-2 bg-gray-100 rounded-xl text-[10px] font-bold text-luxury-gold hover:bg-luxury-gold hover:text-white transition-all"
+                        >
+                          <Plus className="w-3 h-3" /> VIEW PROOF
+                        </button>
                       )}
+                      <div className="flex gap-2">
+                        {req.status === 'Pending' ? (
+                           <>
+                              <GoldButton onClick={() => handleVerifyPayment(req.id, req.reservation_id, req.amount)} className="px-6 py-2 text-[10px]">VERIFY</GoldButton>
+                              <button 
+                                onClick={() => {
+                                  setProcessingRequest(req);
+                                  setShowRejectionModal(true);
+                                }} 
+                                className="px-6 py-2 border border-gray-200 rounded-xl text-[10px] font-bold text-gray-400 hover:bg-red-50 hover:text-red-500 transition-colors"
+                              >
+                                REJECT
+                              </button>
+                           </>
+                        ) : (
+                           <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${req.status === 'Verified' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                              {req.status}
+                           </span>
+                        )}
+                      </div>
                    </div>
                 </div>
               ))}
@@ -483,6 +532,48 @@ const FinanceSystem = () => {
                 </GoldButton>
               </form>
            </GlassCard>
+        </div>
+      )}
+
+      {/* Proof Viewer Modal */}
+      {selectedProof && (
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-xl z-[100] flex items-center justify-center p-8">
+          <button onClick={() => setSelectedProof(null)} className="absolute top-8 right-8 text-white/50 hover:text-white transition-colors">
+            <X className="w-10 h-10" />
+          </button>
+          <div className="w-full max-w-5xl h-full flex items-center justify-center">
+            {selectedProof.endsWith('.pdf') ? (
+              <iframe src={selectedProof} className="w-full h-full rounded-2xl bg-white" title="Payment Proof PDF" />
+            ) : (
+              <img src={selectedProof} alt="Payment Proof" className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" />
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Rejection Reason Modal */}
+      {showRejectionModal && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <GlassCard className="bg-white w-full max-w-md p-8 relative">
+            <h3 className="text-2xl font-serif font-bold mb-4">Reject Payment</h3>
+            <p className="text-gray-400 text-sm mb-6">Please specify the reason for rejecting this transfer proof. The guest will be notified.</p>
+            <textarea 
+              rows="4" 
+              value={rejectionReason}
+              onChange={e => setRejectionReason(e.target.value)}
+              placeholder="e.g. IBAN mismatch, insufficient funds, illegible document..."
+              className="w-full bg-gray-50 border border-gray-200 rounded-2xl p-4 text-sm font-medium outline-none focus:border-red-300 transition-all mb-6"
+            />
+            <div className="flex gap-4">
+              <button onClick={() => setShowRejectionModal(false)} className="flex-1 py-3 px-6 bg-gray-100 rounded-xl text-[10px] font-bold text-gray-400 uppercase tracking-widest hover:bg-gray-200 transition-all">CANCEL</button>
+              <button 
+                onClick={handleRejectPayment}
+                className="flex-1 py-3 px-6 bg-red-500 rounded-xl text-[10px] font-bold text-white uppercase tracking-widest hover:bg-red-600 transition-all shadow-lg shadow-red-500/20"
+              >
+                REJECT PERMANENTLY
+              </button>
+            </div>
+          </GlassCard>
         </div>
       )}
 

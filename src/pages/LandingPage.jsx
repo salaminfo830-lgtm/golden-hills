@@ -91,15 +91,15 @@ const LandingPage = () => {
               <h4 className="text-luxury-gold font-bold text-xs md:text-sm tracking-[0.2em] md:tracking-[0.4em] uppercase text-center">Setif&apos;s Gilded Masterpiece</h4>
               <div className="hidden sm:block h-px w-20 bg-luxury-gold/50" />
             </div>
-            <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[10rem] font-bold text-white tracking-tight leading-[1] sm:leading-[0.9] mb-8 md:mb-12">
-               <span className="text-mask capitalize">{(settings?.hotel_name || "Golden Hills").split(' ')[0].toLowerCase()}</span> <br /> 
-               <span className="text-luxury-gold/90 capitalize">{(settings?.hotel_name || "Golden Hills").split(' ').slice(1).join(' ').toLowerCase()}</span>
+            <h1 className="text-4xl sm:text-6xl md:text-7xl font-medium text-white tracking-tight leading-[1.1] mb-10">
+               <span className="text-mask capitalize">{settings?.hotel_name || "Hôtel Golden Hills"}</span> <br /> 
+               <span className="text-luxury-gold/90 text-2xl md:text-4xl tracking-widest uppercase block mt-4">A Symphony of Luxury & Light</span>
             </h1>
-            <p className="text-lg md:text-2xl text-white/80 max-w-2xl mx-auto mb-16 font-medium leading-relaxed">
-               Where ancient heritage meets the height of contemporary luxury. A sanctuary crafted for the world&apos;s most discerning travelers.
+            <p className="text-lg md:text-2xl text-white/80 max-w-2xl mx-auto mb-16 font-medium leading-relaxed italic">
+               "Un refuge de tranquillité dans chaque détail"
             </p>
             <div className="flex flex-col sm:flex-row gap-6 md:gap-8 justify-center items-center">
-              <GoldButton className="px-8 md:px-14 py-4 md:py-6 text-xs md:text-sm shadow-gold hover:scale-105 transition-all w-full sm:w-auto" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
+              <GoldButton className="px-10 py-4 shadow-sm hover:scale-105 transition-all w-full sm:w-auto" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
               <button className="flex items-center gap-4 text-xs font-bold tracking-[0.4em] text-white uppercase hover:text-luxury-gold transition-all group">
                 <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
                    <PlayCircle className="w-8 h-8" />
@@ -128,7 +128,7 @@ const LandingPage = () => {
            animate={{ opacity: 1, y: 0 }}
            transition={{ delay: 1, duration: 1 }}
          >
-           <GlassCard className="bg-white p-4 rounded-[2rem] shadow-[0_50px_100px_-20px_rgba(0,0,0,0.2)] flex items-center border-luxury-gold/10">
+           <GlassCard className="bg-white p-3 rounded-2xl shadow-[0_40px_80px_-20px_rgba(0,0,0,0.1)] flex items-center border-luxury-gold/5">
               <div className="flex-1 grid grid-cols-3 gap-4">
                  <div className="group px-10 py-7 rounded-2xl hover:bg-luxury-cream/40 transition-all cursor-pointer border-r border-gray-50 relative">
                     <div className="flex items-center gap-5">
@@ -176,22 +176,22 @@ const LandingPage = () => {
               </div>
               <button 
                 onClick={() => navigate(`/search?checkIn=${searchParams.checkIn}&checkOut=${searchParams.checkOut}&guests=${searchParams.guests}`)}
-                className="h-[80px] w-[200px] gold-gradient rounded-xl flex items-center justify-center text-white shadow-gold hover:brightness-110 transition-all ml-4"
+                className="h-[70px] w-[180px] gold-gradient rounded-xl flex items-center justify-center text-white shadow-sm hover:brightness-110 transition-all ml-4"
               >
-                 <span className="font-bold tracking-[0.4em] text-xs uppercase">Initialize Discovery</span>
+                 <span className="font-bold tracking-[0.3em] text-[10px] uppercase">Initialize Discovery</span>
               </button>
            </GlassCard>
          </motion.div>
       </div>
 
       {/* Section: The Heritage */}
-      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
+      <section className="py-20 md:py-40 container mx-auto px-6 md:px-12">
         <div className="grid lg:grid-cols-2 gap-32 items-center">
            <motion.div {...fadeInUp}>
               <span className="text-luxury-gold font-bold text-xs uppercase tracking-widest mb-8 block">The Soul of Setif</span>
               <h2 className="text-4xl md:text-7xl font-bold text-luxury-black leading-[1.1] tracking-tight mb-8 md:mb-12">Rugged beauty, <br/><span className="text-luxury-gold">refined.</span></h2>
               <p className="text-xl text-gray-500 leading-relaxed font-medium mb-16 max-w-xl">
-                 Perched upon the highest point of Champs d&apos;azur, Golden Hills is more than a hotel. It is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of four-star excellence.
+                 Located at Rue Champs d'azur, {settings?.hotel_name || "Hôtel Golden Hills"} is a sanctuary of 54 rooms and suites. We offer a perfect blend of traditional Algerian hospitality and modern luxury, just steps away from Sétif's most iconic landmarks.
               </p>
               <div className="space-y-10">
                  {[
@@ -272,7 +272,7 @@ const LandingPage = () => {
       </section>
 
       {/* Section: The Sanctuaries (Suites) */}
-      <section className="bg-white py-20 md:py-60">
+      <section className="bg-white py-20 md:py-40">
          <div className="container mx-auto px-6 md:px-12">
             <div className="flex flex-col md:flex-row justify-between items-end gap-12 mb-32">
                <motion.div {...fadeInUp} className="max-w-2xl">
@@ -314,7 +314,7 @@ const LandingPage = () => {
       </section>
 
       {/* Section: Epicurean Enclaves (Dining/Spa) */}
-      <section className="py-20 md:py-60 bg-luxury-black text-white relative overflow-hidden">
+      <section className="py-20 md:py-40 bg-luxury-black text-white relative overflow-hidden">
          <div className="absolute top-0 right-0 w-[500px] md:w-[1000px] h-[500px] md:h-[1000px] bg-luxury-gold opacity-[0.03] rounded-full blur-[100px] md:blur-[150px] translate-x-1/2 -translate-y-1/2" />
          <div className="container mx-auto px-6 md:px-12 relative z-10">
             <div className="grid lg:grid-cols-2 gap-40 items-center">
@@ -384,16 +384,16 @@ const LandingPage = () => {
       </section>
 
       {/* Section: Guest Voices */}
-      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
+      <section className="py-20 md:py-40 container mx-auto px-6 md:px-12">
          <motion.div {...fadeInUp} className="text-center mb-32">
             <Sparkles className="w-12 h-12 text-luxury-gold mx-auto mb-8" />
             <h2 className="text-5xl md:text-6xl font-bold text-luxury-black tracking-tight">Voices of the Hills</h2>
          </motion.div>
          <div className="grid md:grid-cols-3 gap-12">
             {[
-              { name: 'Elena Romanov', city: 'London', text: 'An oasis of profound silence. The Royal Gold suite is quite literally the most beautiful residence I have ever experienced in North Africa.' },
-              { name: 'Julien Durand', city: 'Paris', text: 'The attention to detail is obsessive. From the weight of the silver to the scent of the lobby—Golden Hills is perfection.' },
-              { name: 'Ahmed Mansour', city: 'Dubai', text: 'Finally, a destination in Setif that understands the true meaning of world-class luxury. A landmark achievement.' }
+              { name: 'Sarah B.', city: 'Algiers', text: 'An exceptional stay. The rooms are beautifully designed with authentic touches, and the location is perfect for exploring Sétif.' },
+              { name: 'David M.', city: 'London', text: 'The best hotel in Sétif. The staff is professional, the rooms are spotless, and the breakfast buffet is simply amazing.' },
+              { name: 'Karim L.', city: 'Dubai', text: 'Luxury and peace in the heart of the city. The spa treatments were a highlight of my trip. Highly recommended!' }
             ].map((review, i) => (
               <motion.div
                 key={i}
@@ -449,9 +449,9 @@ const LandingPage = () => {
                <div className="space-y-10">
                   <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-luxury-gold">Contact Enclave</h4>
                    <div className="space-y-6 text-sm text-white/40 font-medium">
-                      <p className="leading-relaxed">{settings?.address || "Boulevard des Champs d'azur, Sétif 19000, Algeria"}</p>
-                      <p>{settings?.contact_phone || "+213 36 12 34 56"}</p>
-                      <p className="text-luxury-gold">{settings?.contact_email || "reserve@goldenhills.dz"}</p>
+                      <p className="leading-relaxed">{settings?.address || "Rue Champs d'azur, Sétif 19000, Algeria"}</p>
+                      <p>{settings?.contact_phone || "030 793 030 / 07 70 51 53 59"}</p>
+                      <p className="text-luxury-gold">{settings?.contact_email || "hotelgoldenhillsreservation@gmail.com"}</p>
                    </div>
                </div>
 

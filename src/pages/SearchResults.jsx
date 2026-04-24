@@ -112,7 +112,7 @@ const SearchResults = () => {
     });
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD', maximumFractionDigits: 0 }).format(price);
   };
 
   return (
@@ -155,7 +155,7 @@ const SearchResults = () => {
                     <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold" /> Suite Categories
                   </h3>
                   <div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible no-scrollbar pb-4 lg:pb-0">
-                    {['All', 'Heritage Deluxe', 'Royal Gold Suite', 'Presidential Panorama'].map((type) => (
+                    {['All', 'Standard Queen Room', 'Standard Twin Room', 'Superior King Room', 'Junior Suite', 'Executive Suite', 'Family Suite'].map((type) => (
                       <button 
                         key={type}
                         onClick={() => setFilters({...filters, type})}
@@ -217,7 +217,7 @@ const SearchResults = () => {
           <main className="flex-1 space-y-8 lg:space-y-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
               <div className="w-full md:w-auto">
-                <h2 className="text-3xl lg:text-5xl font-bold text-luxury-black mb-2 lg:mb-4">Discovery</h2>
+                <h2 className="text-2xl lg:text-4xl font-medium text-luxury-black mb-2 lg:mb-4">Discovery</h2>
                 <p className="text-gray-400 font-medium text-sm lg:text-lg">Found {filteredRooms.length} available sanctuaries.</p>
               </div>
               <div className="flex items-center gap-4 lg:gap-6 text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 bg-white px-6 lg:px-8 py-3 lg:py-4 rounded-2xl border border-gray-100 shadow-sm w-full md:w-auto justify-between md:justify-start">
@@ -271,7 +271,7 @@ const SearchResults = () => {
                         <div className="space-y-6">
                           <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
                             <div>
-                              <h3 className="text-2xl lg:text-4xl font-bold text-luxury-black mb-2 lg:mb-4">{room.type}</h3>
+                              <h3 className="text-xl lg:text-2xl font-medium text-luxury-black mb-2 lg:mb-4">{room.type}</h3>
                               <div className="flex flex-wrap gap-4 lg:gap-6 text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
                                 <span className="flex items-center gap-2"><Users className="w-4 h-4 text-luxury-gold" /> {room.capacity || 2} Guests</span>
                                 <span className="flex items-center gap-2"><Wind className="w-4 h-4 text-luxury-gold" /> Climate Controlled</span>
@@ -279,7 +279,7 @@ const SearchResults = () => {
                               </div>
                             </div>
                             <div className="text-left sm:text-right">
-                              <p className="text-3xl lg:text-4xl font-bold text-luxury-gold mb-1">{formatPrice(room.price)}</p>
+                              <p className="text-2xl lg:text-3xl font-medium text-luxury-gold mb-1">{formatPrice(room.price)}</p>
                               <p className="text-[9px] lg:text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Per Evening</p>
                             </div>
                           </div>

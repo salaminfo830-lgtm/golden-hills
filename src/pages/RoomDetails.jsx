@@ -121,7 +121,7 @@ const RoomDetails = () => {
   }, [id, navigate]);
 
   const formatPrice = (price) => {
-    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(price);
+    return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD', maximumFractionDigits: 0 }).format(price);
   };
 
   const fadeInUp = {
@@ -211,7 +211,7 @@ const RoomDetails = () => {
                        <div className="h-px w-12 bg-luxury-gold/20" />
                        <span className="text-xs font-bold uppercase tracking-[0.4em] text-gray-400">Official 4-Star Gilded Rating</span>
                     </div>
-                    <h1 className="text-4xl md:text-8xl font-serif font-bold text-luxury-black leading-[1.1]">
+                    <h1 className="text-4xl md:text-6xl font-serif font-medium text-luxury-black leading-[1.1]">
                        {room.type} <br /> <span className="italic font-normal text-luxury-gold">Sanctuary</span>
                     </h1>
                     <div className="flex flex-wrap gap-6 md:gap-10 py-6 md:py-8 border-y border-gray-100">
@@ -251,9 +251,11 @@ const RoomDetails = () => {
                           </h4>
                           <div className="grid grid-cols-1 gap-6">
                              {(room.amenities && room.amenities.length > 0 ? room.amenities : [
-                               { name: 'Gilded WiFi', icon: 'Wifi' },
-                               { name: 'Imperial TV', icon: 'Tv' },
-                               { name: 'Nespresso Bar', icon: 'Coffee' }
+                               { name: 'Select Comfort Bed', icon: 'Sparkles' },
+                               { name: 'Egyptian Cotton Sheets', icon: 'Sparkles' },
+                               { name: 'Plasma TV', icon: 'Tv' },
+                               { name: 'Complimentary WiFi', icon: 'Wifi' },
+                               { name: 'Coffee & Tea Facilities', icon: 'Coffee' }
                              ]).map((a, i) => (
                                <div key={i} className="flex items-center gap-5 group">
                                   <div className="w-10 md:w-12 h-10 md:h-12 rounded-2xl bg-gray-50 flex items-center justify-center text-luxury-gold border border-gray-100 group-hover:bg-luxury-gold group-hover:text-white transition-all duration-500">
@@ -294,7 +296,7 @@ const RoomDetails = () => {
                           <div className="flex justify-between items-end">
                              <div>
                                 <p className="text-xs font-bold uppercase tracking-[0.3em] text-gray-400 mb-2">Sanctuary Rate</p>
-                                <h3 className="text-3xl md:text-5xl font-serif font-bold text-luxury-black">{formatPrice(room.price)}</h3>
+                                <h3 className="text-3xl md:text-4xl font-serif font-medium text-luxury-black">{formatPrice(room.price)}</h3>
                              </div>
                              <p className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">/ Evening</p>
                           </div>
@@ -368,7 +370,7 @@ const RoomDetails = () => {
             <div className="grid lg:grid-cols-2 gap-16 md:gap-24 items-center">
                <div>
                   <h4 className="text-luxury-gold font-bold text-xs uppercase tracking-[0.4em] mb-6">Complete The Vision</h4>
-                  <h2 className="text-4xl md:text-7xl font-serif font-bold mb-8 md:mb-10 leading-tight">Elevate Your <br /> Stay in Setif</h2>
+                  <h2 className="text-4xl md:text-6xl font-serif font-medium mb-8 md:mb-10 leading-tight">Elevate Your <br /> Stay in Setif</h2>
                   <p className="text-white/40 text-lg md:text-xl font-medium leading-relaxed max-w-xl mb-10 md:mb-12 italic">
                      "True luxury is found in the moments between. Curate your experience with our exclusive add-ons."
                   </p>

@@ -43,7 +43,7 @@ const GuestDashboard = () => {
       const { data: guestData } = await supabase
         .from('Guest')
         .select('id')
-        .eq('email', user.email)
+        .eq('id', user.id)
         .single();
 
       if (guestData) {

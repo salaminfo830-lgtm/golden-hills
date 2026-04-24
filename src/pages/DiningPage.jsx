@@ -1,45 +1,34 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UtensilsCrossed, Clock, MapPin, ChevronRight, Star, Wine, Coffee, Zap, Loader2, ArrowRight } from 'lucide-react';
+import { UtensilsCrossed, Clock, MapPin, Star, ChevronRight, Loader2, ArrowRight, Wine, Coffee, Zap } from 'lucide-react';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
 import { supabase } from '../lib/supabase';
-import { X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const DiningPage = () => {
+  const navigate = useNavigate();
   const [venues, setVenues] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showBookingModal, setShowBookingModal] = useState(false);
   const [selectedVenue, setSelectedVenue] = useState(null);
-  const [bookingStatus, setBookingStatus] = useState('idle'); // idle, booking, success
-  const [bookingData, setBookingData] = useState({
-    guest_name: '',
-    guest_email: '',
-    guest_phone: '',
-    party_size: 2,
-    reservation_date: '',
-    reservation_time: '',
-    notes: ''
-  });
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   const fallbackVenues = [
     {
-      name: 'Atlas Sky Lounge',
-      type: 'Dining',
-      description: 'Panoramic views of Sétif with signature cocktails and a sophisticated atmosphere. Perched on the 12th floor, it offers the city’s most dramatic sunsets.',
-      hours: '18:00 - 01:00',
-      location: 'Rooftop Sanctuary',
-      specialty: 'Saffron Martini',
-      image_url: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2070'
+      name: 'The Saffron Theater',
+      type: 'Fine Dining',
+      description: 'A sensory journey through the heart of Algeria. Experience the theater of fine dining where each dish is a masterpiece of hill-grown spices and artisanal precision.',
+      hours: '19:00 - 23:00',
+      location: 'Level 42',
+      image_url: 'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=1974'
     },
     {
-      name: 'The Heritage Kitchen',
-      type: 'Dining',
-      description: 'A contemporary dialogue with traditional Algerian flavors. Our chefs utilize hill-grown spices and artisanal techniques to create modern masterpieces.',
-      hours: '07:00 - 23:00',
-      location: 'Grand Lobby Level',
-      specialty: 'Slow-cooked Hillside Couscous',
-      image_url: 'https://images.unsplash.com/photo-1550966842-2849a2249821?auto=format&fit=crop&q=80&w=2070'
+      name: 'Azure Terrace',
+      type: 'Mediterranean',
+      description: 'Open-air dining with panoramic views of the Setif highlands. Fresh, seasonal ingredients meet the cooling mountain breeze.',
+      hours: '12:00 - 15:00, 19:00 - 22:00',
+      location: 'Sky Deck',
+      image_url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=1974'
     }
   ];
 
@@ -61,38 +50,6 @@ const DiningPage = () => {
     fetchVenues();
   }, []);
 
-  const handleBooking = async (e) => {
-    e.preventDefault();
-    setBookingStatus('booking');
-    
-    const { error } = await supabase
-      .from('DiningReservation')
-      .insert([{
-        venue_name: selectedVenue.name,
-        ...bookingData
-      }]);
-
-    if (!error) {
-      setBookingStatus('success');
-      setTimeout(() => {
-        setShowBookingModal(false);
-        setBookingStatus('idle');
-        setBookingData({
-          guest_name: '',
-          guest_email: '',
-          guest_phone: '',
-          party_size: 2,
-          reservation_date: '',
-          reservation_time: '',
-          notes: ''
-        });
-      }, 2000);
-    } else {
-      alert("Error: " + error.message);
-      setBookingStatus('idle');
-    }
-  };
-
   const fadeInUp = {
     initial: { opacity: 0, y: 30 },
     whileInView: { opacity: 1, y: 0 },
@@ -111,13 +68,13 @@ const DiningPage = () => {
   return (
     <BrochureLayout>
       {/* Hero Section */}
-      <section className="relative h-[65vh] md:h-[75vh] flex items-center justify-center overflow-hidden bg-luxury-black">
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden bg-luxury-black text-white">
          <motion.div 
            initial={{ scale: 1.2, opacity: 0 }}
-           animate={{ scale: 1, opacity: 0.6 }}
+           animate={{ scale: 1, opacity: 0.4 }}
            transition={{ duration: 2 }}
            className="absolute inset-0 bg-cover bg-center"
-           style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&q=80&w=2070")' }}
+           style={{ backgroundImage: 'url("https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2070")' }}
          />
          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/20" />
          <div className="relative z-10 text-center px-6">
@@ -127,27 +84,33 @@ const DiningPage = () => {
               transition={{ delay: 0.5, duration: 1 }}
             >
                <h4 className="text-luxury-gold text-2xl md:text-3xl mb-4">Epicurean Journeys</h4>
-               <h1 className="text-5xl md:text-9xl font-bold text-white tracking-tight leading-none">The Gastronomy</h1>
+               <h1 className="text-4xl md:text-7xl font-medium text-white tracking-tight leading-none">The Gastronomy</h1>
             </motion.div>
          </div>
       </section>
 
-      {/* Philosophy Section */}
-      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
+      {/* Philosophy & Breakfast Section */}
+      <section className="py-20 md:py-40 container mx-auto px-6 md:px-12">
          <div className="grid lg:grid-cols-2 gap-20 md:gap-32 items-center">
             <motion.div {...fadeInUp} className="space-y-10 md:space-y-12 text-center lg:text-left">
-               <h2 className="text-4xl md:text-8xl font-bold text-luxury-black leading-[1.1]">From the Earth, <br/><span className="text-luxury-gold">To the Soul.</span></h2>
-               <p className="text-lg md:text-2xl text-gray-500 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0">
-                  At Golden Hills, we believe that luxury is found in the purity of ingredients. Our executive chef works directly with local farmers to harvest the finest saffron and spices, ensuring every dish tells a story of the Algerian terroir.
-               </p>
-               <div className="flex justify-center lg:justify-start gap-10 md:gap-20 pt-8">
-                  <div className="space-y-2">
-                     <p className="text-4xl md:text-5xl font-bold text-luxury-black">0</p>
-                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Kilometer Sourcing</p>
+               <h2 className="text-3xl md:text-6xl font-medium text-luxury-black leading-[1.1]">The Morning <br/><span className="text-luxury-gold">Ritual.</span></h2>
+               <div className="space-y-6">
+                  <p className="text-lg md:text-2xl text-gray-500 leading-relaxed font-medium max-w-xl mx-auto lg:mx-0">
+                     Start your journey with our complimentary breakfast buffet, a curated selection of artisanal pastries, fresh local honey, and international morning classics.
+                  </p>
+                  <div className="flex items-center gap-4 text-luxury-gold justify-center lg:justify-start">
+                     <Clock className="w-6 h-6" />
+                     <span className="text-xl font-bold tracking-widest uppercase">Daily 06:00 – 10:00</span>
                   </div>
-                  <div className="space-y-2">
-                     <p className="text-4xl md:text-5xl font-bold text-luxury-black">12</p>
-                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Heritage Awards</p>
+               </div>
+               <div className="grid grid-cols-2 gap-10 md:gap-16 pt-10 border-t border-luxury-gold/10">
+                  <div className="space-y-4">
+                     <p className="text-4xl md:text-5xl font-bold text-luxury-black">24/7</p>
+                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">In-Room Dining</p>
+                  </div>
+                  <div className="space-y-4">
+                     <p className="text-4xl md:text-5xl font-bold text-luxury-black">3</p>
+                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Signature Venues</p>
                   </div>
                </div>
             </motion.div>
@@ -194,7 +157,7 @@ const DiningPage = () => {
                  <motion.div {...fadeInUp} className="flex-1 space-y-8 md:space-y-12">
                     <div className="space-y-4 md:space-y-6">
                        <span className="text-luxury-gold font-bold uppercase tracking-[0.6em] text-[10px]">{venue.type} Sanctuary</span>
-                       <h2 className="text-4xl md:text-7xl font-bold text-luxury-black leading-none">{venue.name}</h2>
+                       <h2 className="text-3xl md:text-5xl font-medium text-luxury-black leading-none">{venue.name}</h2>
                     </div>
                     <p className="text-lg md:text-2xl text-gray-500 leading-relaxed font-medium">
                        {venue.description}
@@ -242,128 +205,43 @@ const DiningPage = () => {
       </section>
 
       {/* Private Dining Accent */}
-      <section className="bg-luxury-black py-20 md:py-60 text-white relative overflow-hidden text-center">
+      <section className="bg-luxury-black py-20 md:py-40 text-white relative overflow-hidden text-center">
          <motion.div 
            animate={{ rotate: 360 }}
            transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border border-white/5 rounded-full pointer-events-none"
+           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border border-white/5 rounded-full pointer-events-none" 
          />
          <div className="container mx-auto px-6 md:px-12 relative z-10">
             <motion.div {...fadeInUp}>
                <UtensilsCrossed className="w-16 md:w-20 h-16 md:h-20 text-luxury-gold mx-auto mb-8 md:mb-12" />
-               <h2 className="text-4xl md:text-9xl font-bold mb-8 md:mb-10 leading-none tracking-tight">Sanctuary Dining</h2>
+               <h2 className="text-4xl md:text-7xl font-medium mb-8 md:mb-10 leading-none tracking-tight">Sanctuary Dining</h2>
                <p className="text-white/40 max-w-3xl mx-auto text-lg md:text-2xl leading-relaxed mb-12 md:mb-20 font-medium">
-                  For the ultimate in privacy, our chefs can curate a bespoke menu served in your private suite terrace or our exclusive desert-edge pavilion.
+                   For the ultimate in privacy, our chefs can curate a bespoke menu served in your private suite terrace or our exclusive desert-edge pavilion.
                </p>
+               <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-10 items-center">
+                  {[
+                    { icon: <Wine />, label: 'Sommelier Service' },
+                    { icon: <Coffee />, label: 'Artisanal Brews' },
+                    { icon: <Zap />, label: 'Live Preparation' }
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{ delay: i * 0.2 }}
+                      className="flex items-center gap-6 bg-white/5 px-8 md:px-10 py-5 md:py-6 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all cursor-default w-full md:w-auto justify-center md:justify-start"
+                    >
+                       <div className="text-luxury-gold">{item.icon}</div>
+                       <span className="text-[11px] font-bold uppercase tracking-[0.4em]">{item.label}</span>
+                    </motion.div>
+                  ))}
+               </div>
+               <div className="mt-16">
+                  <GoldButton outline className="px-16 py-6 border-white/20 text-white hover:bg-white hover:text-luxury-black transition-all" onClick={() => navigate('/search')}>RESERVE PRIVATE DINING</GoldButton>
+               </div>
             </motion.div>
-            
-            <div className="flex flex-col md:flex-row justify-center gap-8 md:gap-10 items-center">
-               {[
-                 { icon: <Wine />, label: 'Sommelier Service' },
-                 { icon: <Coffee />, label: 'Artisanal Brews' },
-                 { icon: <Zap />, label: 'Live Preparation' }
-               ].map((item, i) => (
-                 <motion.div 
-                   key={i}
-                   initial={{ opacity: 0, y: 20 }}
-                   whileInView={{ opacity: 1, y: 0 }}
-                   transition={{ delay: i * 0.2 }}
-                   className="flex items-center gap-6 bg-white/5 px-8 md:px-10 py-5 md:py-6 rounded-[2rem] border border-white/10 hover:bg-white/10 transition-all cursor-default w-full md:w-auto justify-center md:justify-start"
-                 >
-                    <div className="text-luxury-gold">{item.icon}</div>
-                    <span className="text-[11px] font-bold uppercase tracking-[0.4em]">{item.label}</span>
-                 </motion.div>
-               ))}
-            </div>
-            <div className="mt-20 md:mt-32">
-               <GoldButton onClick={() => navigate('/search')} outline className="border-white/20 text-white hover:bg-white hover:text-luxury-black px-12 md:px-20 py-6 md:py-8 text-[10px] md:text-xs">INQUIRE FOR PRIVATE EVENTS</GoldButton>
-            </div>
          </div>
       </section>
-
-      {/* Booking Modal */}
-      <AnimatePresence>
-        {showBookingModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center px-4 md:px-6">
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowBookingModal(false)}
-              className="absolute inset-0 bg-luxury-black/80 backdrop-blur-xl"
-            />
-            <motion.div 
-              initial={{ scale: 0.9, opacity: 0, y: 20 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 20 }}
-              className="relative w-full max-w-2xl bg-white rounded-[2rem] md:rounded-[3rem] overflow-y-auto max-h-[90vh] shadow-2xl"
-            >
-              <div className="p-8 md:p-16">
-                <div className="flex justify-between items-start mb-8 md:mb-12">
-                  <div>
-                    <h3 className="text-2xl md:text-3xl font-bold text-luxury-black mb-2">Reserve at {selectedVenue?.name}</h3>
-                    <p className="text-[10px] uppercase font-bold text-luxury-gold tracking-[0.3em]">Epicurean Reservation</p>
-                  </div>
-                  <button onClick={() => setShowBookingModal(false)} className="p-3 md:p-4 rounded-full bg-gray-50 text-gray-400 hover:text-luxury-black transition-colors">
-                    <X className="w-5 md:w-6 h-5 md:h-6" />
-                  </button>
-                </div>
-
-                {bookingStatus === 'success' ? (
-                  <motion.div 
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="py-16 md:py-20 text-center space-y-6"
-                  >
-                    <div className="w-16 md:w-20 h-16 md:h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto text-green-500">
-                      <Star className="w-8 md:w-10 h-8 md:h-10 fill-current" />
-                    </div>
-                    <h4 className="text-xl md:text-2xl font-bold">Table Confirmed</h4>
-                    <p className="text-sm md:text-base text-gray-400">Your table has been orchestrated. We await your arrival.</p>
-                  </motion.div>
-                ) : (
-                  <form onSubmit={handleBooking} className="space-y-6 md:space-y-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Full Name</label>
-                        <input required type="text" value={bookingData.guest_name} onChange={e => setBookingData({...bookingData, guest_name: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" placeholder="Enter your name" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Phone Number</label>
-                        <input required type="tel" value={bookingData.guest_phone} onChange={e => setBookingData({...bookingData, guest_phone: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" placeholder="+213..." />
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Date</label>
-                        <input required type="date" value={bookingData.reservation_date} onChange={e => setBookingData({...bookingData, reservation_date: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Time</label>
-                        <input required type="time" value={bookingData.reservation_time} onChange={e => setBookingData({...bookingData, reservation_time: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
-                      </div>
-                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Guests</label>
-                        <input required type="number" min="1" max="20" value={bookingData.party_size} onChange={e => setBookingData({...bookingData, party_size: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 pl-1">Special Requirements</label>
-                      <textarea rows="3" value={bookingData.notes} onChange={e => setBookingData({...bookingData, notes: e.target.value})} className="w-full bg-gray-50 border border-gray-100 rounded-2xl px-6 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all resize-none" placeholder="Allergies, seating preference..."></textarea>
-                    </div>
-
-                    <GoldButton type="submit" className="w-full py-5 md:py-6 shadow-gold" disabled={bookingStatus === 'booking'}>
-                      {bookingStatus === 'booking' ? <Loader2 className="w-5 h-5 animate-spin mx-auto" /> : 'CONFIRM RESERVATION'}
-                    </GoldButton>
-                  </form>
-                )}
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </BrochureLayout>
   );
 };

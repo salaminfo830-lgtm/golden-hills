@@ -34,36 +34,36 @@ const AboutPage = () => {
               transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
             >
                <h4 className="text-luxury-gold text-2xl md:text-3xl mb-6 tracking-widest">Since 1998</h4>
-               <h1 className="text-6xl md:text-[10rem] font-bold text-white tracking-tight leading-none uppercase">The Legacy</h1>
+               <h1 className="text-4xl md:text-7xl font-medium text-white tracking-tight leading-none uppercase">The Legacy</h1>
             </motion.div>
          </div>
       </section>
 
       {/* The Core Narrative */}
-      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12">
+      <section className="py-20 md:py-40 container mx-auto px-6 md:px-12">
         <div className="grid lg:grid-cols-2 gap-20 md:gap-40 items-center">
            <motion.div {...fadeInUp} className="space-y-12 md:space-y-16">
               <div className="space-y-6">
                  <span className="text-luxury-gold font-bold uppercase tracking-[0.6em] text-[10px] block">Our Origin</span>
-                 <h2 className="text-5xl md:text-8xl font-bold text-luxury-black leading-[1.1]">Sculpted in <br/><span className="text-luxury-gold">Stone & Gold.</span></h2>
+                 <h2 className="text-3xl md:text-6xl font-medium text-luxury-black leading-[1.1]">Sculpted in <br/><span className="text-luxury-gold">Stone & Gold.</span></h2>
               </div>
               <div className="space-y-8">
-                <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium">
-                  "At Golden Hills, we believe true luxury is a dialogue between the rugged spirit of the Algerian highlands and the delicate precision of handcrafted excellence."
-                </p>
-                <p className="text-lg text-gray-400 leading-relaxed font-medium">
-                  Established in 1998, {settings?.hotel_name || "Golden Hills Hotel Setif"} was envisioned as a beacon of modern grandeur in the high plateau. For over a quarter-century, we have served as a sanctuary for world leaders, a stage for the region&apos;s most prestigious celebrations, and a silent guardian of Setif&apos;s architectural heritage.
-                </p>
-              </div>
-              <div className="grid grid-cols-2 gap-12 pt-10">
-                 <div className="space-y-3 border-l-2 border-luxury-gold pl-8">
-                    <p className="text-5xl md:text-6xl font-bold text-luxury-black">28</p>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Years of Mastery</p>
-                 </div>
-                 <div className="space-y-3 border-l-2 border-luxury-gold pl-8">
-                    <p className="text-5xl md:text-6xl font-bold text-luxury-black">4☆</p>
-                    <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Gilded Rating</p>
-                 </div>
+                 <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium">
+                   "At Golden Hills, we believe true luxury is a sanctuary where traditional Algerian hospitality meets modern architectural excellence."
+                 </p>
+                 <p className="text-lg text-gray-400 leading-relaxed font-medium">
+                   Newly renovated and situated in the heart of Sétif, {settings?.hotel_name || "Hôtel Golden Hills"} offers 54 meticulously designed rooms and suites. Since our inception, we have been a refuge of tranquility, blending the rich heritage of the region with a symphony of luxury and light.
+                 </p>
+               </div>
+               <div className="grid grid-cols-2 gap-12 pt-10">
+                  <div className="space-y-3 border-l-2 border-luxury-gold pl-8">
+                     <p className="text-5xl md:text-6xl font-bold text-luxury-black">54</p>
+                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Luxury Sanctuaries</p>
+                  </div>
+                  <div className="space-y-3 border-l-2 border-luxury-gold pl-8">
+                     <p className="text-5xl md:text-6xl font-bold text-luxury-black">4☆</p>
+                     <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Sétif Jewel</p>
+                  </div>
               </div>
            </motion.div>
            <div className="relative group">
@@ -91,11 +91,11 @@ const AboutPage = () => {
       </section>
 
       {/* Pillars of Excellence */}
-      <section className="bg-luxury-white-warm py-20 md:py-60">
+      <section className="bg-luxury-white-warm py-20 md:py-40">
          <div className="container mx-auto px-6 md:px-12">
             <motion.div {...fadeInUp} className="text-center mb-32">
                <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.6em] mb-8">The Foundations</h4>
-               <h2 className="text-4xl md:text-7xl font-bold text-luxury-black">Our Three Pillars</h2>
+               <h2 className="text-3xl md:text-6xl font-medium text-luxury-black">Our Three Pillars</h2>
             </motion.div>
             
             <div className="grid md:grid-cols-3 gap-16 lg:gap-24">
@@ -126,11 +126,11 @@ const AboutPage = () => {
       </section>
 
       {/* Timeline Section */}
-      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12 relative overflow-hidden">
+      <section className="py-20 md:py-40 container mx-auto px-6 md:px-12 relative overflow-hidden">
          <div className="absolute top-1/2 left-0 w-full h-px bg-gray-100 hidden md:block" />
          <div className="max-w-6xl mx-auto space-y-32">
             <motion.div {...fadeInUp} className="text-center relative z-10">
-               <h3 className="text-5xl md:text-8xl font-bold mb-6">The Golden Timeline</h3>
+               <h3 className="text-4xl md:text-7xl font-medium mb-6">The Golden Timeline</h3>
                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.5em]">Chronicles of Grandeur</p>
             </motion.div>
 
@@ -143,8 +143,8 @@ const AboutPage = () => {
                ].map((event, i) => (
                  <div key={i} className={`flex flex-col md:flex-row gap-12 md:gap-20 items-center ${i % 2 !== 0 ? 'md:flex-row-reverse text-right' : ''}`}>
                     <div className="md:w-1/2 space-y-6">
-                       <span className="text-8xl md:text-[12rem] font-bold text-luxury-gold/10 block leading-none">{event.year}</span>
-                       <h4 className="text-3xl md:text-5xl font-bold text-luxury-black">{event.title}</h4>
+                       <span className="text-7xl md:text-9xl font-bold text-luxury-gold/10 block leading-none">{event.year}</span>
+                       <h4 className="text-2xl md:text-4xl font-medium text-luxury-black">{event.title}</h4>
                        <p className="text-lg md:text-xl text-gray-500 leading-relaxed font-medium max-w-xl mx-auto md:mx-0">{event.desc}</p>
                     </div>
                     <div className="hidden md:flex w-24 h-24 rounded-full bg-white border border-luxury-gold items-center justify-center text-luxury-gold shadow-gold relative">
@@ -159,12 +159,12 @@ const AboutPage = () => {
       </section>
 
       {/* Team/Leadership Accent */}
-      <section className="bg-luxury-black py-20 md:py-60 text-white text-center relative overflow-hidden">
+      <section className="bg-luxury-black py-20 md:py-40 text-white text-center relative overflow-hidden">
          <div className="absolute top-0 right-0 w-[1000px] h-[1000px] bg-luxury-gold opacity-[0.03] rounded-full blur-[200px] translate-x-1/2 -translate-y-1/2" />
          <div className="container mx-auto px-6 md:px-12 relative z-10">
             <motion.div {...fadeInUp}>
               <Users className="w-16 h-16 text-luxury-gold mx-auto mb-10" />
-              <h2 className="text-5xl md:text-8xl font-bold mb-10 leading-none">The Custodians</h2>
+              <h2 className="text-4xl md:text-7xl font-medium mb-10 leading-none">The Custodians</h2>
               <p className="text-white/40 max-w-3xl mx-auto text-xl md:text-2xl leading-relaxed mb-24 font-medium">
                 "Our staff are not merely employees; they are the guardians of your experience. Every gesture is choreographed to anticipate your silent desires."
               </p>
@@ -197,9 +197,9 @@ const AboutPage = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="py-20 md:py-60 container mx-auto px-6 md:px-12 text-center">
+      <section className="py-20 md:py-40 container mx-auto px-6 md:px-12 text-center">
          <motion.div {...fadeInUp} className="max-w-4xl mx-auto space-y-16">
-            <h2 className="text-5xl md:text-8xl font-bold text-luxury-black leading-[1.1]">Become Part <br/> of the Legacy.</h2>
+            <h2 className="text-4xl md:text-7xl font-medium text-luxury-black leading-[1.1]">Become Part <br/> of the Legacy.</h2>
             <p className="text-xl md:text-2xl text-gray-500 leading-relaxed font-medium">
                Whether you are visiting for a night or staying for a season, your presence adds a new chapter to our story. We invite you to experience the hills as they were meant to be seen.
             </p>

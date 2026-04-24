@@ -23,6 +23,7 @@ const SecuritySystem = () => {
   });
   const [showAddModal, setShowAddModal] = useState(false);
   const [newLog, setNewLog] = useState({ event: '', location: '', status: 'Info', time: new Date().toISOString() });
+  const [activeLogTab, setActiveLogTab] = useState('Security'); // Security, Audit
 
   useEffect(() => {
     fetchLogs();
@@ -46,7 +47,7 @@ const SecuritySystem = () => {
       supabase.removeChannel(logSubscription);
       supabase.removeChannel(statusSubscription);
     };
-  }, []);
+  }, [activeLogTab]);
 
   const fetchSystemStatus = async () => {
     const { data, error } = await supabase
@@ -62,14 +63,21 @@ const SecuritySystem = () => {
   };
 
   const fetchLogs = async () => {
-    const { data, error } = await supabase
-      .from('SecurityLog')
-      .select('*')
-      .order('time', { ascending: false })
-      .limit(20);
-    
-    if (!error) {
+    setLoading(true);
+    if (activeLogTab === 'Security') {
+      const { data } = await supabase.from('SecurityLog').select('*').order('time', { ascending: false }).limit(50);
       setLogs(data || []);
+    } else {
+      const { data } = await supabase.from('AuditLog').select('*').order('created_at', { ascending: false }).limit(50);
+      // Map AuditLog to SecurityLog format for consistent UI
+      setLogs(data?.map(item => ({
+        id: item.id,
+        event: item.action,
+        location: `${item.entity_type} #${item.entity_id?.slice(0, 8)}`,
+        status: 'Info',
+        time: item.created_at,
+        details: item.details
+      })) || []);
     }
     setLoading(false);
   };
@@ -214,7 +222,20 @@ const SecuritySystem = () => {
                   <h3 className="font-bold font-serif text-lg flex items-center gap-2">
                      <History className="w-5 h-5 text-luxury-gold" /> System Activity
                   </h3>
-                  <button onClick={fetchLogs}><Loader2 className={`w-4 h-4 text-luxury-gold ${loading ? 'animate-spin' : ''}`} /></button>
+                  <div className="flex gap-4 items-center">
+                    <div className="flex bg-gray-100 p-1 rounded-lg">
+                      {['Security', 'Audit'].map(tab => (
+                        <button 
+                          key={tab}
+                          onClick={() => { setActiveLogTab(tab); setLoading(true); }}
+                          className={`px-3 py-1.5 rounded-md text-[9px] font-bold uppercase transition-all ${activeLogTab === tab ? 'bg-white text-luxury-gold shadow-sm' : 'text-gray-400'}`}
+                        >
+                          {tab}
+                        </button>
+                      ))}
+                    </div>
+                    <button onClick={fetchLogs}><Loader2 className={`w-4 h-4 text-luxury-gold ${loading ? 'animate-spin' : ''}`} /></button>
+                  </div>
                </div>
                <div className="divide-y divide-gray-50 max-h-[400px] overflow-y-auto">
                   <AnimatePresence mode="popLayout">

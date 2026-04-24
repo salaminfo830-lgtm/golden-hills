@@ -28,11 +28,11 @@ export const SettingsProvider = ({ children }) => {
           // Record not found, initialize it
           const initialSettings = {
             id: 'global',
-            hotel_name: 'Golden Hills Hotel Setif',
-            address: 'Blvd des Orangers, Setif, Algeria',
-            contact_email: 'contact@goldenhills.dz',
-            contact_phone: '+213 36 00 00 00',
-            language: 'English',
+            hotel_name: 'Hôtel Golden Hills',
+            address: "Rue Champs d'azur, Sétif 19000, Algeria",
+            contact_email: 'hotelgoldenhillsreservation@gmail.com',
+            contact_phone: '030 793 030 / 07 70 51 53 59',
+            language: 'French',
             timezone: '(GMT+01:00) Algiers, Casablanca, Tunis',
             currency: 'DZD',
             brand_color_primary: '#D4AF37',

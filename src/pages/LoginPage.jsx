@@ -12,12 +12,29 @@ const LoginPage = () => {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(location.state?.error || null);
+  const [isResetting, setIsResetting] = useState(false);
+  const [newPassword, setNewPassword] = useState('');
+  const [attempts, setAttempts] = useState(Number(localStorage.getItem('login_attempts') || 0));
+  const [cooldown, setCooldown] = useState(Number(localStorage.getItem('login_cooldown') || 0));
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (window.location.hash.includes('type=recovery')) {
+      setIsResetting(true);
+    }
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
+
+    if (cooldown > Date.now()) {
+      const minutes = Math.ceil((cooldown - Date.now()) / 60000);
+      setError(`Security Lockout: Please wait ${minutes} minute(s) before retrying.`);
+      setLoading(false);
+      return;
+    }
 
     const cleanEmail = email.trim().toLowerCase();
     const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
@@ -26,10 +43,38 @@ const LoginPage = () => {
     });
 
     if (authError) {
-      setError(authError.message);
+      const newAttempts = attempts + 1;
+      setAttempts(newAttempts);
+      localStorage.setItem('login_attempts', newAttempts.toString());
+
+      await supabase.from('SecurityLog').insert([{
+        event: `Failed Login Attempt: ${cleanEmail}`,
+        status: 'Warning',
+        location: 'Login Portal'
+      }]);
+
+      if (newAttempts >= 5) {
+        const lockoutTime = Date.now() + 5 * 60 * 1000; // 5 minutes
+        setCooldown(lockoutTime);
+        localStorage.setItem('login_cooldown', lockoutTime.toString());
+        setError("Security Lockout: 5 failed attempts. Access restricted for 5 minutes.");
+      } else {
+        setError(`${authError.message} (${5 - newAttempts} attempts remaining)`);
+      }
       setLoading(false);
       return;
     }
+
+    // Success
+    setAttempts(0);
+    localStorage.removeItem('login_attempts');
+    localStorage.removeItem('login_cooldown');
+
+    await supabase.from('SecurityLog').insert([{
+      event: `Authorized Login: ${cleanEmail}`,
+      status: 'Success',
+      location: 'Login Portal'
+    }]);
 
     const user = authData.user;
     const userId = user?.id;
@@ -58,18 +103,16 @@ const LoginPage = () => {
     // 2. Check Staff Table
     const { data: staffData } = await supabase.from('Staff').select('status, role').eq('id', userId).single();
     if (staffData) {
-      if (staffData.status === 'Pending Approval') {
-        setError('Your staff credentials are awaiting administrative approval.');
-        await supabase.auth.signOut();
-        setLoading(false);
+      if (staffData.status === 'Pending Approval' || staffData.status === 'Rejected') {
+        navigate('/status');
         return;
       }
       navigate(from || '/staff');
       return;
     }
 
-    // 3. Default to Guest / Home
-    navigate(from || '/');
+    // 3. Default to Guest / Dashboard
+    navigate(from || '/dashboard');
   };
 
   const handleResetPassword = async () => {
@@ -85,6 +128,20 @@ const LoginPage = () => {
       setError(error.message);
     } else {
       setError("Recovery protocol initiated. Check your email.");
+    }
+    setLoading(false);
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) {
+      setError(error.message);
+    } else {
+      setError("Access key updated successfully. You can now log in.");
+      setIsResetting(false);
+      setNewPassword('');
     }
     setLoading(false);
   };
@@ -105,7 +162,7 @@ const LoginPage = () => {
         
         <div className="relative z-10 p-24 text-center">
           <Logo inverse className="mx-auto mb-12 scale-150" />
-          <h2 className="text-6xl font-bold text-white mb-6 leading-tight">Welcome Back to <br /> <span className="font-normal">the Sanctuary</span></h2>
+          <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 leading-tight">Welcome Back to <br /> <span className="italic">the Sanctuary</span></h2>
           <p className="text-white/40 text-lg max-w-md mx-auto font-medium leading-relaxed uppercase tracking-[0.2em]">Authentic Algerian Grandeur • Setif</p>
         </div>
 
@@ -123,11 +180,15 @@ const LoginPage = () => {
 
         <div className="w-full max-w-md space-y-12">
           <div className="text-center md:text-left space-y-3 md:space-y-4">
-            <h1 className="text-3xl md:text-5xl font-bold text-luxury-black">Authorized Access</h1>
-            <p className="text-gray-400 font-medium text-base md:text-lg">Secure your session with your credentials.</p>
+            <h1 className="text-3xl md:text-4xl font-medium text-luxury-black">
+              {isResetting ? "Update Access Key" : "Authorized Access"}
+            </h1>
+            <p className="text-gray-400 font-medium text-base md:text-lg">
+              {isResetting ? "Set a new secure key for your account." : "Secure your session with your credentials."}
+            </p>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-8">
+          <form onSubmit={isResetting ? handleUpdatePassword : handleLogin} className="space-y-8">
             {error && (
               <motion.div 
                 initial={{ opacity: 0, y: -10 }}
@@ -139,44 +200,63 @@ const LoginPage = () => {
             )}
 
             <div className="space-y-6">
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em] pl-2">Email Identity</label>
-                <div className="relative group">
-                  <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
-                  <input 
-                    type="email" 
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="input-luxury w-full pl-16 h-16"
-                    placeholder="concierge@goldenhills.dz"
-                    required
-                  />
-                </div>
-              </div>
+              {!isResetting ? (
+                <>
+                  <div className="space-y-2">
+                    <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em] pl-2">Email Identity</label>
+                    <div className="relative group">
+                      <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                      <input 
+                        type="email" 
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="input-luxury w-full pl-16 h-16"
+                        placeholder="concierge@goldenhills.dz"
+                        required
+                      />
+                    </div>
+                  </div>
 
-              <div className="space-y-2">
-                <div className="flex justify-between items-center px-2">
-                  <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em]">Access Key</label>
-                  <button 
-                    type="button" 
-                    onClick={handleResetPassword}
-                    className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest hover:underline transition-all"
-                  >
-                    Recover Key
-                  </button>
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center px-2">
+                      <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em]">Access Key</label>
+                      <button 
+                        type="button" 
+                        onClick={handleResetPassword}
+                        className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest hover:underline transition-all"
+                      >
+                        Recover Key
+                      </button>
+                    </div>
+                    <div className="relative group">
+                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                      <input 
+                        type="password" 
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        className="input-luxury w-full pl-16 h-16"
+                        placeholder="••••••••"
+                        required
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="space-y-2">
+                  <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em] pl-2">New Access Key</label>
+                  <div className="relative group">
+                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                    <input 
+                      type="password" 
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="input-luxury w-full pl-16 h-16"
+                      placeholder="••••••••"
+                      required
+                    />
+                  </div>
                 </div>
-                <div className="relative group">
-                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
-                  <input 
-                    type="password" 
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="input-luxury w-full pl-16 h-16"
-                    placeholder="••••••••"
-                    required
-                  />
-                </div>
-              </div>
+              )}
             </div>
 
             <GoldButton 
@@ -187,7 +267,7 @@ const LoginPage = () => {
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <>INITIALIZE SESSION <ArrowRight className="w-4 h-4" /></>
+                <>{isResetting ? "UPDATE ACCESS KEY" : "INITIALIZE SESSION"} <ArrowRight className="w-4 h-4" /></>
               )}
             </GoldButton>
           </form>

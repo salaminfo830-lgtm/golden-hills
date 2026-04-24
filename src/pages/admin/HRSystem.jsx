@@ -17,6 +17,7 @@ const HRSystem = () => {
   const [filter, setFilter] = useState('All');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingStaff, setEditingStaff] = useState(null);
+  const [notification, setNotification] = useState(null);
 
   const [newStaff, setNewStaff] = useState({
     name: '', role: 'Staff', department: 'Housekeeping', phone: '', email: '',
@@ -28,7 +29,16 @@ const HRSystem = () => {
 
     const subscription = supabase
       .channel('public:Staff')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'Staff' }, () => fetchStaff())
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'Staff' }, (payload) => {
+        setNotification({
+          type: 'new_request',
+          message: `New access request from ${payload.new.name} (${payload.new.department})`,
+          data: payload.new
+        });
+        fetchStaff();
+      })
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'Staff' }, () => fetchStaff())
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'Staff' }, () => fetchStaff())
       .subscribe();
 
     return () => {
@@ -65,47 +75,6 @@ const HRSystem = () => {
       fetchStaff();
     } else {
       console.error("Error adding staff:", error.message);
-      setLoading(false);
-    }
-  };
-
-  const handleFileUpload = async (e, isEditing = false) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setLoading(true);
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random()}.${fileExt}`;
-    const filePath = `staff/${fileName}`;
-
-    try {
-      const { error: uploadError } = await supabase.storage
-        .from('staff')
-        .upload(filePath, file);
-
-      if (uploadError) {
-        if (uploadError.message === 'Bucket not found') {
-           await supabase.storage.createBucket('staff', { public: true });
-           const { error: retryError } = await supabase.storage.from('staff').upload(filePath, file);
-           if (retryError) throw retryError;
-        } else {
-           throw uploadError;
-        }
-      }
-
-      const { data: { publicUrl } } = supabase.storage
-        .from('staff')
-        .getPublicUrl(filePath);
-
-      if (isEditing) {
-        setEditingStaff(prev => ({ ...prev, avatar_url: publicUrl }));
-      } else {
-        setNewStaff(prev => ({ ...prev, avatar_url: publicUrl }));
-      }
-    } catch (error) {
-      console.error('Upload error:', error);
-      alert('Error uploading image: ' + error.message);
-    } finally {
       setLoading(false);
     }
   };
@@ -154,10 +123,26 @@ const HRSystem = () => {
       .eq('id', id);
     
     if (!error) {
-       // Also confirm the email in auth.users via RPC
        await supabase.rpc('confirm_user_email', { target_user_id: id });
        await supabase.from('Profile').update({ role: 'staff' }).eq('id', id);
        fetchStaff();
+    }
+  };
+
+  const handleReject = async (id) => {
+    if(window.confirm("Are you sure you want to REJECT this application?")) {
+      setLoading(true);
+      const { error } = await supabase
+        .from('Staff')
+        .update({ status: 'Rejected' })
+        .eq('id', id);
+      
+      if (!error) {
+         fetchStaff();
+      } else {
+        alert("Error: " + error.message);
+        setLoading(false);
+      }
     }
   };
 
@@ -204,6 +189,28 @@ const HRSystem = () => {
 
   return (
     <div className="space-y-8 font-sans relative">
+      <AnimatePresence>
+        {notification && (
+          <motion.div 
+            initial={{ opacity: 0, y: -20, x: '-50%' }}
+            animate={{ opacity: 1, y: 0, x: '-50%' }}
+            exit={{ opacity: 0, y: -20, x: '-50%' }}
+            className="fixed top-10 left-1/2 z-[100] w-full max-w-md bg-luxury-black text-white p-6 rounded-[2rem] shadow-2xl border border-luxury-gold/30 flex items-center gap-6"
+          >
+            <div className="w-12 h-12 bg-luxury-gold rounded-2xl flex items-center justify-center shrink-0">
+              <Shield className="w-6 h-6 text-white" />
+            </div>
+            <div className="flex-1">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold mb-1">Security Alert</p>
+              <p className="text-sm font-bold leading-tight">{notification.message}</p>
+            </div>
+            <button onClick={() => setNotification(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+              <X className="w-5 h-5 text-gray-400" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
         <div>
           <h2 className="text-3xl font-serif font-bold tracking-tight text-luxury-black">Personnel Command</h2>
@@ -247,7 +254,7 @@ const HRSystem = () => {
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Accessing Biometric Records</p>
              </div>
            ) : filteredStaff.length === 0 ? (
-             <GlassCard className="col-span-full py-24 text-center bg-white border-dashed border-2 border-gray-100">
+             <GlassCard key="empty" className="col-span-full py-24 text-center bg-white border-dashed border-2 border-gray-100">
                 <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No personnel entries found in {filter} sector.</p>
              </GlassCard>
            ) : filteredStaff.map((person) => (
@@ -265,7 +272,7 @@ const HRSystem = () => {
                        <div className="relative">
                           <div className="w-20 h-20 rounded-[1.8rem] gold-gradient p-[2px] transition-transform group-hover:scale-105 duration-500">
                              <div className="w-full h-full bg-white rounded-[1.6rem] overflow-hidden">
-                                <img src={person.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${person.name}`} alt={person.name} />
+                                <img src={person.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${person.name}`} alt={person.name} className="w-full h-full object-cover" />
                              </div>
                           </div>
                           <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-lg border-4 border-white flex items-center justify-center ${person.status === 'On Shift' ? 'bg-green-500' : 'bg-gray-300'}`}>
@@ -308,24 +315,29 @@ const HRSystem = () => {
                        </div>
                        <div className="flex gap-3">
                           {person.status === 'Pending Approval' ? (
-                            <GoldButton onClick={() => confirmApproval(person.id)} className="px-6 py-2.5 text-[10px] shadow-lg flex items-center gap-2">
-                              <CheckCircle2 className="w-3.5 h-3.5" /> APPROVE
-                            </GoldButton>
-                          ) : (
-                             <>
-                                <button onClick={() => setEditingStaff(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
-                                   <Edit2 className="w-4 h-4" />
-                                </button>
-                                <button onClick={() => openPermissions(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
-                                   <Shield className="w-4 h-4" />
-                                </button>
-                             </>
-                          )}
-                          <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-red-100">
-                             <Trash2 className="w-4 h-4" />
-                          </button>
-                       </div>
-                    </div>
+                              <>
+                                 <button onClick={() => confirmApproval(person.id)} className="p-2.5 bg-luxury-gold/10 text-luxury-gold hover:bg-luxury-gold hover:text-white rounded-xl transition-all border border-luxury-gold/20">
+                                    <CheckCircle2 className="w-4 h-4" />
+                                 </button>
+                                 <button onClick={() => handleReject(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-red-100">
+                                    <X className="w-4 h-4" />
+                                 </button>
+                              </>
+                           ) : (
+                              <>
+                                 <button onClick={() => setEditingStaff(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
+                                    <Edit2 className="w-4 h-4" />
+                                 </button>
+                                 <button onClick={() => openPermissions(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
+                                    <Shield className="w-4 h-4" />
+                                 </button>
+                                 <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-red-100">
+                                    <Trash2 className="w-4 h-4" />
+                                 </button>
+                              </>
+                           )}
+                        </div>
+                     </div>
                  </GlassCard>
               </motion.div>
            ))}
@@ -367,7 +379,7 @@ const HRSystem = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (USD)</label>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (DZD)</label>
                         <input type="number" value={editingStaff.salary || ''} onChange={e=>setEditingStaff({...editingStaff, salary: Number(e.target.value)})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
                      </div>
                      <div className="space-y-2">
@@ -431,8 +443,8 @@ const HRSystem = () => {
                     </div>
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (USD)</label>
-                        <input type="number" value={newStaff.salary} onChange={e=>setNewStaff({...newStaff, salary: Number(e.target.value)})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" placeholder="2500" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (DZD)</label>
+                        <input type="number" value={newStaff.salary} onChange={e=>setNewStaff({...newStaff, salary: Number(e.target.value)})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" placeholder="250000" />
                       </div>
                       <div className="space-y-2">
                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Joined Date</label>

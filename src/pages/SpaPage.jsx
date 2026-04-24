@@ -84,34 +84,32 @@ const SpaPage = () => {
               transition={{ delay: 0.5, duration: 1 }}
             >
                <h4 className="text-luxury-gold text-3xl mb-4">The Rituals</h4>
-               <h1 className="text-7xl md:text-9xl font-bold tracking-tight leading-none">Pure Atmosphere</h1>
+               <h1 className="text-4xl md:text-7xl font-medium tracking-tight leading-none">Pure Atmosphere</h1>
             </motion.div>
          </div>
          {/* Wave Overlay (Subtle) */}
          <div className="absolute bottom-0 left-0 w-full h-32 bg-gradient-to-t from-luxury-cream to-transparent" />
       </section>
 
-      {/* Philosophy Section */}
-      <section className="py-60 container mx-auto px-12 bg-luxury-cream/30">
+      {/* Philosophy & Special Offer Section */}
+      <section className="py-20 md:py-40 container mx-auto px-12 bg-luxury-cream/30">
          <div className="grid lg:grid-cols-2 gap-32 items-center">
             <motion.div {...fadeInUp} className="space-y-12">
-               <h2 className="text-6xl md:text-8xl font-bold text-luxury-black leading-[1.1]">Wellness, <br/><span className="text-luxury-gold">Redefined.</span></h2>
+               <h2 className="text-4xl md:text-6xl font-medium text-luxury-black leading-[1.1]">Silence, <br/><span className="text-luxury-gold">Restored.</span></h2>
                <p className="text-2xl text-gray-500 leading-relaxed font-medium max-w-xl">
                   Immerse yourself in the ancient wisdom of the hills. Our spa rituals are choreographies of silence, steam, and restoration, designed to reconnect the body with the soul.
                </p>
-               <div className="grid grid-cols-2 gap-16 pt-12 border-t border-luxury-gold/10">
-                  {[
-                    { icon: <Droplets />, title: 'Pure Water', desc: 'Sourced from natural hillside springs.' },
-                    { icon: <Wind />, title: 'Mountain Air', desc: 'HEPA-filtered sanctuary atmosphere.' }
-                  ].map((item, i) => (
-                    <div key={i} className="space-y-4">
-                       <div className="text-luxury-gold">{item.icon}</div>
-                       <h5 className="font-bold uppercase tracking-[0.4em] text-xs">{item.title}</h5>
-                       <p className="text-gray-400 text-sm">{item.desc}</p>
-                    </div>
-                  ))}
-               </div>
-            </motion.div>
+               <GlassCard className="bg-luxury-gold/10 border-luxury-gold/20 p-8 md:p-10">
+                  <div className="flex items-center gap-6">
+                     <div className="w-16 h-16 rounded-full bg-luxury-gold text-white flex items-center justify-center shrink-0">
+                        <Sparkles className="w-8 h-8" />
+                     </div>
+                     <div>
+                        <h4 className="text-xl font-bold text-luxury-black mb-2 tracking-tight">The Gilded Gesture</h4>
+                        <p className="text-gray-600 font-medium italic">Guests staying 3 or more nights receive 1 complimentary hour of spa treatment.</p>
+                     </div>
+                  </div>
+               </GlassCard>
             <motion.div 
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -134,11 +132,11 @@ const SpaPage = () => {
       </section>
 
       {/* Services Grid */}
-      <section className="py-60">
+      <section className="py-20 md:py-40">
          <div className="container mx-auto px-12">
             <motion.div {...fadeInUp} className="text-center mb-32">
                <h4 className="text-luxury-gold font-bold text-[10px] uppercase tracking-[0.6em] mb-6">Discovery</h4>
-               <h2 className="text-6xl md:text-8xl font-bold text-luxury-black leading-none">The Treatment Menu</h2>
+               <h2 className="text-4xl md:text-6xl font-medium text-luxury-black leading-none">The Treatment Menu</h2>
             </motion.div>
             
             <div className="grid md:grid-cols-2 gap-24">
@@ -158,7 +156,7 @@ const SpaPage = () => {
                        <div className="flex justify-between items-start">
                           <div>
                              <span className="text-luxury-gold font-bold uppercase tracking-[0.5em] text-[10px] mb-3 block">{service.location}</span>
-                             <h3 className="text-5xl font-bold text-luxury-black group-hover: transition-all duration-700 leading-none">{service.name}</h3>
+                             <h3 className="text-3xl md:text-4xl font-medium text-luxury-black group-hover: transition-all duration-700 leading-none">{service.name}</h3>
                           </div>
                           <div className="w-16 h-16 rounded-full border border-luxury-gold/20 flex items-center justify-center text-luxury-gold group-hover:bg-luxury-gold group-hover:text-white transition-all">
                              <Heart className="w-6 h-6" />
@@ -183,12 +181,12 @@ const SpaPage = () => {
       </section>
 
       {/* Wellness Membership CTA */}
-      <section className="bg-luxury-black py-60 text-white relative overflow-hidden">
+      <section className="bg-luxury-black py-20 md:py-40 text-white relative overflow-hidden">
          <div className="absolute bottom-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=2070')] bg-cover bg-center opacity-10 grayscale" />
          <div className="container mx-auto px-12 relative z-10 text-center">
             <motion.div {...fadeInUp}>
                <ShieldCheck className="w-20 h-20 text-luxury-gold mx-auto mb-12" />
-               <h2 className="text-6xl md:text-9xl font-bold mb-10 leading-none tracking-tight">The Gilded Circle</h2>
+               <h2 className="text-4xl md:text-7xl font-medium mb-10 leading-none tracking-tight">The Gilded Circle</h2>
                <p className="text-white/40 max-w-3xl mx-auto text-2xl leading-relaxed mb-20 font-medium">
                   Join our exclusive wellness membership for priority booking, private hammam sessions, and bespoke botanical blends crafted specifically for your skin profile.
                </p>
