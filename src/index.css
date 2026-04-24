@@ -6,10 +6,18 @@
 
 @layer base {
   :root {
-    --luxury-gold: #D4AF37;
+    --luxury-gold: #C9A84C;
+    --luxury-navy: #050B18;
     --luxury-black: #0A0A0A;
     --luxury-cream: #FDFBF7;
     --luxury-white-warm: #FAF9F6;
+    --apple-bg: #FBFBFD;
+    --apple-card: #FFFFFF;
+    --apple-gray: #F5F5F7;
+    --status-confirmed: #22C55E;
+    --status-pending: #C9A84C;
+    --status-urgent: #EF4444;
+    --status-inactive: #94A3B8;
   }
 
   body {
@@ -39,11 +47,19 @@
 
 @layer components {
   .glass {
-    @apply bg-white/70 backdrop-blur-2xl border border-white/20 shadow-xl;
+    @apply bg-white/70 backdrop-blur-2xl border border-white/20 shadow-[0_8px_32px_rgba(0,0,0,0.04)];
+  }
+
+  .apple-card {
+    @apply bg-white border border-gray-100 rounded-[1.5rem] shadow-[0_8px_32px_rgba(0,0,0,0.04)] transition-all duration-300;
+  }
+
+  .apple-card-hover {
+    @apply hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] hover:-translate-y-1;
   }
 
   .glass-dark {
-    background: rgba(10, 10, 10, 0.4);
+    background: rgba(5, 11, 24, 0.8);
     backdrop-filter: blur(40px);
     -webkit-backdrop-filter: blur(40px);
     border: 1px solid rgba(255, 255, 255, 0.05);
@@ -51,54 +67,66 @@
   }
 
   .glass-gold {
-    background: rgba(212, 175, 55, 0.05);
+    background: rgba(201, 168, 76, 0.05);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
-    border: 1px solid rgba(212, 175, 55, 0.2);
+    border: 1px solid rgba(201, 168, 76, 0.2);
   }
 
   .shadow-gold {
-    box-shadow: 0 20px 40px -10px rgba(212, 175, 55, 0.3);
+    box-shadow: 0 20px 40px -10px rgba(201, 168, 76, 0.3);
   }
 
   .gold-gradient {
-    background: linear-gradient(135deg, #A68546 0%, #D4AF37 40%, #D4AF37 60%, #A68546 100%);
+    background: linear-gradient(135deg, #A68546 0%, #C9A84C 40%, #C9A84C 60%, #A68546 100%);
   }
 
   .gold-text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, #c5a059 0%, #d4af37 50%, #a68546 100%);
+    background-image: linear-gradient(135deg, #c5a059 0%, #C9A84C 50%, #a68546 100%);
   }
 
-  .input-luxury {
-    @apply bg-white border-2 border-gray-50 rounded-[1.5rem] px-8 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all duration-500 shadow-sm;
+  .input-apple {
+    @apply bg-[#F5F5F7] border border-transparent rounded-2xl px-6 py-4 text-sm font-medium focus:bg-white focus:border-luxury-gold focus:ring-4 focus:ring-luxury-gold/5 outline-none transition-all duration-300;
   }
 
-  .btn-luxury {
-    @apply relative overflow-hidden transition-all duration-700 active:scale-95;
+  .btn-apple-primary {
+    @apply px-8 py-4 bg-luxury-gold text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-opacity-90 active:scale-95 transition-all shadow-lg shadow-luxury-gold/20;
   }
 
-  .btn-luxury::after {
-    content: '';
-    @apply absolute inset-0 bg-white/20 translate-y-full transition-transform duration-700 ease-[0.16,1,0.3,1];
+  .btn-apple-secondary {
+    @apply px-8 py-4 bg-[#F5F5F7] text-[#050B18] rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-gray-200 active:scale-95 transition-all;
   }
 
-  .btn-luxury:hover::after {
-    @apply translate-y-0;
+  .badge-apple {
+    @apply px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border;
   }
 
-  .text-mask {
-    @apply bg-clip-text text-transparent bg-cover bg-center;
-    background-image: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
-    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
-    filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.2));
+  .table-apple {
+    @apply w-full border-separate border-spacing-y-2;
+  }
+
+  .table-apple tr {
+    @apply bg-white transition-all duration-300;
+  }
+
+  .table-apple tr:hover {
+    @apply shadow-md transform -translate-y-0.5;
+  }
+
+  .table-apple th {
+    @apply px-6 py-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest text-left;
+  }
+
+  .table-apple td {
+    @apply px-6 py-5 text-sm border-t border-b border-gray-50 first:border-l first:rounded-l-2xl last:border-r last:rounded-r-2xl;
   }
 
   .luxury-blur {
-    backdrop-filter: blur(8px) saturate(180%);
-    -webkit-backdrop-filter: blur(8px) saturate(180%);
-    background-color: rgba(255, 255, 255, 0.7);
-    border: 1px solid rgba(209, 213, 219, 0.3);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    background-color: rgba(255, 255, 255, 0.8);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 }
 

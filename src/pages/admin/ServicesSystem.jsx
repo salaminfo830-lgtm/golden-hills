@@ -200,32 +200,38 @@ const ServicesSystem = () => {
   const filteredServices = services.filter(s => s.type === activeTab);
 
   return (
-    <div className="space-y-8 font-sans relative">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <div className="space-y-12 font-apple relative">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pb-10 border-b border-gray-100">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight text-luxury-black">Dining & Wellness</h2>
-          <p className="text-gray-400 font-medium tracking-wide">Manage property venues and guest rituals</p>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A84C]">Guest Experience</span>
+            <span className="text-gray-300">•</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Services Command</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-[#050B18] tracking-tighter">Dining & Wellness</h2>
         </div>
-        <div className="flex gap-4 w-full md:w-auto">
-           <GoldButton outline onClick={fetchServices} className="flex-1 md:flex-none py-3 px-6 text-[10px]">REFRESH</GoldButton>
-           <GoldButton onClick={() => { setEditingService(null); resetForm(); setShowAddModal(true); }} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2 shadow-gold">
-             <Plus className="w-4 h-4" /> ADD SERVICE
-           </GoldButton>
+        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+           <button onClick={fetchServices} className="btn-apple-secondary flex items-center justify-center gap-3 px-8 py-4 shadow-sm">
+             <span className="text-[11px] uppercase tracking-widest font-bold">Refresh Intel</span>
+           </button>
+           <button onClick={() => { setEditingService(null); resetForm(); setShowAddModal(true); }} className="btn-apple-primary flex items-center justify-center gap-3 px-10 py-4 shadow-xl shadow-[#050B18]/10">
+             <Plus className="w-5 h-5" /> <span className="text-[11px] uppercase tracking-widest font-bold">Register Service</span>
+           </button>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-4 bg-gray-100/50 p-1.5 rounded-2xl w-max">
+      <div className="flex gap-1 bg-[#F5F5F7] p-1.5 rounded-2xl w-full sm:w-auto overflow-x-auto custom-scrollbar">
         {[
-          { id: 'Dining', icon: <Utensils className="w-4 h-4" />, label: 'Dining Venues' },
-          { id: 'Spa', icon: <Waves className="w-4 h-4" />, label: 'Spa & Wellness' },
-          { id: 'Bookings', icon: <Clock className="w-4 h-4" />, label: 'External Bookings' }
+          { id: 'Dining', icon: <Utensils className="w-5 h-5" />, label: 'Dining Venues' },
+          { id: 'Spa', icon: <Waves className="w-5 h-5" />, label: 'Spa & Wellness' },
+          { id: 'Bookings', icon: <Clock className="w-5 h-5" />, label: 'External Bookings' }
         ].map((tab) => (
           <button 
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all flex items-center gap-3 ${
-              activeTab === tab.id ? 'bg-white text-luxury-gold shadow-sm' : 'text-gray-400 hover:text-gray-600'
+            className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 flex items-center gap-3 whitespace-nowrap ${
+              activeTab === tab.id ? 'bg-white text-[#050B18] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'
             }`}
           >
             {tab.icon} {tab.label}
@@ -253,20 +259,20 @@ const ServicesSystem = () => {
                    animate={{ opacity: 1, y: 0 }}
                    key={booking.id}
                  >
-                   <GlassCard className="bg-white border-gray-100 p-8 hover:border-luxury-gold/30 transition-all shadow-sm">
+                   <div className="apple-card bg-white border-none p-8 hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 shadow-xl shadow-gray-100">
                       <div className="flex justify-between items-start mb-6">
                         <div>
-                          <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${
-                            booking.status === 'Confirmed' ? 'text-green-500 bg-green-50 border-green-100' :
-                            booking.status === 'Cancelled' ? 'text-red-500 bg-red-50 border-red-100' :
+                          <span className={`badge-apple py-1.5 px-3 ${
+                            booking.status === 'Confirmed' ? 'text-green-600 bg-green-50 border-green-100' :
+                            booking.status === 'Cancelled' ? 'text-red-600 bg-red-50 border-red-100' :
                             'text-gray-400 bg-gray-50 border-gray-100'
                           }`}>
                             {booking.status}
                           </span>
-                          <h4 className="text-xl font-serif font-bold mt-3">{booking.guest_name}</h4>
-                          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">{booking.venue_name}</p>
+                          <h4 className="text-2xl font-bold text-[#050B18] mt-4 tracking-tight">{booking.guest_name}</h4>
+                          <p className="text-[10px] text-[#C9A84C] font-bold uppercase tracking-[0.2em] mt-1">{booking.venue_name}</p>
                         </div>
-                        <div className="p-3 bg-luxury-cream/30 rounded-2xl text-luxury-gold">
+                        <div className="w-12 h-12 bg-[#F5F5F7] rounded-2xl text-[#C9A84C] flex items-center justify-center">
                            <Clock className="w-5 h-5" />
                         </div>
                       </div>
@@ -300,7 +306,8 @@ const ServicesSystem = () => {
                           Delete
                         </button>
                       </div>
-                   </GlassCard>
+                   </div>
+
                  </motion.div>
                ))
              ) : (
@@ -316,30 +323,30 @@ const ServicesSystem = () => {
                    exit={{ opacity: 0, scale: 0.9 }}
                    key={service.id}
                  >
-                   <GlassCard className="group bg-white border-gray-100 p-0 overflow-hidden hover:border-luxury-gold/30 transition-all duration-500 shadow-sm">
+                   <div className="apple-card group bg-white border-none p-0 overflow-hidden hover:-translate-y-1 hover:shadow-2xl transition-all duration-500 shadow-xl shadow-gray-100">
                       <div className="relative aspect-[16/10] overflow-hidden">
                         <img 
                           src={service.image_url || 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?auto=format&fit=crop&q=80&w=2070'} 
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000" 
                           alt={service.name} 
                         />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                        <div className="absolute bottom-6 left-6 text-white">
-                           <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-luxury-gold mb-1 block">{service.type}</span>
-                           <h4 className="text-xl font-serif font-bold">{service.name}</h4>
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#050B18]/80 via-[#050B18]/20 to-transparent opacity-90" />
+                        <div className="absolute bottom-6 left-6 text-white z-10">
+                           <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A84C] mb-2 block">{service.type}</span>
+                           <h4 className="text-2xl font-bold tracking-tight">{service.name}</h4>
                         </div>
-                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                        <div className="absolute top-5 right-5 flex gap-3 opacity-0 group-hover:opacity-100 transition-all z-10">
                            <button 
                              onClick={() => handleEditService(service)}
-                             className="p-2 bg-black/20 backdrop-blur-md text-white/60 hover:text-luxury-gold rounded-xl transition-all"
+                             className="p-3 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 rounded-2xl transition-all shadow-lg"
                            >
-                              <Edit3 className="w-4 h-4" />
+                              <Edit3 className="w-5 h-5" />
                            </button>
                            <button 
                              onClick={() => handleDeleteService(service.id)}
-                             className="p-2 bg-black/20 backdrop-blur-md text-white/60 hover:text-red-400 rounded-xl transition-all"
+                             className="p-3 bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-red-500 hover:border-red-500 rounded-2xl transition-all shadow-lg"
                            >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-5 h-5" />
                            </button>
                         </div>
                       </div>
@@ -368,7 +375,8 @@ const ServicesSystem = () => {
                            <ChevronRight className="w-5 h-5 text-luxury-gold opacity-30" />
                         </div>
                       </div>
-                   </GlassCard>
+                   </div>
+
                  </motion.div>
                ))
              )}
@@ -388,15 +396,15 @@ const ServicesSystem = () => {
            <motion.div 
              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-             className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20"
+             className="relative w-full max-w-lg h-full apple-card p-0 flex flex-col border-none shadow-2xl"
            >
-              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+              <div className="p-10 border-b border-gray-50 bg-white flex justify-between items-center shrink-0">
                  <div>
-                    <h3 className="text-2xl font-bold font-serif text-luxury-black">{editingService ? 'Edit Service' : 'Add New Service'}</h3>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Product Catalog Management</p>
+                    <h3 className="text-3xl font-bold tracking-tighter text-[#050B18]">{editingService ? 'Refine Service' : 'Catalog New Service'}</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em] mt-1.5">Asset Registration</p>
                  </div>
-                 <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
-                   <X className="w-5 h-5"/>
+                 <button onClick={() => setShowAddModal(false)} className="p-3.5 bg-[#F5F5F7] rounded-full text-gray-400 hover:text-[#050B18] transition-all">
+                   <X className="w-6 h-6"/>
                  </button>
               </div>
 
@@ -476,15 +484,15 @@ const ServicesSystem = () => {
                  </form>
               </div>
 
-               <div className="p-8 bg-white border-t border-gray-100 shrink-0">
-                  <GoldButton 
+               <div className="p-10 bg-white border-t border-gray-50 shrink-0">
+                  <button 
                     form="add-service-form" 
                     type="submit" 
                     disabled={loading || uploading}
-                    className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2"
+                    className="btn-apple-primary w-full py-5 text-base shadow-xl shadow-[#050B18]/10"
                   >
-                     {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : (uploading ? 'UPLOADING...' : (editingService ? 'SAVE CHANGES' : 'SAVE TO COLLECTION'))}
-                  </GoldButton>
+                     {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : (uploading ? 'SYNCHRONIZING...' : (editingService ? 'COMMIT CHANGES' : 'DEPLOY TO CATALOG'))}
+                  </button>
                </div>
            </motion.div>
         </div>

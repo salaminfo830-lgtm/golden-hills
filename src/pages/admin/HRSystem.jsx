@@ -188,59 +188,71 @@ const HRSystem = () => {
     : staff.filter(s => s.department === filter && s.status !== 'Pending Approval');
 
   return (
-    <div className="space-y-8 font-sans relative">
+    <div className="space-y-12 font-apple">
       <AnimatePresence>
         {notification && (
           <motion.div 
             initial={{ opacity: 0, y: -20, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: -20, x: '-50%' }}
-            className="fixed top-10 left-1/2 z-[100] w-full max-w-md bg-luxury-black text-white p-6 rounded-[2rem] shadow-2xl border border-luxury-gold/30 flex items-center gap-6"
+            className="fixed top-12 left-1/2 z-[100] w-full max-w-md bg-[#050B18] text-white p-6 rounded-3xl shadow-2xl border border-[#C9A84C]/30 flex items-center gap-6"
           >
-            <div className="w-12 h-12 bg-luxury-gold rounded-2xl flex items-center justify-center shrink-0">
+            <div className="w-12 h-12 bg-[#C9A84C] rounded-2xl flex items-center justify-center shrink-0">
               <Shield className="w-6 h-6 text-white" />
             </div>
             <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-luxury-gold mb-1">Security Alert</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#C9A84C] mb-1">Security Protocol</p>
               <p className="text-sm font-bold leading-tight">{notification.message}</p>
             </div>
             <button onClick={() => setNotification(null)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
-              <X className="w-5 h-5 text-gray-400" />
+              <X className="w-5 h-5 text-white/40" />
             </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pb-10 border-b border-gray-100">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight text-luxury-black">Personnel Command</h2>
-          <p className="text-gray-400 font-medium tracking-wide text-sm font-semibold uppercase tracking-[0.2em]">Employee Directory & Access Control</p>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A84C]">Human Resources</span>
+            <span className="text-gray-300">•</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Personnel Command</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-[#050B18] tracking-tighter">Staff Intelligence</h2>
         </div>
-        <div className="flex gap-4 w-full md:w-auto">
-           <GoldButton outline className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2" onClick={() => setFilter('Approvals')}>
-              <Shield className="w-4 h-4" /> REVIEW REQUESTS {staff.filter(s => s.status === 'Pending Approval').length > 0 && `(${staff.filter(s => s.status === 'Pending Approval').length})`}
-           </GoldButton>
-           <GoldButton onClick={() => setShowAddModal(true)} className="flex-1 md:flex-none py-3 px-10 text-[10px] flex items-center justify-center gap-2 shadow-lg">
-             <UserPlus className="w-4 h-4" /> ADD PERSONNEL
-           </GoldButton>
+        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+           <button 
+             onClick={() => setFilter('Approvals')}
+             className="btn-apple-secondary flex items-center justify-center gap-3 px-8 py-4 shadow-sm"
+           >
+              <Shield className="w-5 h-5" /> 
+              <span className="text-[11px] uppercase tracking-widest font-bold">Review Requests</span>
+              {staff.filter(s => s.status === 'Pending Approval').length > 0 && (
+                <span className="ml-2 px-2 py-1 rounded-full bg-red-500 text-white text-[10px] font-bold animate-pulse shadow-lg shadow-red-500/20">
+                  {staff.filter(s => s.status === 'Pending Approval').length}
+                </span>
+              )}
+           </button>
+           <button 
+             onClick={() => setShowAddModal(true)} 
+             className="btn-apple-primary flex items-center justify-center gap-3 px-10 py-4 shadow-xl shadow-[#050B18]/10"
+           >
+             <UserPlus className="w-5 h-5" /> <span className="text-[11px] uppercase tracking-widest font-bold">Onboard Personnel</span>
+           </button>
         </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-6 items-center justify-between">
-         <div className="flex gap-2 bg-gray-100/50 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto no-scrollbar border border-gray-100">
+         <div className="flex gap-1 bg-[#F5F5F7] p-1.5 rounded-2xl w-full overflow-x-auto custom-scrollbar">
             {['All', 'Approvals', 'Administration', 'Front Desk', 'Housekeeping', 'Kitchen', 'Security', 'Finance'].map((dept) => (
               <button 
                 key={dept}
                 onClick={() => setFilter(dept)}
-                className={`px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.15em] transition-all whitespace-nowrap ${
-                  filter === dept ? 'bg-white text-luxury-gold shadow-sm ring-1 ring-luxury-gold/10' : 'text-gray-400 hover:text-gray-600'
+                className={`px-8 py-3 rounded-xl text-[10px] font-bold uppercase tracking-[0.2em] transition-all duration-300 whitespace-nowrap ${
+                  filter === dept ? 'bg-white text-[#050B18] shadow-sm' : 'text-gray-400 hover:text-gray-600 hover:bg-white/50'
                 }`}
               >
-                {dept} {dept === 'Approvals' && staff.filter(s => s.status === 'Pending Approval').length > 0 && (
-                  <span className="ml-2 px-1.5 py-0.5 rounded-md bg-red-500 text-white text-[8px] animate-pulse">
-                    {staff.filter(s => s.status === 'Pending Approval').length}
-                  </span>
-                )}
+                {dept}
               </button>
             ))}
          </div>
@@ -249,14 +261,15 @@ const HRSystem = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
          <AnimatePresence mode="popLayout">
            {loading && staff.length === 0 ? (
-             <div className="col-span-full py-20 flex flex-col items-center justify-center bg-white rounded-[2.5rem] border border-gray-50 shadow-sm">
-                <Loader2 className="w-10 h-10 text-luxury-gold animate-spin mb-4" />
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Accessing Biometric Records</p>
+             <div className="col-span-full py-24 flex flex-col items-center justify-center apple-card border-none bg-transparent">
+                <Loader2 className="w-10 h-10 text-[#C9A84C] animate-spin mb-4" />
+                <p className="text-[10px] font-bold text-gray-300 uppercase tracking-[0.4em]">Accessing Biometric Vault</p>
              </div>
            ) : filteredStaff.length === 0 ? (
-             <GlassCard key="empty" className="col-span-full py-24 text-center bg-white border-dashed border-2 border-gray-100">
-                <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">No personnel entries found in {filter} sector.</p>
-             </GlassCard>
+             <div className="col-span-full py-32 text-center apple-card border-dashed border-gray-200">
+                <Briefcase className="w-12 h-12 text-gray-100 mx-auto mb-4" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-300">Sector Empty. No active personnel records.</p>
+             </div>
            ) : filteredStaff.map((person) => (
               <motion.div
                 layout
@@ -265,13 +278,13 @@ const HRSystem = () => {
                 exit={{ opacity: 0, scale: 0.95 }}
                 key={person.id}
               >
-                 <GlassCard className="bg-white border-gray-100 p-8 hover:border-luxury-gold/40 transition-all group relative overflow-hidden">
-                    {person.status === 'Pending Approval' && <div className="absolute top-0 left-0 w-full h-1 bg-luxury-gold animate-pulse" />}
+                 <div className="apple-card p-8 hover:border-[#C9A84C]/40 transition-all group relative overflow-hidden">
+                    {person.status === 'Pending Approval' && <div className="absolute top-0 left-0 w-full h-1 bg-[#C9A84C] animate-pulse" />}
                     
                     <div className="flex gap-6 items-center mb-10">
                        <div className="relative">
-                          <div className="w-20 h-20 rounded-[1.8rem] gold-gradient p-[2px] transition-transform group-hover:scale-105 duration-500">
-                             <div className="w-full h-full bg-white rounded-[1.6rem] overflow-hidden">
+                          <div className="w-20 h-20 rounded-[2rem] bg-[#F5F5F7] p-1 group-hover:scale-105 transition-transform duration-500">
+                             <div className="w-full h-full bg-white rounded-[1.8rem] overflow-hidden">
                                 <img src={person.avatar_url || `https://api.dicebear.com/7.x/avataaars/svg?seed=${person.name}`} alt={person.name} className="w-full h-full object-cover" />
                              </div>
                           </div>
@@ -280,9 +293,9 @@ const HRSystem = () => {
                           </div>
                        </div>
                        <div>
-                          <h3 className="text-xl font-serif font-bold text-luxury-black tracking-tight">{person.name}</h3>
+                          <h3 className="text-xl font-bold text-[#050B18] tracking-tight">{person.name}</h3>
                           <div className="flex items-center gap-2 mt-1">
-                             <span className="text-[9px] font-bold text-luxury-gold uppercase tracking-[0.2em]">{person.role}</span>
+                             <span className="text-[9px] font-bold text-[#C9A84C] uppercase tracking-widest">{person.role}</span>
                              <div className="w-1 h-1 rounded-full bg-gray-200" />
                              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{person.department}</span>
                           </div>
@@ -291,54 +304,52 @@ const HRSystem = () => {
 
                     <div className="space-y-4 mb-8">
                         <div className="flex items-center gap-4 text-xs">
-                           <div className="p-2.5 bg-gray-50 rounded-xl text-gray-400 group-hover:bg-luxury-gold/10 group-hover:text-luxury-gold transition-colors"><Mail className="w-4 h-4" /></div>
-                           <span className="font-bold text-gray-600 truncate">{person.email || 'internal@goldenhills.dz'}</span>
+                           <div className="w-10 h-10 bg-[#F5F5F7] rounded-xl flex items-center justify-center text-gray-400 group-hover:bg-[#C9A84C]/10 group-hover:text-[#C9A84C] transition-colors"><Mail className="w-4 h-4" /></div>
+                           <span className="font-bold text-[#050B18]/60 truncate uppercase tracking-tighter">{person.email || 'internal@goldenhills.dz'}</span>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
-                           <div className="p-4 bg-gray-50 rounded-[1.5rem] flex flex-col gap-1 border border-gray-100/50">
-                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Monthly Salary</span>
-                              <span className="text-sm font-bold text-luxury-black">{person.salary ? `${person.salary} DZD` : 'TBD'}</span>
+                           <div className="p-4 bg-[#F5F5F7]/50 rounded-2xl border border-gray-50">
+                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Capital Sync</span>
+                              <span className="text-sm font-bold text-[#050B18]">{person.salary ? `${person.salary.toLocaleString()} DZD` : 'Pending'}</span>
                            </div>
-                           <div className="p-4 bg-gray-50 rounded-[1.5rem] flex flex-col gap-1 border border-gray-100/50">
-                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Joined</span>
-                              <span className="text-xs font-bold text-gray-600">{person.joined_date ? new Date(person.joined_date).toLocaleDateString() : 'New'}</span>
+                           <div className="p-4 bg-[#F5F5F7]/50 rounded-2xl border border-gray-50">
+                              <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Deployment</span>
+                              <span className="text-[10px] font-bold text-gray-600 uppercase">{person.joined_date ? new Date(person.joined_date).toLocaleDateString() : 'New'}</span>
                            </div>
                         </div>
                     </div>
 
                     <div className="flex justify-between items-center pt-8 border-t border-gray-50">
-                       <div className="flex items-center gap-3">
-                          <div className="flex flex-col">
-                             <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mb-1">Status</span>
-                             <span className={`text-[10px] font-bold uppercase tracking-[0.1em] ${person.status === 'On Shift' ? 'text-green-500' : 'text-gray-400'}`}>{person.status}</span>
-                          </div>
+                       <div className="flex flex-col">
+                          <span className="text-[8px] font-bold text-gray-400 uppercase tracking-widest mb-1">Flow State</span>
+                          <span className={`text-[10px] font-bold uppercase tracking-widest ${person.status === 'On Shift' ? 'text-green-500' : 'text-gray-400'}`}>{person.status}</span>
                        </div>
-                       <div className="flex gap-3">
+                       <div className="flex gap-2">
                           {person.status === 'Pending Approval' ? (
-                              <>
-                                 <button onClick={() => confirmApproval(person.id)} className="p-2.5 bg-luxury-gold/10 text-luxury-gold hover:bg-luxury-gold hover:text-white rounded-xl transition-all border border-luxury-gold/20">
-                                    <CheckCircle2 className="w-4 h-4" />
-                                 </button>
-                                 <button onClick={() => handleReject(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-red-100">
-                                    <X className="w-4 h-4" />
-                                 </button>
-                              </>
-                           ) : (
-                              <>
-                                 <button onClick={() => setEditingStaff(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
-                                    <Edit2 className="w-4 h-4" />
-                                 </button>
-                                 <button onClick={() => openPermissions(person)} className="p-2.5 bg-gray-50 hover:bg-luxury-gold/10 text-gray-400 hover:text-luxury-gold rounded-xl transition-all border border-transparent hover:border-luxury-gold/20">
-                                    <Shield className="w-4 h-4" />
-                                 </button>
-                                 <button onClick={() => handleDeleteStaff(person.id)} className="p-2.5 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl transition-all border border-transparent hover:border-red-100">
-                                    <Trash2 className="w-4 h-4" />
-                                 </button>
-                              </>
-                           )}
+                               <>
+                                  <button onClick={() => confirmApproval(person.id)} className="p-3 bg-[#C9A84C]/10 text-[#C9A84C] hover:bg-[#C9A84C] hover:text-white rounded-xl transition-all border border-[#C9A84C]/20">
+                                     <CheckCircle2 className="w-4 h-4" />
+                                  </button>
+                                  <button onClick={() => handleReject(person.id)} className="p-3 bg-red-50 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all border border-red-100">
+                                     <X className="w-4 h-4" />
+                                  </button>
+                               </>
+                            ) : (
+                               <>
+                                  <button onClick={() => setEditingStaff(person)} className="p-3 bg-[#F5F5F7] text-gray-400 hover:text-[#050B18] rounded-xl transition-all">
+                                     <Edit2 className="w-4 h-4" />
+                                  </button>
+                                  <button onClick={() => openPermissions(person)} className="p-3 bg-[#F5F5F7] text-gray-400 hover:text-[#C9A84C] rounded-xl transition-all">
+                                     <Shield className="w-4 h-4" />
+                                  </button>
+                                  <button onClick={() => handleDeleteStaff(person.id)} className="p-3 bg-[#F5F5F7] text-gray-400 hover:text-red-500 rounded-xl transition-all">
+                                     <Trash2 className="w-4 h-4" />
+                                  </button>
+                               </>
+                            )}
                         </div>
                      </div>
-                 </GlassCard>
+                 </div>
               </motion.div>
            ))}
          </AnimatePresence>
@@ -347,27 +358,29 @@ const HRSystem = () => {
       <AnimatePresence>
       {editingStaff && (
          <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEditingStaff(null)} className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative bg-white w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl overflow-hidden">
-               <div className="absolute top-0 right-0 w-32 h-32 bg-luxury-gold/5 rounded-full translate-x-16 -translate-y-16 blur-2xl" />
-               <button onClick={() => setEditingStaff(null)} className="absolute top-6 right-6 p-2 text-gray-400 hover:text-black hover:bg-gray-50 rounded-full transition-all"><X className="w-6 h-6"/></button>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEditingStaff(null)} className="absolute inset-0 bg-[#050B18]/40 backdrop-blur-md" />
+            <motion.div initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }} className="relative bg-white w-full max-w-xl rounded-[2.5rem] p-10 shadow-2xl overflow-hidden apple-card border-none">
+               <div className="absolute top-0 right-0 w-48 h-48 bg-[#C9A84C]/5 rounded-full translate-x-24 -translate-y-24 blur-3xl" />
+               <button onClick={() => setEditingStaff(null)} className="absolute top-8 right-8 p-3 bg-[#F5F5F7] rounded-full text-gray-400 hover:text-[#050B18] transition-all"><X className="w-6 h-6"/></button>
                
-               <h3 className="text-2xl font-serif font-bold text-luxury-black mb-1">Edit Personnel Info</h3>
-               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-10">Administrative Control Panel</p>
+               <div className="mb-10">
+                  <h3 className="text-2xl font-bold text-[#050B18]">Refine Record</h3>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">Intelligence Override</p>
+               </div>
                
-               <form onSubmit={handleUpdateStaff} className="space-y-6">
+               <form onSubmit={handleUpdateStaff} className="space-y-8">
                   <div className="space-y-2">
-                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Full Name</label>
-                     <input required value={editingStaff.name} onChange={e=>setEditingStaff({...editingStaff, name: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Personnel Name</label>
+                     <input required value={editingStaff.name} onChange={e=>setEditingStaff({...editingStaff, name: e.target.value})} className="input-apple w-full" />
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Role</label>
-                        <input required value={editingStaff.role} onChange={e=>setEditingStaff({...editingStaff, role: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Tactical Role</label>
+                        <input required value={editingStaff.role} onChange={e=>setEditingStaff({...editingStaff, role: e.target.value})} className="input-apple w-full" />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Department</label>
-                        <select value={editingStaff.department} onChange={e=>setEditingStaff({...editingStaff, department: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all cursor-pointer">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Sector</label>
+                        <select value={editingStaff.department} onChange={e=>setEditingStaff({...editingStaff, department: e.target.value})} className="input-apple w-full appearance-none">
                            <option>Administration</option>
                            <option>Front Desk</option>
                            <option>Housekeeping</option>
@@ -379,20 +392,18 @@ const HRSystem = () => {
                   </div>
                   <div className="grid grid-cols-2 gap-6">
                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (DZD)</label>
-                        <input type="number" value={editingStaff.salary || ''} onChange={e=>setEditingStaff({...editingStaff, salary: Number(e.target.value)})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Portfolio (DZD)</label>
+                        <input type="number" value={editingStaff.salary || ''} onChange={e=>setEditingStaff({...editingStaff, salary: Number(e.target.value)})} className="input-apple w-full" />
                      </div>
                      <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Joined Date</label>
-                        <input type="date" value={editingStaff.joined_date ? new Date(editingStaff.joined_date).toISOString().split('T')[0] : ''} onChange={e=>setEditingStaff({...editingStaff, joined_date: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Activation Date</label>
+                        <input type="date" value={editingStaff.joined_date ? new Date(editingStaff.joined_date).toISOString().split('T')[0] : ''} onChange={e=>setEditingStaff({...editingStaff, joined_date: e.target.value})} className="input-apple w-full" />
                      </div>
                   </div>
-                  <div className="space-y-2">
-                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Full Address</label>
-                     <textarea value={editingStaff.address || ''} onChange={e=>setEditingStaff({...editingStaff, address: e.target.value})} className="w-full bg-[#fafafa] border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-all resize-none" rows="2" />
-                  </div>
                   
-                  <GoldButton type="submit" className="w-full py-4 shadow-xl mt-4">SAVE CHANGES</GoldButton>
+                  <button type="submit" className="btn-apple-primary w-full py-4 shadow-xl mt-4">
+                     Commit Changes
+                  </button>
                </form>
             </motion.div>
          </div>
@@ -401,33 +412,33 @@ const HRSystem = () => {
 
       <AnimatePresence>
       {showAddModal && (
-        <div className="fixed inset-0 z-[60] flex items-start justify-end">
-           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddModal(false)} className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
-           <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20">
-              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+        <div className="fixed inset-0 z-[60] flex items-start justify-end p-4">
+           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setShowAddModal(false)} className="absolute inset-0 bg-[#050B18]/40 backdrop-blur-md" />
+           <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="relative w-full max-w-lg h-full apple-card p-0 flex flex-col border-none shadow-2xl">
+              <div className="p-8 border-b border-gray-50 flex justify-between items-center shrink-0 bg-white">
                  <div>
-                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Personnel Recruitment</h3>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Strategic HR Integration</p>
+                    <h3 className="text-2xl font-bold text-[#050B18]">Recruitment Protocol</h3>
+                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em] mt-1">Asset Integration</p>
                  </div>
-                 <button onClick={() => setShowAddModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
+                 <button onClick={() => setShowAddModal(false)} className="p-3 bg-[#F5F5F7] rounded-full text-gray-400 hover:text-[#050B18] transition-all">
                    <X className="w-5 h-5"/>
                  </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-10 no-scrollbar">
-                 <form id="add-staff-form" onSubmit={handleAddStaff} className="space-y-6">
+              <div className="flex-1 overflow-y-auto p-10 custom-scrollbar">
+                 <form id="add-staff-form" onSubmit={handleAddStaff} className="space-y-8">
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Employee Name</label>
-                      <input required value={newStaff.name} onChange={e=>setNewStaff({...newStaff, name: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none transition-all shadow-sm" placeholder="Full Name" />
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Full Identity</label>
+                      <input required value={newStaff.name} onChange={e=>setNewStaff({...newStaff, name: e.target.value})} type="text" className="input-apple w-full" placeholder="Executive Name" />
                     </div>
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Target Role</label>
-                        <input required placeholder="e.g. Lead Concierge" type="text" value={newStaff.role} onChange={e=>setNewStaff({...newStaff, role: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Deployment Role</label>
+                        <input required placeholder="e.g. Portfolio Manager" type="text" value={newStaff.role} onChange={e=>setNewStaff({...newStaff, role: e.target.value})} className="input-apple w-full" />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Department</label>
-                        <select value={newStaff.department} onChange={e=>setNewStaff({...newStaff, department: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm cursor-pointer appearance-none">
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Sector</label>
+                        <select value={newStaff.department} onChange={e=>setNewStaff({...newStaff, department: e.target.value})} className="input-apple w-full appearance-none">
                           <option>Administration</option>
                           <option>Front Desk</option>
                           <option>Housekeeping</option>
@@ -438,29 +449,25 @@ const HRSystem = () => {
                       </div>
                     </div>
                     <div className="space-y-2">
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Email Interface</label>
-                      <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" placeholder="user@goldenhills.dz" />
+                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Secure Channel (Email)</label>
+                      <input required type="email" value={newStaff.email} onChange={e=>setNewStaff({...newStaff, email: e.target.value})} className="input-apple w-full uppercase tracking-tighter font-bold" placeholder="user@goldenhills.dz" />
                     </div>
                     <div className="grid grid-cols-2 gap-6">
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary (DZD)</label>
-                        <input type="number" value={newStaff.salary} onChange={e=>setNewStaff({...newStaff, salary: Number(e.target.value)})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" placeholder="250000" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Salary Allocation (DZD)</label>
+                        <input type="number" value={newStaff.salary} onChange={e=>setNewStaff({...newStaff, salary: Number(e.target.value)})} className="input-apple w-full" placeholder="250000" />
                       </div>
                       <div className="space-y-2">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Joined Date</label>
-                        <input type="date" value={newStaff.joined_date} onChange={e=>setNewStaff({...newStaff, joined_date: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm" />
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Sync Date</label>
+                        <input type="date" value={newStaff.joined_date} onChange={e=>setNewStaff({...newStaff, joined_date: e.target.value})} className="input-apple w-full" />
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Address</label>
-                       <textarea value={newStaff.address} onChange={e=>setNewStaff({...newStaff, address: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-5 text-sm font-bold focus:border-luxury-gold outline-none shadow-sm resize-none" rows="2" placeholder="Street, City..." />
                     </div>
                  </form>
               </div>
-              <div className="p-10 bg-white border-t border-gray-100 shrink-0">
-                 <GoldButton form="add-staff-form" type="submit" className="w-full py-5 shadow-[0_20px_50px_rgba(212,175,55,0.2)] text-xs font-bold flex items-center justify-center gap-3">
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><UserPlus className="w-5 h-5" /> ONBOARD PERSONNEL</>}
-                 </GoldButton>
+              <div className="p-10 border-t border-gray-50 bg-white shrink-0">
+                 <button form="add-staff-form" type="submit" className="btn-apple-primary w-full py-4.5 flex items-center justify-center gap-3">
+                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><UserPlus className="w-5 h-5" /> Activate Asset</>}
+                 </button>
               </div>
            </motion.div>
         </div>
@@ -469,14 +476,16 @@ const HRSystem = () => {
 
       <AnimatePresence>
       {permissionsModal.show && (
-         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }}>
-               <GlassCard className="bg-white w-full max-w-md p-10 relative shadow-2xl rounded-[3rem]">
-                  <button onClick={() => setPermissionsModal({show:false, staffId:null, permissions:[]})} className="absolute top-8 right-8 text-gray-400 hover:text-black hover:bg-gray-50 p-2 rounded-full transition-all">
+         <div className="fixed inset-0 bg-[#050B18]/40 backdrop-blur-md z-[60] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="w-full max-w-md">
+               <div className="apple-card p-10 relative bg-white border-none shadow-2xl">
+                  <button onClick={() => setPermissionsModal({show:false, staffId:null, permissions:[]})} className="absolute top-8 right-8 p-3 bg-[#F5F5F7] rounded-full text-gray-400 hover:text-[#050B18] transition-all">
                     <X className="w-6 h-6"/>
                   </button>
-                  <h3 className="text-2xl font-bold font-serif text-luxury-black mb-1">Access Control</h3>
-                  <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mb-10">System Level Permissions</p>
+                  <div className="mb-10">
+                     <h3 className="text-2xl font-bold text-[#050B18]">Access Control</h3>
+                     <p className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.2em] mt-1">System Authorization</p>
+                  </div>
                   
                   <div className="space-y-3 mb-10">
                      {ALL_MODULES.map(module => {
@@ -485,28 +494,27 @@ const HRSystem = () => {
                            <div 
                               key={module.id} 
                               onClick={() => togglePermission(module.id)}
-                              className={`flex justify-between items-center p-5 rounded-[1.5rem] cursor-pointer border transition-all ${
-                                hasAccess ? 'border-luxury-gold bg-luxury-gold/5 shadow-sm shadow-luxury-gold/10' : 'border-gray-50 hover:bg-gray-50'
+                              className={`flex justify-between items-center p-5 rounded-2xl cursor-pointer border-2 transition-all ${
+                                hasAccess ? 'border-[#C9A84C] bg-[#C9A84C]/5' : 'border-transparent bg-[#F5F5F7] hover:bg-gray-100'
                               }`}
                            >
-                              <span className={`font-bold text-sm ${hasAccess ? 'text-luxury-gold' : 'text-gray-400'}`}>{module.label}</span>
-                              <div className={`w-12 h-7 rounded-full p-1.5 transition-colors ${hasAccess ? 'bg-luxury-gold' : 'bg-gray-100'}`}>
-                                 <div className={`w-4 h-4 bg-white rounded-full transition-transform shadow-md ${hasAccess ? 'translate-x-5' : 'translate-x-0'}`} />
+                              <span className={`font-bold text-xs uppercase tracking-tight ${hasAccess ? 'text-[#C9A84C]' : 'text-gray-400'}`}>{module.label}</span>
+                              <div className={`w-10 h-6 rounded-full p-1 transition-colors ${hasAccess ? 'bg-[#C9A84C]' : 'bg-gray-200'}`}>
+                                 <div className={`w-4 h-4 bg-white rounded-full transition-transform ${hasAccess ? 'translate-x-4' : 'translate-x-0'}`} />
                               </div>
                            </div>
                         );
                      })}
                   </div>
 
-                  <GoldButton onClick={savePermissions} className="w-full py-4 shadow-xl text-xs font-bold">
-                     {loading ? <Loader2 className="w-4 h-4 animate-spin mx-auto" /> : 'CONFIRM ACCESS RIGHTS'}
-                  </GoldButton>
-               </GlassCard>
+                  <button onClick={savePermissions} className="btn-apple-primary w-full py-4 flex items-center justify-center gap-2">
+                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <span>Authorize Access Levels</span>}
+                  </button>
+               </div>
             </motion.div>
          </div>
       )}
       </AnimatePresence>
-
     </div>
   );
 };

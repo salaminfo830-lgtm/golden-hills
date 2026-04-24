@@ -4,9 +4,9 @@ import GlassCard from './GlassCard';
 
 const BookingSummary = ({ room, nights, guests, checkIn, checkOut, isMobileExpanded, setIsMobileExpanded, hasSpaBenefit }) => {
   const basePrice = room.price * nights;
-  const serviceFee = basePrice * 0.1;
-  const discount = basePrice * 0.05;
-  const total = basePrice + serviceFee - discount;
+  const taxes = basePrice * 0.10; // 10% Luxury Tax
+  const serviceFee = basePrice * 0.05; // 5% Service Protocol
+  const total = basePrice + taxes + serviceFee;
 
   const formatPrice = (price) => {
     return new Intl.NumberFormat('fr-DZ', { style: 'currency', currency: 'DZD', maximumFractionDigits: 0 }).format(price);
@@ -24,7 +24,7 @@ const BookingSummary = ({ room, nights, guests, checkIn, checkOut, isMobileExpan
             <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover" alt="Suite" />
           </div>
           <div className="text-left">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Stay</p>
+            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Investment</p>
             <p className="text-lg font-serif font-bold text-luxury-gold">{formatPrice(total)}</p>
           </div>
         </div>
@@ -72,12 +72,12 @@ const BookingSummary = ({ room, nights, guests, checkIn, checkOut, isMobileExpan
                 <span className="font-bold text-luxury-black">{formatPrice(basePrice)}</span>
               </div>
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400 font-medium flex items-center gap-2">Gilded Service Protocol (10%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
-                <span className="font-bold text-luxury-black">{formatPrice(serviceFee)}</span>
+                <span className="text-gray-400 font-medium flex items-center gap-2">Luxury Tax (10%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
+                <span className="font-bold text-luxury-black">{formatPrice(taxes)}</span>
               </div>
-              <div className="flex justify-between items-center text-sm text-green-600 bg-green-50/50 p-4 rounded-2xl border border-green-100">
-                <span className="font-bold uppercase tracking-widest text-xs">GHE Web Privilege</span>
-                <span className="font-bold">- {formatPrice(discount)}</span>
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-400 font-medium flex items-center gap-2">Gilded Service Protocol (5%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
+                <span className="font-bold text-luxury-black">{formatPrice(serviceFee)}</span>
               </div>
 
               {hasSpaBenefit && (

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Plus, ChevronLeft, ChevronRight, User, Star, Loader2, X, Trash2 } from 'lucide-react';
+import { Plus, ChevronLeft, ChevronRight, User as UserIcon, Star, Loader2, X, Trash2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
@@ -21,6 +21,7 @@ const ReservationsSystem = () => {
 
   useEffect(() => {
     fetchReservations();
+    runIntegrityCheck(true);
 
     const subscription = supabase
       .channel('public:Reservation')
@@ -154,42 +155,54 @@ const ReservationsSystem = () => {
   };
 
   return (
-    <div className="space-y-8 font-sans relative">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <div className="space-y-10 font-apple">
+      {/* Apple-Style Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-8 border-b border-gray-100">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight">Reservation Hub</h2>
-          <p className="text-gray-400 font-medium">Global booking synchronization</p>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C9A84C]">Reservations</span>
+            <span className="text-gray-300">•</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Inventory Sync</span>
+          </div>
+          <h2 className="text-3xl font-bold text-[#050B18] tracking-tight">Booking Management</h2>
         </div>
-        <GoldButton onClick={() => setShowAddModal(true)} className="w-full md:w-auto flex items-center justify-center gap-2 px-8 py-4 md:py-3">
-          <Plus className="w-4 h-4" /> NEW BOOKING
-        </GoldButton>
+        <button 
+          onClick={() => setShowAddModal(true)} 
+          className="btn-apple-primary flex items-center gap-2 px-8 py-3.5"
+        >
+          <Plus className="w-4 h-4" /> <span>New Reservation</span>
+        </button>
       </div>
 
-      {/* Calendar Strip Mockup */}
-      <GlassCard className="bg-white border-gray-100 p-6 md:p-8">
+      {/* Calendar Strip */}
+      <div className="apple-card p-8">
          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
-            <div className="flex items-center gap-6 w-full md:w-auto">
-               <h3 className="text-xl font-bold font-serif">October 2026</h3>
+            <div className="flex items-center gap-4">
+               <h3 className="text-xl font-bold text-[#050B18]">October 2026</h3>
                <div className="flex gap-2">
-                  <button className="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"><ChevronLeft className="w-4 h-4" /></button>
-                  <button className="p-2.5 bg-gray-50 hover:bg-gray-100 rounded-xl transition-colors"><ChevronRight className="w-4 h-4" /></button>
+                  <button className="p-2 bg-[#F5F5F7] hover:bg-gray-200 rounded-lg transition-all"><ChevronLeft className="w-4 h-4" /></button>
+                  <button className="p-2 bg-[#F5F5F7] hover:bg-gray-200 rounded-lg transition-all"><ChevronRight className="w-4 h-4" /></button>
                </div>
             </div>
-            <div className="flex flex-wrap gap-4">
-               <span className="flex items-center gap-2 text-[10px] uppercase font-bold text-gray-400"><div className="w-2.5 h-2.5 rounded-full bg-luxury-gold shadow-sm" /> Check-in</span>
-               <span className="flex items-center gap-2 text-[10px] uppercase font-bold text-gray-400"><div className="w-2.5 h-2.5 rounded-full bg-blue-400 shadow-sm" /> Stay</span>
-               <span className="flex items-center gap-2 text-[10px] uppercase font-bold text-gray-400"><div className="w-2.5 h-2.5 rounded-full bg-orange-400 shadow-sm" /> Check-out</span>
+            <div className="flex gap-6">
+               <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-[#C9A84C]" />
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Check-in</span>
+               </div>
+               <div className="flex items-center gap-2">
+                  <div className="w-2.5 h-2.5 rounded-full bg-blue-500" />
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Stay</span>
+               </div>
             </div>
          </div>
          
-         <div className="grid grid-cols-7 gap-2 md:gap-4 mb-4 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-gray-300">
+         <div className="grid grid-cols-7 gap-4 mb-4 text-center text-[10px] font-bold uppercase tracking-widest text-gray-300">
             {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(d => <span key={d}>{d}</span>)}
          </div>
-         <div className="grid grid-cols-7 gap-1.5 md:gap-4">
+         <div className="grid grid-cols-7 gap-3">
             {Array.from({ length: 35 }).map((_, i) => {
                const day = i - 3;
                const isCurrent = day === 12;
-               // Filter reservations for this day
                const todayBooking = reservations.find(res => {
                  const start = new Date(res.start_date).getDate();
                  const end = new Date(res.end_date).getDate();
@@ -197,24 +210,20 @@ const ReservationsSystem = () => {
                });
 
                return (
-                  <div key={i} className={`aspect-square md:h-28 rounded-xl md:rounded-2xl border p-1 md:p-2 transition-all relative group cursor-pointer ${
-                    day < 1 || day > 31 ? 'opacity-0' : 
-                    isCurrent ? 'bg-luxury-gold/5 border-luxury-gold/30' : 'bg-white border-gray-100 hover:border-luxury-gold/30'
+                  <div key={i} className={`aspect-square rounded-xl border p-2 transition-all relative group cursor-pointer ${
+                    day < 1 || day > 31 ? 'opacity-0 pointer-events-none' : 
+                    isCurrent ? 'bg-[#C9A84C]/5 border-[#C9A84C]/30' : 'bg-white border-gray-100 hover:border-[#C9A84C]/30'
                   }`}>
                      {day > 0 && day <= 31 && (
                        <>
-                         <span className={`text-[10px] md:text-sm font-bold ${isCurrent ? 'text-luxury-gold' : 'text-gray-400'}`}>{day}</span>
+                         <span className={`text-[11px] font-bold ${isCurrent ? 'text-[#C9A84C]' : 'text-gray-400'}`}>{day}</span>
                          {todayBooking && (
-                           <motion.div 
-                             initial={{ opacity: 0 }}
-                             animate={{ opacity: 1 }}
-                             className={`mt-1 md:mt-2 h-1.5 md:h-10 rounded-full md:rounded-lg ${new Date(todayBooking.start_date).getDate() === day ? 'bg-luxury-gold' : 'bg-blue-400'} p-2 hidden md:block text-[8px] font-bold text-white overflow-hidden leading-tight`}
-                           >
-                              {new Date(todayBooking.start_date).getDate() === day ? `IN: ${todayBooking.guest_name.split(' ')[1] || todayBooking.guest_name}` : todayBooking.room_id ? `ROOM ${todayBooking.room_id}` : 'STAY'}
-                           </motion.div>
+                           <div className={`mt-1.5 h-1 md:h-8 rounded-md ${new Date(todayBooking.start_date).getDate() === day ? 'bg-[#C9A84C]' : 'bg-blue-500'} p-1.5 hidden md:block text-[8px] font-bold text-white overflow-hidden`}>
+                              {new Date(todayBooking.start_date).getDate() === day ? 'Arrival' : 'Stay'}
+                           </div>
                          )}
                          {todayBooking && (
-                           <div className={`absolute bottom-1 md:hidden left-1/2 -translate-x-1/2 w-1 h-1 rounded-full ${new Date(todayBooking.start_date).getDate() === day ? 'bg-luxury-gold' : 'bg-blue-400'}`} />
+                           <div className={`absolute bottom-2 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full md:hidden ${new Date(todayBooking.start_date).getDate() === day ? 'bg-[#C9A84C]' : 'bg-blue-500'}`} />
                          )}
                        </>
                      )}
@@ -222,161 +231,195 @@ const ReservationsSystem = () => {
                );
             })}
          </div>
-      </GlassCard>
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
          <div className="lg:col-span-2">
-            <GlassCard className="bg-white border-gray-100 p-0 overflow-hidden min-h-[400px]">
+            <div className="apple-card p-0 overflow-hidden">
                <div className="p-8 border-b border-gray-50 flex justify-between items-center">
-                  <h3 className="font-bold font-serif text-lg">Active Requests</h3>
-                  <div onClick={fetchReservations} className="flex gap-2 text-[10px] uppercase font-bold text-gray-400 cursor-pointer hover:text-luxury-gold transition-all">
-                     Syncing Real-time <Loader2 className={`w-4 h-4 translate-y-[1px] ${loading ? 'animate-spin' : ''}`} />
+                  <h3 className="text-lg font-bold text-[#050B18]">Active Bookings</h3>
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                     <Loader2 className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+                     <span>Live Feed</span>
                   </div>
                </div>
-               <div className="divide-y divide-gray-50">
-                  {reservations.length === 0 ? (
-                    <div className="p-20 text-center">
-                       <p className="text-gray-400 text-sm font-medium italic">No active reservations in the system.</p>
-                    </div>
-                  ) : reservations.map((req, i) => (
-                    <div key={i} className="p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:bg-gray-50/50 transition-colors group">
-                       <div className="flex gap-4 md:gap-6 items-center w-full md:w-auto">
-                          <div className="w-12 h-12 bg-gray-50 group-hover:bg-white rounded-2xl flex items-center justify-center text-gray-400 transition-colors">
-                             <User className="w-6 h-6" />
-                          </div>
-                          <div className="flex-1">
-                             <h4 className="font-bold text-gray-800">{req.guest_name}</h4>
-                             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{req.guests_count} Guests • {req.nights} Nights</p>
-                          </div>
-                          <div className="hidden md:block pl-6 border-l border-gray-100 uppercase tracking-[0.2em] text-[10px] font-bold text-gray-300">
-                             <p>{req.room_type}</p>
-                             <p className="text-luxury-gold">{new Date(req.start_date).toLocaleDateString()}</p>
-                          </div>
-                       </div>
-                       <div className="flex flex-col items-end gap-2">
-                          <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border transition-all ${
-                            req.status === 'Confirmed' ? 'bg-green-50 text-green-600 border-green-100' : 
-                            req.status === 'No-Show' ? 'bg-red-50 text-red-600 border-red-100' :
-                            'bg-white border-gray-100 text-gray-400'
-                          }`}>
-                             {req.status}
-                          </span>
-                          <span className={`text-[9px] font-bold uppercase tracking-widest ${
-                            req.payment_status === 'Paid' ? 'text-green-500' : 'text-orange-400'
-                          }`}>
-                             {req.payment_status || 'Unpaid'} • {req.payment_method || 'N/A'}
-                          </span>
-                       </div>
-                       <div className="flex gap-2">
-                          <GoldButton onClick={() => handleProcessStatus(req.id, req.status)} outline className="px-4 py-2 text-[10px]">PROCESS</GoldButton>
-                          {req.status === 'Confirmed' && req.payment_method === 'Pay at Hotel' && (
-                            <button 
-                              onClick={() => handleMarkNoShow(req.id)}
-                              className="px-4 py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-bold hover:bg-red-500 hover:text-white transition-all"
-                            >
-                              NO-SHOW
-                            </button>
-                          )}
-                       </div>
-                       <button onClick={() => handleDelete(req.id)} className="text-gray-300 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity"><Trash2 className="w-4 h-4"/></button>
-                    </div>
-                  ))}
+               
+               <div className="p-6">
+                  <table className="table-apple">
+                    <thead>
+                      <tr>
+                        <th>Guest</th>
+                        <th>Stay Details</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {reservations.length === 0 ? (
+                        <tr>
+                          <td colSpan="4" className="text-center py-20 text-gray-400 font-medium italic">No active reservations.</td>
+                        </tr>
+                      ) : reservations.map((req, i) => (
+                        <tr key={i} className="group">
+                          <td>
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 rounded-xl bg-[#F5F5F7] flex items-center justify-center text-gray-400 group-hover:bg-white transition-all">
+                                <UserIcon className="w-5 h-5" />
+                              </div>
+                              <div>
+                                <p className="font-bold text-sm text-[#050B18]">{req.guest_name}</p>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-widest">{req.source}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td>
+                            <p className="text-xs font-bold text-gray-600">{req.room_type}</p>
+                            <p className="text-[10px] text-[#C9A84C] font-bold">{new Date(req.start_date).toLocaleDateString()} — {req.nights} Nights</p>
+                          </td>
+                          <td>
+                            <div className="flex flex-col gap-1.5">
+                              <span className={`badge-apple w-fit ${
+                                req.status === 'Confirmed' ? 'bg-green-50 text-green-600 border-green-100' : 
+                                req.status === 'No-Show' ? 'bg-red-50 text-red-600 border-red-100' :
+                                'bg-[#F5F5F7] border-transparent text-gray-500'
+                              }`}>
+                                {req.status}
+                              </span>
+                              <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                                {req.payment_status || 'Pending'} • {req.payment_method}
+                              </span>
+                            </div>
+                          </td>
+                          <td>
+                            <div className="flex items-center gap-2">
+                              <button 
+                                onClick={() => handleProcessStatus(req.id, req.status)}
+                                className="p-2 bg-[#F5F5F7] hover:bg-[#C9A84C]/10 hover:text-[#C9A84C] rounded-lg transition-all"
+                                title="Process Status"
+                              >
+                                <Star className="w-4 h-4" />
+                              </button>
+                              {req.status === 'Confirmed' && (
+                                <button 
+                                  onClick={() => handleMarkNoShow(req.id)}
+                                  className="p-2 bg-red-50 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all"
+                                  title="Mark No-Show"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
+                              )}
+                              <button 
+                                onClick={() => handleDelete(req.id)} 
+                                className="p-2 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"
+                              >
+                                <Trash2 className="w-4 h-4"/>
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                </div>
-            </GlassCard>
+            </div>
          </div>
 
          <div className="space-y-8">
-            <GlassCard className="bg-white border-gray-100 p-8 shadow-sm">
-               <h3 className="text-xl font-bold mb-8">Booking Sources</h3>
+            <div className="apple-card p-8">
+               <h3 className="text-lg font-bold text-[#050B18] mb-8">Booking Sources</h3>
                <div className="space-y-8">
                   {[
-                    { label: 'Direct Site', val: '100%', color: 'bg-luxury-gold' },
+                    { label: 'Direct Site', val: '100%', color: 'bg-[#C9A84C]' },
                     { label: 'Booking.com', val: '0%', color: 'bg-blue-600' },
                     { label: 'Expedia', val: '0%', color: 'bg-orange-500' },
                   ].map((item, i) => (
-                    <div key={i} className="flex flex-col gap-2">
-                       <div className="flex justify-between text-xs font-bold uppercase tracking-widest mb-1">
-                          <span>{item.label}</span>
-                          <span className="text-luxury-gold">{item.val}</span>
+                    <div key={i} className="space-y-2">
+                       <div className="flex justify-between items-end">
+                          <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{item.label}</span>
+                          <span className="text-xs font-bold text-[#C9A84C]">{item.val}</span>
                        </div>
-                       <div className="w-full h-1 bg-gray-50 rounded-full overflow-hidden">
+                       <div className="w-full h-1.5 bg-[#F5F5F7] rounded-full overflow-hidden">
                           <motion.div 
                              initial={{ width: 0 }}
                              animate={{ width: item.val }}
-                             transition={{ duration: 1 }}
+                             transition={{ duration: 1.5, ease: "easeOut" }}
                              className={`h-full ${item.color}`}
                           />
                        </div>
                     </div>
                   ))}
                </div>
-            </GlassCard>
+            </div>
 
-            <GlassCard className="gold-gradient text-white p-8">
-               <div className="flex items-center gap-3 mb-6 font-bold">
-                  <Star className="text-white" />
-                  <h3>Occupancy Forecast</h3>
+            <div className="apple-card bg-[#050B18] text-white p-8 relative overflow-hidden">
+               <div className="absolute top-0 right-0 w-32 h-32 bg-[#C9A84C]/10 rounded-full blur-[60px] -translate-y-16 translate-x-16" />
+               <div className="flex items-center gap-3 mb-4">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-[#C9A84C]">
+                    <Star className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-lg font-bold">Occupancy Forecast</h3>
                </div>
-               <p className="text-xs opacity-80 leading-relaxed mb-6">
-                  Based on historical data for Setif region, we expect <span className="font-bold underline">100% occupancy</span> during next week&apos;s festival season.
+               <p className="text-xs text-white/50 leading-relaxed mb-8">
+                  Expected <span className="text-[#C9A84C] font-bold">100% capacity</span> for the upcoming festival season in the Setif region.
                </p>
-               <GoldButton 
-                 onClick={() => console.log("Analyze Trends clicked")}
-                 outline 
-                 className="w-full border-white/40 text-white hover:bg-white hover:text-luxury-gold"
-               >
-                 ANALYZE TRENDS
-               </GoldButton>
-            </GlassCard>
+               <button className="w-full py-3.5 rounded-xl border border-white/10 text-white/40 text-[10px] font-bold uppercase tracking-widest hover:bg-[#C9A84C] hover:text-white hover:border-[#C9A84C] transition-all">
+                 Analyze Trends
+               </button>
+            </div>
          </div>
       </div>
 
+      <AnimatePresence>
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-           <GlassCard className="bg-white w-full max-w-md p-6 relative">
-              <button onClick={() => setShowAddModal(false)} className="absolute top-4 right-4 text-gray-400 hover:text-black">
+        <div className="fixed inset-0 bg-[#050B18]/40 backdrop-blur-md z-50 flex items-center justify-center p-4">
+           <motion.div 
+             initial={{ opacity: 0, scale: 0.95 }}
+             animate={{ opacity: 1, scale: 1 }}
+             className="apple-card w-full max-w-md p-8 relative"
+           >
+              <button onClick={() => setShowAddModal(false)} className="absolute top-6 right-6 text-gray-400 hover:text-[#050B18] transition-all">
                 <X className="w-5 h-5"/>
               </button>
-              <h3 className="text-xl font-bold font-serif mb-6">New Reservation</h3>
-              <form onSubmit={handleCreateBooking} className="space-y-4">
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Guest Name</label>
-                  <input required value={newRes.guest_name} onChange={e=>setNewRes({...newRes, guest_name: e.target.value})} type="text" className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+              <h3 className="text-2xl font-bold text-[#050B18] mb-8">New Reservation</h3>
+              <form onSubmit={handleCreateBooking} className="space-y-6">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Guest Full Name</label>
+                  <input required value={newRes.guest_name} onChange={e=>setNewRes({...newRes, guest_name: e.target.value})} type="text" className="input-apple w-full" placeholder="e.g. John Doe" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Guests</label>
-                    <input required type="number" value={newRes.guests_count} onChange={e=>setNewRes({...newRes, guests_count: Number(e.target.value)})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Guests</label>
+                    <input required type="number" value={newRes.guests_count} onChange={e=>setNewRes({...newRes, guests_count: Number(e.target.value)})} className="input-apple w-full" />
                   </div>
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Nights</label>
-                    <input required type="number" value={newRes.nights} onChange={e=>setNewRes({...newRes, nights: Number(e.target.value)})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none" />
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Nights</label>
+                    <input required type="number" value={newRes.nights} onChange={e=>setNewRes({...newRes, nights: Number(e.target.value)})} className="input-apple w-full" />
                   </div>
                 </div>
-                <div>
-                  <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Room Type</label>
-                  <select value={newRes.room_type} onChange={e=>setNewRes({...newRes, room_type: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Suite Selection</label>
+                  <select value={newRes.room_type} onChange={e=>setNewRes({...newRes, room_type: e.target.value})} className="input-apple w-full appearance-none">
                     <option>Heritage Deluxe</option>
                     <option>Royal Gold Suite</option>
                     <option>Presidential Panorama</option>
                   </select>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Check-in</label>
-                    <input required type="date" value={newRes.start_date} onChange={e=>setNewRes({...newRes, start_date: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none text-xs" />
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Arrival</label>
+                    <input required type="date" value={newRes.start_date} onChange={e=>setNewRes({...newRes, start_date: e.target.value})} className="input-apple w-full text-xs" />
                   </div>
-                  <div>
-                    <label className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-1 block">Check-out</label>
-                    <input required type="date" value={newRes.end_date} onChange={e=>setNewRes({...newRes, end_date: e.target.value})} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2 outline-none text-xs" />
+                  <div className="space-y-2">
+                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Departure</label>
+                    <input required type="date" value={newRes.end_date} onChange={e=>setNewRes({...newRes, end_date: e.target.value})} className="input-apple w-full text-xs" />
                   </div>
                 </div>
-                <GoldButton type="submit" className="w-full mt-6 py-3">CONFIRM BOOKING</GoldButton>
+                <button type="submit" className="btn-apple-primary w-full mt-4">Confirm Reservation</button>
               </form>
-           </GlassCard>
+           </motion.div>
         </div>
       )}
-
+      </AnimatePresence>
     </div>
   );
 };

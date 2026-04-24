@@ -103,35 +103,49 @@ const KitchenSystem = () => {
   };
 
   return (
-    <div className="space-y-8 font-sans relative">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <div className="space-y-12 font-apple">
+      {/* Elite Culinary Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pb-10 border-b border-gray-100">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight">Kitchen Operations</h2>
-          <p className="text-gray-400 font-medium tracking-wide">Live order flow & pantry synchronization</p>
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A84C]">Culinary</span>
+            <span className="text-gray-300">•</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">Operations Control</span>
+          </div>
+          <h2 className="text-3xl md:text-5xl font-bold text-[#050B18] tracking-tighter">Kitchen Intelligence</h2>
         </div>
-        <div className="flex gap-4 w-full md:w-auto">
-           <GoldButton outline onClick={() => setShowStockModal(true)} className="flex-1 md:flex-none py-3 px-6 text-[10px]"><Plus className="w-4 h-4 inline mr-1" /> STOCK</GoldButton>
-           <GoldButton onClick={() => setShowOrderModal(true)} className="flex-1 md:flex-none py-3 px-8 text-[10px] flex items-center justify-center gap-2">
-             <Inbox className="w-4 h-4" /> NEW ORDER
-           </GoldButton>
+        <div className="flex flex-col sm:flex-row gap-4 w-full lg:w-auto">
+           <button 
+             onClick={() => setShowStockModal(true)} 
+             className="btn-apple-secondary flex items-center justify-center gap-3 px-8 py-4 shadow-sm"
+           >
+             <Plus className="w-5 h-5" /> <span className="text-[11px] uppercase tracking-widest font-bold">Stock Asset</span>
+           </button>
+           <button 
+             onClick={() => setShowOrderModal(true)} 
+             className="btn-apple-primary flex items-center justify-center gap-3 px-10 py-4 shadow-xl shadow-[#050B18]/10"
+           >
+             <Inbox className="w-5 h-5" /> <span className="text-[11px] uppercase tracking-widest font-bold">Transmit Order</span>
+           </button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
          {/* Live Orders Column */}
-         <div className="lg:col-span-2 space-y-6">
+         <div className="lg:col-span-2 space-y-10">
             <div className="flex items-center justify-between px-2">
-               <h3 className="font-bold font-serif text-lg flex items-center gap-2">
-                  <Inbox className="w-5 h-5 text-luxury-gold" /> Active Queue
+               <h3 className="text-xl font-bold text-[#050B18] flex items-center gap-3 tracking-tight">
+                  <Inbox className="w-6 h-6 text-[#C9A84C]" /> Active Dispatch Queue
                </h3>
-               {loading && <Loader2 className="w-4 h-4 text-luxury-gold animate-spin" />}
+               {loading && <Loader2 className="w-5 h-5 text-[#C9A84C] animate-spin" />}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                <AnimatePresence mode="popLayout">
                   {activeOrders.length === 0 ? (
-                    <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-dashed border-gray-200">
-                       <p className="text-gray-400 font-medium">Kitchen is clear. No pending orders.</p>
+                    <div className="col-span-full py-32 text-center apple-card border-none shadow-sm flex flex-col items-center bg-white/50 backdrop-blur-sm">
+                       <Inbox className="w-16 h-16 text-gray-200 mb-6" />
+                       <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-gray-400">Quiet Hours. No pending tickets.</p>
                     </div>
                   ) : activeOrders.map((order) => (
                     <motion.div
@@ -141,35 +155,44 @@ const KitchenSystem = () => {
                       exit={{ opacity: 0, scale: 0.95 }}
                       key={order.id}
                     >
-                       <GlassCard className="bg-white border-gray-100 p-8 hover:border-luxury-gold/30 transition-all">
-                          <div className="flex justify-between items-start mb-6">
+                       <div className="apple-card p-8 group hover:-translate-y-1 hover:shadow-2xl hover:shadow-[#050B18]/5 border-none shadow-xl shadow-gray-100 transition-all duration-500 bg-white">
+                          <div className="flex justify-between items-start mb-8">
                              <div>
-                                <span className={`text-[8px] font-bold uppercase tracking-widest px-2 py-1 rounded-md border ${getPriorityColor(order.priority)}`}>
-                                   {order.priority} Priority
+                                <span className={`badge-apple py-1.5 px-3 ${
+                                  order.priority === 'High' ? 'bg-red-50 text-red-500 border-red-100' :
+                                  order.priority === 'Normal' ? 'bg-blue-50 text-blue-500 border-blue-100' : 'bg-gray-50 text-gray-400 border-gray-100'
+                                }`}>
+                                   {order.priority} Protocol
                                 </span>
-                                <h4 className="text-2xl font-serif font-bold mt-3">Table {order.table_id}</h4>
+                                <h4 className="text-3xl font-bold text-[#050B18] mt-4 tracking-tighter">Table {order.table_id}</h4>
                              </div>
-                             <div className="p-3 bg-gray-50 rounded-2xl text-luxury-gold">
-                                <Timer className="w-5 h-5" />
+                             <div className={`w-14 h-14 rounded-[1.2rem] flex items-center justify-center shadow-sm ${order.priority === 'High' ? 'bg-red-50 text-red-500' : 'bg-[#F5F5F7] text-[#C9A84C]'}`}>
+                                <Timer className="w-6 h-6" />
                              </div>
                           </div>
 
-                          <div className="space-y-3 mb-8">
+                          <div className="space-y-4 mb-10">
                              {Array.isArray(order.items) && order.items.map((item, idx) => (
-                               <div key={idx} className="flex justify-between items-center text-sm">
-                                  <span className="font-medium text-gray-700">{item}</span>
-                                  <CheckCircle2 className="w-4 h-4 text-gray-100 hover:text-green-500 cursor-pointer transition-colors" />
+                               <div key={idx} className="flex justify-between items-center group/item p-4 bg-[#F5F5F7] rounded-2xl hover:bg-[#050B18] transition-all duration-300">
+                                  <span className="font-bold text-sm text-[#050B18] group-hover/item:text-white transition-colors">{item}</span>
+                                  <CheckCircle2 className="w-5 h-5 text-gray-300 group-hover/item:text-green-500 cursor-pointer transition-colors" />
                                 </div>
                              ))}
                           </div>
 
                           <div className="flex justify-between items-center pt-6 border-t border-gray-50">
-                             <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                                <Clock className="w-3.5 h-3.5" /> {new Date(order.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                             </span>
-                             <button onClick={() => handleMarkReady(order.id)} className="text-[10px] font-bold text-luxury-gold uppercase tracking-tighter hover:underline">Mark Ready</button>
+                             <div className="flex items-center gap-2 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em]">
+                                <Clock className="w-4 h-4" />
+                                {new Date(order.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                             </div>
+                             <button 
+                               onClick={() => handleMarkReady(order.id)} 
+                               className="text-[11px] font-bold text-white bg-[#C9A84C] hover:bg-[#050B18] px-5 py-2.5 rounded-xl uppercase tracking-widest transition-all shadow-md shadow-[#C9A84C]/20"
+                             >
+                               Mark Ready
+                             </button>
                           </div>
-                       </GlassCard>
+                       </div>
                     </motion.div>
                   ))}
                </AnimatePresence>
@@ -177,163 +200,179 @@ const KitchenSystem = () => {
          </div>
 
          {/* Stock & Alerts Column */}
-         <div className="space-y-8">
-            <GlassCard className="bg-white border-gray-100 p-8 shadow-sm">
-               <h3 className="text-xl font-bold mb-8 flex items-center gap-2">
-                  <Flame className="w-5 h-5 text-orange-500" /> Stock Monitor
+         <div className="space-y-10">
+            <div className="apple-card p-10 border-none shadow-xl shadow-gray-100">
+               <h3 className="text-xl font-bold text-[#050B18] mb-10 flex items-center gap-3 tracking-tight">
+                  <Flame className="w-6 h-6 text-orange-500" /> Pantry Inventory
                </h3>
-               <div className="space-y-6">
-                  {stockAlerts.slice(0,6).map((item, i) => (
-                    <div key={i} className="flex items-center justify-between p-4 bg-gray-50/50 rounded-2xl border border-gray-100 group relative">
-                       <div className="flex items-center gap-4">
-                          <div className={`w-2 h-2 rounded-full ${
-                            item.status === 'Critical' ? 'bg-red-500 animate-pulse' :
-                            item.status === 'Low' ? 'bg-orange-500' : 'bg-green-500'
+               <div className="space-y-5">
+                  {stockAlerts.slice(0,8).map((item, i) => (
+                    <div key={i} className="flex items-center justify-between p-5 bg-[#F5F5F7] rounded-2xl group relative border border-transparent hover:border-gray-200 hover:bg-white hover:shadow-lg transition-all duration-300">
+                       <div className="flex items-center gap-5">
+                          <div className={`w-3 h-3 rounded-full shadow-sm ${
+                            item.status === 'Critical' ? 'bg-red-500 animate-pulse shadow-red-500/50' :
+                            item.status === 'Low' ? 'bg-orange-500 shadow-orange-500/50' : 'bg-green-500 shadow-green-500/50'
                           }`} />
                           <div>
-                             <p className="font-bold text-sm text-gray-800">{item.name}</p>
-                             <p className="text-[10px] text-gray-400 uppercase font-bold tracking-widest">{item.category}</p>
+                             <p className="font-bold text-sm text-[#050B18] tracking-tight">{item.name}</p>
+                             <p className="text-[10px] text-gray-400 font-bold uppercase tracking-[0.2em] mt-0.5">{item.category}</p>
                           </div>
                        </div>
-                       <div className="flex items-center gap-4">
-                         <span className="font-serif font-bold text-luxury-gold">{item.level}</span>
-                         <button onClick={() => handleDeleteStock(item.id)} className="hidden group-hover:block text-red-500 hover:text-red-600"><Trash2 className="w-4 h-4"/></button>
+                       <div className="flex items-center gap-5">
+                         <span className="text-xs font-bold text-[#C9A84C] uppercase tracking-[0.2em]">{item.level}</span>
+                         <button onClick={() => handleDeleteStock(item.id)} className="p-2 text-gray-300 hover:bg-red-50 hover:text-red-500 rounded-xl opacity-0 group-hover:opacity-100 transition-all">
+                            <Trash2 className="w-4 h-4"/>
+                         </button>
                        </div>
                     </div>
                   ))}
                </div>
-               <GoldButton outline onClick={() => setShowStockModal(true)} className="w-full mt-8 py-3 text-[10px]">ADD STOCK ITEM</GoldButton>
-            </GlassCard>
+               <button 
+                 onClick={() => setShowStockModal(true)} 
+                 className="w-full mt-10 py-4 rounded-2xl border-2 border-dashed border-gray-200 text-[11px] font-bold text-gray-400 uppercase tracking-[0.2em] hover:bg-[#F5F5F7] hover:text-[#050B18] hover:border-[#050B18] transition-all"
+               >
+                 Register Stock Asset
+               </button>
+            </div>
 
-            <GlassCard className="gold-gradient text-white p-8">
-               <div className="flex items-center gap-3 mb-6">
-                  <AlertCircle className="text-white" />
-                  <h3 className="font-bold">Hygiene Protocol</h3>
+            <div className="apple-card bg-[#050B18] text-white p-10 border-none relative overflow-hidden shadow-2xl shadow-[#050B18]/20">
+               <div className="absolute top-0 right-0 w-48 h-48 bg-[#C9A84C]/10 rounded-full blur-[60px] -translate-y-16 translate-x-16" />
+               <div className="flex items-center gap-4 mb-8 relative z-10">
+                  <div className="p-3 bg-white/10 rounded-2xl">
+                     <AlertCircle className="w-6 h-6 text-[#C9A84C]" />
+                  </div>
+                  <h3 className="font-bold text-2xl tracking-tighter">Hygiene Safety</h3>
                </div>
-               <p className="text-xs opacity-80 leading-relaxed mb-6">
-                  Next standard health inspection scheduled for <span className="font-bold underline">Friday, Oct 23rd</span>. Please ensure logs are up-to-date.
-               </p>
-                <button 
-                  onClick={() => console.log("Hygiene Checklist clicked")}
-                  className="text-[10px] font-bold uppercase underline"
-                >
-                  View Checklist
-                </button>
-            </GlassCard>
+               <div className="p-6 rounded-2xl bg-white/5 border border-white/10 mb-8 relative z-10">
+                  <p className="text-[11px] text-white/70 leading-loose font-medium uppercase tracking-widest">
+                     Next tactical health audit: <br/>
+                     <span className="text-white font-bold text-sm tracking-tight inline-block mt-2">Friday, Oct 23rd</span>
+                  </p>
+               </div>
+               <button className="w-full py-4 rounded-xl border border-white/20 text-white text-[10px] font-bold uppercase tracking-widest hover:bg-[#C9A84C] hover:border-[#C9A84C] transition-all relative z-10">
+                  Verify Protocol Checklist
+               </button>
+            </div>
          </div>
       </div>
 
+      {/* Order Dispatch Side Panel */}
       <AnimatePresence>
       {showOrderModal && (
-        <div className="fixed inset-0 z-50 flex items-start justify-end">
+        <div className="fixed inset-0 z-50 flex items-start justify-end p-4">
            <motion.div 
              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
              onClick={() => setShowOrderModal(false)} 
-             className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+             className="absolute inset-0 bg-[#050B18]/40 backdrop-blur-md" 
            />
            <motion.div 
              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-             className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20"
+             className="relative w-full max-w-lg h-full apple-card p-0 flex flex-col border-none shadow-2xl"
            >
-              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+              <div className="p-10 border-b border-gray-50 bg-white flex justify-between items-center shrink-0">
                  <div>
-                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Add Kitchen Order</h3>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Order Dispatch</p>
+                    <h3 className="text-3xl font-bold text-[#050B18] tracking-tighter">Ticket Dispatch</h3>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1.5">Culinary Order Logistics</p>
                  </div>
-                 <button onClick={() => setShowOrderModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
-                   <X className="w-5 h-5"/>
+                 <button onClick={() => setShowOrderModal(false)} className="p-3.5 bg-[#F5F5F7] rounded-full text-gray-400 hover:text-[#050B18] transition-all">
+                   <X className="w-6 h-6"/>
                  </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
-                 <form id="add-order-form" onSubmit={handleAddOrder} className="space-y-6">
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Table / Room ID</label>
-                      <input required placeholder="e.g. Table 4" value={newOrder.table_id} onChange={e=>setNewOrder({...newOrder, table_id: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+              <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                 <form id="add-order-form" onSubmit={handleAddOrder} className="space-y-10">
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Table / Room Location</label>
+                      <input required placeholder="e.g. Table 12, Suite 402" value={newOrder.table_id} onChange={e=>setNewOrder({...newOrder, table_id: e.target.value})} type="text" className="input-apple w-full py-4 text-base" />
                     </div>
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Items (comma separated)</label>
-                      <textarea rows="4" required placeholder="e.g. 2x Wagyu Steak, 1x Cesar Salad" value={newOrder.items} onChange={e=>setNewOrder({...newOrder, items: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm resize-none"></textarea>
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Culinary Items (CSV)</label>
+                      <textarea rows="4" required placeholder="e.g. 1x Truffle Risotto, 2x Champagne" value={newOrder.items} onChange={e=>setNewOrder({...newOrder, items: e.target.value})} className="input-apple w-full resize-none h-40 py-4 text-base"></textarea>
                     </div>
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Priority Level</label>
-                      <select value={newOrder.priority} onChange={e=>setNewOrder({...newOrder, priority: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
-                        <option>Normal</option>
-                        <option>High</option>
-                      </select>
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Kitchen Priority Protocol</label>
+                      <div className="relative">
+                        <select value={newOrder.priority} onChange={e=>setNewOrder({...newOrder, priority: e.target.value})} className="input-apple w-full appearance-none py-4 text-base font-medium">
+                          <option value="Normal">Normal Sequence</option>
+                          <option value="High">High Priority (Immediate)</option>
+                        </select>
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none">
+                           <div className={`w-3 h-3 rounded-full ${newOrder.priority === 'High' ? 'bg-red-500' : 'bg-blue-500'}`} />
+                        </div>
+                      </div>
                     </div>
                  </form>
               </div>
-              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
-                 <GoldButton form="add-order-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'DISPATCH TO KITCHEN'}
-                 </GoldButton>
+              <div className="p-10 border-t border-gray-50 bg-white shrink-0">
+                 <button form="add-order-form" type="submit" className="btn-apple-primary w-full py-5 text-base shadow-xl shadow-[#050B18]/10">
+                    {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : 'Transmit to Kitchen Operations'}
+                 </button>
               </div>
            </motion.div>
         </div>
       )}
       </AnimatePresence>
 
+      {/* Stock Registration Side Panel */}
       <AnimatePresence>
       {showStockModal && (
-        <div className="fixed inset-0 z-50 flex items-start justify-end">
+        <div className="fixed inset-0 z-50 flex items-start justify-end p-4">
            <motion.div 
              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
              onClick={() => setShowStockModal(false)} 
-             className="absolute inset-0 bg-black/40 backdrop-blur-sm" 
+             className="absolute inset-0 bg-[#050B18]/40 backdrop-blur-md" 
            />
            <motion.div 
              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-             className="relative w-full max-w-lg h-full bg-[#fafafa] shadow-2xl flex flex-col border-l border-luxury-gold/20"
+             className="relative w-full max-w-lg h-full apple-card p-0 flex flex-col border-none shadow-2xl"
            >
-              <div className="p-8 border-b border-gray-100 bg-white flex justify-between items-center shrink-0">
+              <div className="p-10 border-b border-gray-50 bg-white flex justify-between items-center shrink-0">
                  <div>
-                    <h3 className="text-2xl font-bold font-serif text-luxury-black">Add Stock Item</h3>
-                    <p className="text-[10px] uppercase font-bold text-gray-400 tracking-widest mt-1">Pantry Management</p>
+                    <h3 className="text-3xl font-bold text-[#050B18] tracking-tighter">Asset Registry</h3>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1.5">Pantry Operations</p>
                  </div>
-                 <button onClick={() => setShowStockModal(false)} className="w-10 h-10 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:text-luxury-black hover:bg-gray-100 transition-colors">
-                   <X className="w-5 h-5"/>
+                 <button onClick={() => setShowStockModal(false)} className="p-3.5 bg-[#F5F5F7] rounded-full text-gray-400 hover:text-[#050B18] transition-all">
+                   <X className="w-6 h-6"/>
                  </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-8 no-scrollbar">
-                 <form id="add-stock-form" onSubmit={handleAddStock} className="space-y-6">
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Item Name / Ingredient</label>
-                      <input required placeholder="e.g. Fresh Saffron" value={newStock.name} onChange={e=>setNewStock({...newStock, name: e.target.value})} type="text" className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+              <div className="flex-1 overflow-y-auto p-12 custom-scrollbar">
+                 <form id="add-stock-form" onSubmit={handleAddStock} className="space-y-10">
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Asset Name / Ingredient</label>
+                      <input required placeholder="e.g. Saffron Infusion" value={newStock.name} onChange={e=>setNewStock({...newStock, name: e.target.value})} type="text" className="input-apple w-full py-4 text-base" />
                     </div>
-                    <div className="grid grid-cols-2 gap-6">
-                      <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Current Level</label>
-                        <input required placeholder="e.g. 50kg" type="text" value={newStock.level} onChange={e=>setNewStock({...newStock, level: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    <div className="grid grid-cols-2 gap-8">
+                      <div className="space-y-3">
+                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Current Volume</label>
+                        <input required placeholder="e.g. 20 Units" type="text" value={newStock.level} onChange={e=>setNewStock({...newStock, level: e.target.value})} className="input-apple w-full py-4 text-base" />
                       </div>
-                      <div>
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Alert Status</label>
-                        <select value={newStock.status} onChange={e=>setNewStock({...newStock, status: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm cursor-pointer appearance-none">
+                      <div className="space-y-3">
+                        <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Risk Level</label>
+                        <select value={newStock.status} onChange={e=>setNewStock({...newStock, status: e.target.value})} className="input-apple w-full appearance-none py-4 text-base font-medium">
                           <option>Regular</option>
                           <option>Low</option>
                           <option>Critical</option>
                         </select>
                       </div>
                     </div>
-                    <div>
-                      <label className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2 block">Category</label>
-                      <input required placeholder="e.g. Spices, Meat, Beverages" type="text" value={newStock.category} onChange={e=>setNewStock({...newStock, category: e.target.value})} className="w-full bg-white border border-gray-100 rounded-2xl px-5 py-4 text-sm font-bold focus:border-luxury-gold outline-none transition-colors shadow-sm" />
+                    <div className="space-y-3">
+                      <label className="text-[11px] font-bold text-gray-400 uppercase tracking-widest pl-1">Pantry Category</label>
+                      <input required placeholder="e.g. Spices, Gourmet Meats" type="text" value={newStock.category} onChange={e=>setNewStock({...newStock, category: e.target.value})} className="input-apple w-full py-4 text-base" />
                     </div>
                  </form>
               </div>
-              <div className="p-8 bg-white border-t border-gray-100 shrink-0">
-                 <GoldButton form="add-stock-form" type="submit" className="w-full py-4 shadow-lg text-sm flex items-center justify-center gap-2">
-                    {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'SAVE PANTRY RECORD'}
-                 </GoldButton>
+              <div className="p-10 border-t border-gray-50 bg-white shrink-0">
+                 <button form="add-stock-form" type="submit" className="btn-apple-primary w-full py-5 text-base shadow-xl shadow-[#050B18]/10">
+                    {loading ? <Loader2 className="w-6 h-6 animate-spin mx-auto" /> : 'Register Pantry Record'}
+                 </button>
               </div>
            </motion.div>
         </div>
       )}
       </AnimatePresence>
-
     </div>
   );
 };

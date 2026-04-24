@@ -115,126 +115,119 @@ const AnalyticsOverview = () => {
   }
 
   return (
-    <div className="space-y-12">
-      {/* Dynamic Command Header */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pb-12 border-b border-gray-100">
+    <div className="space-y-12 font-apple">
+      {/* Executive Command Header */}
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-end gap-8 pb-10 border-b border-gray-100">
         <div>
-           <div className="flex items-center gap-3 mb-3">
-              <span className="px-3 py-1 bg-luxury-gold/10 text-luxury-gold text-[8px] font-bold uppercase tracking-widest rounded-full border border-luxury-gold/20">Executive Suite</span>
+           <div className="flex items-center gap-2 mb-3">
+              <span className="text-[10px] font-bold uppercase tracking-[0.3em] text-[#C9A84C]">Intelligence Hub</span>
               <span className="text-gray-300">•</span>
-              <span className={`text-[10px] font-bold uppercase tracking-widest ${securityStatus.lockdown_active ? 'text-red-500' : 'text-gray-400'}`}>Global Status: {securityStatus.lockdown_active ? 'LOCKDOWN' : 'Active'}</span>
+              <span className={`text-[10px] font-bold uppercase tracking-[0.3em] ${securityStatus.lockdown_active ? 'text-red-500 animate-pulse' : 'text-gray-400'}`}>
+                {securityStatus.lockdown_active ? 'System Lockdown' : 'Operational Flow: Nominal'}
+              </span>
            </div>
-           <h1 className="text-4xl md:text-6xl font-serif font-bold text-luxury-black tracking-tight">Intelligence Hub</h1>
-           <p className="text-gray-400 font-medium mt-3 text-lg italic">"Precision metrics for the Golden Hills sanctuary operations."</p>
+           <h1 className="text-3xl md:text-5xl font-bold text-[#050B18] tracking-tighter">Executive Dashboard</h1>
         </div>
-        <div className="flex items-center gap-4">
-           <button className="flex items-center gap-3 px-6 py-4 bg-white border border-gray-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-gray-50 transition-all shadow-sm">
-              <Filter className="w-4 h-4 text-luxury-gold" /> Filter Logic
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+           <button className="btn-apple-secondary flex items-center justify-center gap-3 px-8 py-4 w-full sm:w-auto shadow-sm">
+              <Filter className="w-5 h-5" /> <span className="text-[11px] uppercase tracking-widest font-bold">Perspective</span>
            </button>
-           <button className="flex items-center gap-3 px-8 py-4 bg-luxury-black text-white rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-luxury-black/90 transition-all shadow-xl">
-              <Zap className="w-4 h-4 text-luxury-gold" /> Deploy Order
+           <button className="btn-apple-primary flex items-center justify-center gap-3 px-10 py-4 w-full sm:w-auto shadow-xl shadow-[#050B18]/10">
+              <Zap className="w-5 h-5" /> <span className="text-[11px] uppercase tracking-widest font-bold">Sync Assets</span>
            </button>
         </div>
       </div>
 
-      {/* Elite KPI Stream */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      {/* Primary Performance Indicators */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[
-          { icon: <DollarSign />, label: 'Capital Flow', value: formatPrice(stats.revenue), trend: '+14.2%', positive: true, sub: 'Daily Yield' },
-          { icon: <Users />, label: 'Active Presence', value: stats.guests.toString(), trend: '+3.1%', positive: true, sub: 'In-House' },
-          { icon: <Bed />, label: 'Property Load', value: `${stats.occupancy}%`, trend: '-0.8%', positive: false, sub: 'Occupancy' },
-          { icon: <Activity />, label: 'Service Force', value: `${stats.efficiency}%`, trend: '+5.4%', positive: true, sub: 'Efficiency' },
+          { icon: <DollarSign className="w-5 h-5" />, label: 'Portfolio Revenue', value: `${stats.revenue.toLocaleString()} DZD`, trend: '+14.2%', positive: true },
+          { icon: <Users className="w-5 h-5" />, label: 'Active Residency', value: stats.guests.toString(), trend: '+3.1%', positive: true },
+          { icon: <Bed className="w-5 h-5" />, label: 'Asset Utilization', value: `${stats.occupancy}%`, trend: '-0.8%', positive: false },
+          { icon: <Activity className="w-5 h-5" />, label: 'Operational Sync', value: `${stats.efficiency}%`, trend: '+5.4%', positive: true },
         ].map((stat, i) => (
           <motion.div 
             key={i} 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.1 }}
-            className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-sm relative overflow-hidden group hover:border-luxury-gold/30 transition-all"
+            className="apple-card apple-card-hover p-8"
           >
-            <div className="flex justify-between items-start mb-10 relative z-10">
-               <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-luxury-gold group-hover:bg-luxury-gold group-hover:text-white transition-all duration-500">
+            <div className="flex justify-between items-start mb-8">
+               <div className="w-12 h-12 rounded-2xl bg-[#F5F5F7] flex items-center justify-center text-[#C9A84C]">
                   {stat.icon}
                </div>
-               <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-bold transition-all ${stat.positive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                  {stat.positive ? <ArrowUpRight className="w-3 h-3" /> : <ArrowDownRight className="w-3 h-3" />}
+               <span className={`badge-apple ${stat.positive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
+                  {stat.positive ? <ArrowUpRight className="w-3 h-3 mr-1" /> : <ArrowDownRight className="w-3 h-3 mr-1" />}
                   {stat.trend}
-               </div>
+               </span>
             </div>
-            <div className="space-y-1 relative z-10">
-               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">{stat.label}</p>
-               <h3 className="text-3xl font-serif font-bold text-luxury-black">{stat.value}</h3>
-               <p className="text-[9px] font-bold text-luxury-gold/50 uppercase tracking-widest">{stat.sub}</p>
+            <div>
+               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">{stat.label}</p>
+               <h3 className="text-2xl font-bold text-[#050B18] tracking-tight">{stat.value}</h3>
             </div>
-            <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-luxury-gold/5 rounded-full blur-3xl group-hover:bg-luxury-gold/10 transition-colors" />
           </motion.div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-12">
-        {/* Visual Analytics */}
-        <div className="xl:col-span-8 space-y-12">
-          <GlassCard className="bg-white border-gray-100 p-10 rounded-[3rem] shadow-sm relative overflow-hidden">
-             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12 relative z-10">
+      <div className="grid grid-cols-1 xl:grid-cols-12 gap-10">
+        {/* Deep Analysis & Inventory */}
+        <div className="xl:col-span-8 space-y-10">
+          <div className="apple-card p-10">
+             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-12">
                 <div>
-                   <h3 className="text-2xl font-serif font-bold text-luxury-black">Yield Performance</h3>
-                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em] mt-1">7-Day Revenue Matrix</p>
+                   <h3 className="text-xl font-bold text-[#050B18] tracking-tight">Capital Velocity</h3>
+                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Rolling 14-day projection</p>
                 </div>
-                <div className="flex bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
-                   <button className="px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all hover:bg-white hover:shadow-sm text-gray-400 hover:text-luxury-black">Weekly</button>
-                   <button className="px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest rounded-xl transition-all bg-luxury-black text-white shadow-lg">Monthly</button>
+                <div className="flex bg-[#F5F5F7] p-1 rounded-xl">
+                   {['Week', 'Month', 'Year'].map(t => (
+                     <button key={t} className={`px-5 py-2 text-[9px] font-bold uppercase tracking-widest rounded-lg transition-all ${t === 'Month' ? 'bg-white text-[#050B18] shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>
+                       {t}
+                     </button>
+                   ))}
                 </div>
              </div>
              
-             <div className="h-80 flex items-end justify-between gap-4 px-2 relative z-10">
-                {[55, 40, 75, 90, 65, 100, 85, 95, 70, 80, 60, 90].map((val, i) => (
-                  <div key={i} className="flex-1 group relative flex flex-col items-center">
-                     <motion.div 
-                       initial={{ height: 0 }}
-                       animate={{ height: `${val}%` }}
-                       transition={{ duration: 1.5, delay: i * 0.1, ease: "easeOut" }}
-                       className={`w-full max-w-[14px] rounded-full transition-all duration-500 relative ${i === 5 ? 'gold-gradient shadow-gold' : 'bg-luxury-cream/50 group-hover:bg-luxury-gold/30'}`}
-                     >
-                        {i === 5 && (
-                          <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-3 py-1 bg-luxury-black text-white text-[9px] font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                             Peak Yield
-                          </div>
-                        )}
-                     </motion.div>
-                     <p className="mt-4 text-[8px] font-bold text-gray-300 uppercase tracking-tighter">Day {i + 1}</p>
-                  </div>
+             <div className="h-72 flex items-end justify-between gap-4 px-2">
+                {[45, 60, 40, 85, 95, 70, 110, 90, 105, 80, 85, 100, 75, 90].map((val, i) => (
+                   <div key={i} className="flex-1 group relative flex flex-col items-center">
+                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[#050B18] text-white text-[8px] font-bold py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                         {val}%
+                      </div>
+                      <motion.div 
+                        initial={{ height: 0 }}
+                        animate={{ height: `${val * 0.6}%` }}
+                        transition={{ duration: 1, delay: i * 0.05 }}
+                        className={`w-full max-w-[8px] rounded-full transition-all duration-300 ${i === 6 ? 'bg-[#C9A84C]' : 'bg-[#F5F5F7] group-hover:bg-[#C9A84C]/40'}`}
+                      />
+                      <p className="mt-4 text-[7px] font-bold text-gray-300 uppercase tracking-tighter">D{i + 1}</p>
+                   </div>
                 ))}
              </div>
-             {/* Background Subtle Grid Lines */}
-             <div className="absolute inset-0 pointer-events-none opacity-[0.03] flex flex-col justify-between p-10 pt-32 pb-24">
-                {[1,2,3,4,5].map(i => <div key={i} className="w-full h-px bg-luxury-black" />)}
-             </div>
-          </GlassCard>
+          </div>
 
-          {/* Precision Inventory Management */}
-          <GlassCard className="bg-white border-gray-100 p-10 rounded-[3rem] shadow-sm">
+          <div className="apple-card p-10">
              <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
                 <div>
-                   <h3 className="text-2xl font-serif font-bold text-luxury-black">Live Inventory Grid</h3>
-                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em] mt-1">Real-time Suite Logistics</p>
+                   <h3 className="text-xl font-bold text-[#050B18] tracking-tight">Fleet Integrity</h3>
+                   <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">Live room network topology</p>
                 </div>
-                <div className="flex items-center gap-6">
-                   <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.4)]" />
-                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Vacant</span>
-                   </div>
-                   <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-luxury-gold shadow-gold" />
-                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Occupied</span>
-                   </div>
-                   <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-red-500" />
-                      <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Maintenance</span>
-                   </div>
+                <div className="flex flex-wrap items-center gap-6">
+                   {[
+                     { color: 'bg-green-500', label: 'Nominal' },
+                     { color: 'bg-[#C9A84C]', label: 'Engaged' },
+                     { color: 'bg-red-500', label: 'Maintenance' },
+                     { color: 'bg-orange-500', label: 'Transit' }
+                   ].map(l => (
+                     <div key={l.label} className="flex items-center gap-2">
+                        <div className={`w-2 h-2 rounded-full ${l.color}`} />
+                        <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{l.label}</span>
+                     </div>
+                   ))}
                 </div>
              </div>
 
-             <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
+             <div className="grid grid-cols-6 sm:grid-cols-8 md:grid-cols-10 lg:grid-cols-12 gap-3">
                 {rooms.map((room) => {
                   const isOccupied = room.status === 'Occupied';
                   const isMaintenance = room.status === 'Maintenance';
@@ -243,94 +236,86 @@ const AnalyticsOverview = () => {
                   return (
                     <motion.div 
                       key={room.id} 
-                      whileHover={{ scale: 1.1, zIndex: 10, y: -5 }}
-                      className={`aspect-square rounded-2xl border-2 flex flex-col items-center justify-center cursor-pointer transition-all shadow-sm relative group overflow-hidden ${
-                        isOccupied ? 'bg-luxury-gold/5 border-luxury-gold/30' :
+                      whileHover={{ y: -3, scale: 1.1 }}
+                      className={`aspect-square rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all border ${
+                        isOccupied ? 'bg-[#C9A84C]/5 border-[#C9A84C]/20' :
                         isMaintenance ? 'bg-red-50 border-red-100' :
                         isCleaning ? 'bg-orange-50 border-orange-100' :
-                        'bg-white border-gray-100 hover:border-luxury-gold/40'
+                        'bg-[#F5F5F7] border-transparent hover:bg-white hover:border-[#C9A84C]/30'
                       }`}
                     >
-                      <span className={`text-[11px] font-bold ${isOccupied ? 'text-luxury-gold' : isMaintenance ? 'text-red-500' : isCleaning ? 'text-orange-500' : 'text-gray-400 group-hover:text-luxury-black'}`}>
+                      <span className={`text-[10px] font-bold ${isOccupied ? 'text-[#C9A84C]' : isMaintenance ? 'text-red-500' : isCleaning ? 'text-orange-500' : 'text-[#050B18]'}`}>
                          {room.number}
                       </span>
-                      <div className={`absolute bottom-1 w-1 h-1 rounded-full ${
-                        isOccupied ? 'bg-luxury-gold' :
-                        isMaintenance ? 'bg-red-500' :
-                        isCleaning ? 'bg-orange-500' :
-                        'bg-green-500'
-                      }`} />
                     </motion.div>
                   );
                 })}
              </div>
-          </GlassCard>
+          </div>
         </div>
 
-        {/* Sidebar Ops Intelligence */}
-        <div className="xl:col-span-4 space-y-12">
-           {/* Directives Section */}
-           <div className="space-y-6">
-              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em] pl-6">Active Directives</h4>
+        {/* Tactical Intel & VIP Stream */}
+        <div className="xl:col-span-4 space-y-10">
+           <div className="space-y-4">
+              <h4 className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] px-4">Tactical Log</h4>
               <div className="space-y-4">
                  {[
-                   { icon: <Briefcase />, title: 'Personnel Sync', desc: 'Q3 Staff audit required', time: '14:00' },
-                   { icon: <Coffee />, title: 'VIP Reception', desc: 'Gold Suite arrival', time: '16:30' },
-                   { icon: <Shield />, title: 'System Patch', desc: 'GHE-4 Security update', time: '00:00' },
+                   { icon: <Briefcase className="w-4 h-4" />, title: 'Personnel Audit', desc: 'Sync shift leads', time: '14:00' },
+                   { icon: <CheckCircle2 className="w-4 h-4" />, title: 'Logistics Clear', desc: 'Supply chain verified', time: '15:45' },
+                   { icon: <Shield className="w-4 h-4" />, title: 'Encryption Cycle', desc: 'Security protocols updated', time: '00:00' },
                  ].map((item, i) => (
-                   <GlassCard key={i} className="bg-white p-6 border-gray-100 group cursor-pointer hover:border-luxury-gold/30 transition-all">
-                      <div className="flex gap-5">
-                         <div className="w-12 h-12 rounded-2xl bg-luxury-cream/50 flex items-center justify-center text-luxury-gold group-hover:bg-luxury-gold group-hover:text-white transition-all">
-                            {item.icon}
-                         </div>
-                         <div>
-                            <div className="flex justify-between items-center w-full mb-1">
-                               <h5 className="font-bold text-sm">{item.title}</h5>
-                               <span className="text-[9px] font-bold text-gray-300 uppercase tracking-widest">{item.time}</span>
-                            </div>
-                            <p className="text-xs text-gray-400 font-medium">{item.desc}</p>
-                         </div>
+                   <div key={i} className="apple-card p-5 flex gap-5 cursor-pointer hover:bg-gray-50 group">
+                      <div className="w-12 h-12 rounded-2xl bg-[#F5F5F7] flex items-center justify-center text-[#C9A84C] group-hover:bg-[#050B18] group-hover:text-white transition-all">
+                         {item.icon}
                       </div>
-                   </GlassCard>
-                 ))}
-              </div>
-           </div>
-
-           {/* Arrival Stream */}
-           <GlassCard className="bg-luxury-black text-white p-10 rounded-[3rem] border-0 relative overflow-hidden shadow-2xl">
-              <div className="absolute top-0 right-0 w-48 h-48 bg-luxury-gold/10 rounded-full blur-[80px] -translate-y-24 translate-x-24" />
-              <h3 className="text-2xl font-serif font-bold mb-10 relative z-10">Elite Arrivals</h3>
-              
-              <div className="space-y-8 relative z-10">
-                 {arrivals.length === 0 ? (
-                    <div className="py-12 text-center">
-                       <p className="text-white/20 text-xs font-bold uppercase tracking-widest italic">No Live Arrivals Recorded</p>
-                    </div>
-                 ) : arrivals.map((guest, i) => (
-                   <div key={i} className="flex items-center justify-between pb-8 border-b border-white/5 last:border-0 last:pb-0 group">
-                      <div className="flex items-center gap-5">
-                         <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center text-luxury-gold font-serif font-bold text-xl transition-all group-hover:bg-luxury-gold group-hover:text-white">
-                            {guest.guest_name?.[0]}
+                      <div className="flex-1">
+                         <div className="flex justify-between items-start">
+                            <h5 className="font-bold text-sm text-[#050B18]">{item.title}</h5>
+                            <span className="text-[8px] font-bold text-gray-300 uppercase">{item.time}</span>
                          </div>
-                         <div>
-                            <p className="text-sm font-bold tracking-wide">{guest.guest_name}</p>
-                            <p className="text-[9px] text-white/40 uppercase font-bold tracking-[0.2em] mt-1">{guest.room_type} • Room {guest.room_id}</p>
-                         </div>
-                      </div>
-                      <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-white/20 group-hover:text-luxury-gold transition-all">
-                         <ChevronUp className="w-4 h-4 rotate-90" />
+                         <p className="text-[11px] text-gray-400 font-medium mt-1 uppercase tracking-tight">{item.desc}</p>
                       </div>
                    </div>
                  ))}
               </div>
+           </div>
 
-              <button className="w-full mt-12 py-5 rounded-2xl bg-white/5 border border-white/10 text-white/40 text-[9px] font-bold uppercase tracking-[0.3em] hover:bg-luxury-gold hover:text-white hover:border-luxury-gold transition-all duration-500">
-                 View Global Register
+           <div className="apple-card bg-[#050B18] text-white p-10 relative overflow-hidden border-none shadow-2xl">
+              <div className="absolute top-0 right-0 w-48 h-48 bg-[#C9A84C]/10 rounded-full blur-[80px] -translate-y-24 translate-x-24" />
+              <div className="flex items-center justify-between mb-10 relative z-10">
+                 <h3 className="text-xl font-bold tracking-tight">VIP Ledger</h3>
+                 <Users className="w-5 h-5 text-[#C9A84C]" />
+              </div>
+              
+              <div className="space-y-8 relative z-10">
+                 {arrivals.length === 0 ? (
+                    <div className="py-12 text-center border border-white/5 rounded-3xl bg-white/5">
+                       <Shield className="w-8 h-8 text-white/10 mx-auto mb-4" />
+                       <p className="text-white/20 text-[10px] font-bold uppercase tracking-widest">Sector Clear</p>
+                    </div>
+                 ) : arrivals.map((guest, i) => (
+                   <div key={i} className="flex items-center justify-between group cursor-pointer">
+                      <div className="flex items-center gap-5">
+                         <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-[#C9A84C] font-bold text-xl transition-all group-hover:bg-[#C9A84C] group-hover:text-white">
+                            {guest.guest_name?.[0]}
+                         </div>
+                         <div>
+                            <p className="text-sm font-bold tracking-tight">{guest.guest_name}</p>
+                            <p className="text-[10px] text-[#C9A84C] uppercase font-bold tracking-widest mt-1">Suite {guest.room_id}</p>
+                         </div>
+                      </div>
+                      <ArrowUpRight className="w-4 h-4 text-white/10 group-hover:text-[#C9A84C] transition-all" />
+                   </div>
+                 ))}
+              </div>
+
+              <button className="w-full mt-12 py-4 rounded-2xl bg-white/5 border border-white/10 text-white/60 text-[10px] font-bold uppercase tracking-widest hover:bg-white hover:text-[#050B18] transition-all relative z-10">
+                 Access Full Registry
               </button>
-           </GlassCard>
+           </div>
+        </div>
         </div>
       </div>
-    </div>
   );
 };
 

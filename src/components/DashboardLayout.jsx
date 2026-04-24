@@ -99,20 +99,20 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
   const menuItems = userType?.toUpperCase() === 'ADMIN' ? adminItems : staffItems;
 
   return (
-    <div className="flex h-screen bg-[#FDFCFB] overflow-hidden font-apple text-luxury-black">
-      {/* Premium Sidebar */}
+    <div className="flex h-screen bg-[#FBFBFD] overflow-hidden font-apple text-[#050B18]">
+      {/* Premium Apple-Style Sidebar */}
       <motion.aside 
         initial={false}
-        animate={{ width: isSidebarOpen ? 300 : 100 }}
-        className="hidden lg:flex bg-luxury-black flex-col z-30 transition-all duration-500 relative border-r border-white/5 shadow-[20px_0_50px_-20px_rgba(0,0,0,0.2)]"
+        animate={{ width: isSidebarOpen ? 280 : 88 }}
+        className="hidden lg:flex bg-[#050B18] flex-col z-30 transition-all duration-500 relative shadow-[20px_0_50px_-20px_rgba(0,0,0,0.3)]"
       >
-        <div className="p-10 mb-6 flex items-center justify-center">
-             <Logo inverse textVisible={isSidebarOpen} className={isSidebarOpen ? 'scale-100' : 'scale-110'} />
+        <div className="p-8 mb-4 flex items-center justify-center">
+             <Logo inverse textVisible={isSidebarOpen} className={isSidebarOpen ? 'scale-90' : 'scale-100'} />
         </div>
 
-        <nav className="flex-1 px-6 space-y-2 overflow-y-auto no-scrollbar">
-           <div className={`text-[9px] font-bold uppercase tracking-[0.4em] text-white/20 mb-6 transition-opacity ${isSidebarOpen ? 'px-4' : 'opacity-0'}`}>
-              System Architecture
+        <nav className="flex-1 px-4 space-y-1 overflow-y-auto no-scrollbar">
+           <div className={`text-[10px] font-bold uppercase tracking-[0.3em] text-white/20 mb-6 transition-opacity ${isSidebarOpen ? 'px-4' : 'opacity-0'}`}>
+              Management
            </div>
            {menuItems.map((item, idx) => {
              const isActive = currentPath === item.path || (item.path !== '/admin' && item.path !== '/staff' && currentPath.startsWith(item.path));
@@ -120,48 +120,49 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
                <Link 
                   key={idx} 
                   to={item.path}
-                  className={`flex items-center gap-4 px-5 py-4 rounded-[1.25rem] transition-all duration-300 group relative ${
+                  className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group relative ${
                     isActive 
-                      ? 'bg-luxury-gold text-white shadow-gold' 
+                      ? 'bg-white/10 text-[#C9A84C]' 
                       : 'text-white/40 hover:text-white hover:bg-white/5'
                   }`}
                >
-                 <div className={`shrink-0 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-110'}`}>
+                 <div className={`shrink-0 transition-all duration-300 ${isActive ? 'scale-110 text-[#C9A84C]' : 'group-hover:scale-110'}`}>
                     {item.icon}
                  </div>
                  {isSidebarOpen && (
-                   <span className="font-bold text-[10px] uppercase tracking-[0.2em] transition-opacity">
+                   <span className={`font-bold text-[11px] uppercase tracking-[0.15em] transition-opacity ${isActive ? 'text-white' : ''}`}>
                       {item.label}
                    </span>
                  )}
-                 {isActive && isSidebarOpen && (
-                   <motion.div layoutId="active-indicator" className="absolute right-4">
-                      <ChevronRight className="w-4 h-4 opacity-50" />
-                   </motion.div>
+                 {isActive && (
+                   <motion.div 
+                     layoutId="active-pill" 
+                     className="absolute left-0 w-1 h-6 bg-[#C9A84C] rounded-r-full"
+                   />
                  )}
                </Link>
              );
            })}
         </nav>
 
-        <div className="p-8 border-t border-white/5 space-y-4">
+        <div className="p-6 border-t border-white/5 space-y-4">
            {isSidebarOpen && (
-             <div className="bg-white/5 rounded-2xl p-4 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-lg bg-luxury-gold/20 flex items-center justify-center text-luxury-gold">
+             <div className="bg-white/5 rounded-2xl p-4 flex items-center gap-3 border border-white/5">
+                <div className="w-8 h-8 rounded-xl bg-[#C9A84C]/10 flex items-center justify-center text-[#C9A84C]">
                    <Shield className="w-4 h-4" />
                 </div>
                 <div>
-                   <p className="text-[8px] font-bold text-white/40 uppercase tracking-widest">Enclave Mode</p>
-                   <p className="text-[9px] font-bold text-white uppercase tracking-tighter">SECURE NODE GH-1</p>
+                   <p className="text-[9px] font-bold text-white/30 uppercase tracking-widest">Security Mode</p>
+                   <p className="text-[10px] font-bold text-white uppercase tracking-tight">ENCLAVE SECURE</p>
                 </div>
              </div>
            )}
            <button 
              onClick={handleLogout}
-             className="flex items-center gap-4 px-5 py-4 text-white/30 hover:text-red-400 transition-all w-full rounded-[1.25rem] hover:bg-red-400/10 group"
+             className="flex items-center gap-4 px-4 py-3.5 text-white/30 hover:text-red-400 transition-all w-full rounded-2xl hover:bg-red-400/10 group"
            >
              <LogOut className="w-5 h-5 shrink-0 group-hover:-translate-x-1 transition-transform" />
-             {isSidebarOpen && <span className="font-bold text-[10px] uppercase tracking-[0.3em]">Terminate</span>}
+             {isSidebarOpen && <span className="font-bold text-[11px] uppercase tracking-[0.2em]">Sign Out</span>}
            </button>
         </div>
       </motion.aside>
@@ -174,7 +175,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setMobileOpen(false)}
-            className="fixed inset-0 bg-luxury-black/60 backdrop-blur-md z-40 lg:hidden"
+            className="fixed inset-0 bg-[#050B18]/60 backdrop-blur-md z-40 lg:hidden"
           />
         )}
       </AnimatePresence>
@@ -184,7 +185,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
         initial={{ x: '-100%' }}
         animate={{ x: isMobileOpen ? 0 : '-100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed inset-y-0 left-0 w-[300px] bg-luxury-black z-50 lg:hidden flex flex-col"
+        className="fixed inset-y-0 left-0 w-[300px] bg-[#050B18] z-50 lg:hidden flex flex-col"
       >
         <div className="p-10 flex justify-center border-b border-white/5">
             <Logo inverse />
@@ -195,8 +196,8 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
                key={idx} 
                to={item.path} 
                onClick={() => setMobileOpen(false)} 
-               className={`flex items-center gap-5 px-6 py-5 rounded-[1.5rem] transition-all ${
-                 currentPath === item.path ? 'bg-luxury-gold text-white shadow-gold' : 'text-white/40 hover:text-white'
+               className={`flex items-center gap-5 px-6 py-5 rounded-2xl transition-all ${
+                 currentPath === item.path ? 'bg-white/10 text-[#C9A84C]' : 'text-white/40 hover:text-white'
                }`}
               >
                 {item.icon} <span className="font-bold text-xs uppercase tracking-[0.2em]">{item.label}</span>
@@ -204,7 +205,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
            ))}
         </nav>
         <div className="p-8 border-t border-white/5">
-           <button onClick={handleLogout} className="flex items-center gap-5 px-6 py-5 text-white/30 hover:text-red-400 transition-all w-full rounded-[1.5rem] hover:bg-red-400/10">
+           <button onClick={handleLogout} className="flex items-center gap-5 px-6 py-5 text-white/30 hover:text-red-400 transition-all w-full rounded-2xl hover:bg-red-400/10">
              <LogOut className="w-5 h-5 shrink-0" />
              <span className="font-bold text-xs uppercase tracking-[0.2em]">Logout</span>
            </button>
@@ -212,62 +213,57 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
       </motion.aside>
 
       {/* Main Content */}
-      <main className="flex-1 flex flex-col relative overflow-hidden bg-luxury-cream/10">
-        {/* Elite Topbar */}
-        <header className={`sticky top-0 z-20 transition-all duration-300 px-8 py-5 flex items-center justify-between ${scrolled ? 'bg-white/90 backdrop-blur-2xl border-b border-gray-100 shadow-sm' : 'bg-transparent'}`}>
+      <main className="flex-1 flex flex-col relative overflow-hidden bg-[#FBFBFD]">
+        {/* Elite Apple-Style Topbar */}
+        <header className={`sticky top-0 z-20 transition-all duration-500 px-8 py-4 flex items-center justify-between ${scrolled ? 'bg-white/80 backdrop-blur-xl border-b border-gray-100 shadow-sm' : 'bg-transparent'}`}>
             <div className="flex items-center gap-6">
               <button 
                 onClick={() => window.innerWidth > 1024 ? setSidebarOpen(!isSidebarOpen) : setMobileOpen(true)} 
-                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white border border-gray-100 shadow-sm hover:border-luxury-gold transition-all group"
+                className="w-10 h-10 flex items-center justify-center rounded-xl bg-white border border-gray-100 shadow-sm hover:border-[#C9A84C] transition-all group"
               >
-                {isSidebarOpen ? <Menu className="w-5 h-5 text-gray-400 group-hover:text-luxury-gold" /> : <Command className="w-5 h-5 text-luxury-gold" />}
+                {isSidebarOpen ? <Menu className="w-4 h-4 text-gray-400 group-hover:text-[#C9A84C]" /> : <Command className="w-4 h-4 text-[#C9A84C]" />}
               </button>
               
               <div className="hidden md:block">
-                 <p className="text-[9px] font-bold text-luxury-gold uppercase tracking-[0.4em] mb-1">Golden Hills Internal Systems</p>
                  <div className="flex items-center gap-3">
-                    <h2 className="text-xl font-serif font-bold text-luxury-black">Operations Enclave</h2>
-                     <div className={`flex items-center gap-2 px-2 py-0.5 rounded-full border ${lockdownActive ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100'}`}>
-                        <div className={`w-1.5 h-1.5 rounded-full animate-pulse ${lockdownActive ? 'bg-red-500' : 'bg-green-500'}`} />
-                        <span className={`text-[8px] font-bold uppercase tracking-tighter ${lockdownActive ? 'text-red-600' : 'text-green-600'}`}>
-                          {lockdownActive ? 'EMERGENCY LOCKDOWN' : 'System Nominal'}
+                    <h2 className="text-lg font-bold text-[#050B18] tracking-tight">Golden Hills</h2>
+                    <span className="text-gray-300">/</span>
+                    <h2 className="text-lg font-medium text-gray-400 tracking-tight">Dashboard</h2>
+                     <div className={`ml-4 flex items-center gap-2 px-2.5 py-1 rounded-full border ${lockdownActive ? 'bg-red-50 border-red-100' : 'bg-green-50 border-green-100'}`}>
+                        <div className={`w-1.5 h-1.5 rounded-full ${lockdownActive ? 'bg-red-500' : 'bg-green-500'}`} />
+                        <span className={`text-[9px] font-bold uppercase tracking-widest ${lockdownActive ? 'text-red-600' : 'text-green-600'}`}>
+                          {lockdownActive ? 'Lockdown' : 'Nominal'}
                         </span>
                      </div>
                  </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-6">
-               {/* Global Intelligence Search */}
-               <div className="hidden lg:flex items-center bg-white px-6 py-3 rounded-2xl border border-gray-100 focus-within:border-luxury-gold/50 focus-within:ring-4 focus-within:ring-luxury-gold/5 transition-all w-80">
+            <div className="flex items-center gap-4">
+               {/* Global Search */}
+               <div className="hidden lg:flex items-center bg-[#F5F5F7] px-4 py-2 rounded-xl border border-transparent focus-within:bg-white focus-within:border-[#C9A84C]/30 transition-all w-64">
                   <Search className="w-4 h-4 text-gray-400 mr-3 shrink-0" />
-                  <input type="text" placeholder="Search archives..." className="bg-transparent border-none outline-none text-xs w-full font-bold text-luxury-black placeholder-gray-300 focus:ring-0" />
+                  <input type="text" placeholder="Search..." className="bg-transparent border-none outline-none text-xs w-full font-medium text-[#050B18] placeholder-gray-400 focus:ring-0" />
                </div>
 
-               <div className="flex items-center gap-4 pl-6 border-l border-gray-100">
-                  <div className="relative group cursor-pointer">
-                     <NotificationMenu userId={user?.id} />
-                  </div>
+               <div className="flex items-center gap-3 pl-4 border-l border-gray-100">
+                  <NotificationMenu userId={user?.id} />
                   
-                  <div className="flex items-center gap-4 ml-4">
+                  <div className="flex items-center gap-3 ml-2">
                     <div className="text-right hidden sm:block">
-                      <p className="text-xs font-bold text-luxury-black leading-none mb-1">{user?.full_name}</p>
-                      <p className="text-[10px] text-luxury-gold font-bold uppercase tracking-widest italic">{userType}</p>
+                      <p className="text-[11px] font-bold text-[#050B18] leading-none mb-1">{user?.full_name}</p>
+                      <p className="text-[9px] text-[#C9A84C] font-bold uppercase tracking-widest">{userType}</p>
                     </div>
                     <div className="relative group">
-                       <div className="w-12 h-12 rounded-2xl gold-gradient p-[1.5px] shadow-lg group-hover:scale-105 transition-transform cursor-pointer">
-                          <div className="w-full h-full bg-white rounded-[0.9rem] overflow-hidden flex items-center justify-center">
-                            {user?.avatar_url ? (
-                              <img src={user.avatar_url} alt="User" className="w-full h-full object-cover" />
-                            ) : (
-                              <div className="w-full h-full bg-luxury-cream/30 flex items-center justify-center font-serif font-bold text-luxury-gold text-lg">
-                                {user?.full_name?.[0]}
-                              </div>
-                            )}
-                          </div>
+                       <div className="w-10 h-10 rounded-xl bg-[#F5F5F7] p-[1px] shadow-sm group-hover:scale-105 transition-transform cursor-pointer overflow-hidden border border-gray-100">
+                          {user?.avatar_url ? (
+                            <img src={user.avatar_url} alt="User" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center font-bold text-[#C9A84C] text-sm bg-white">
+                              {user?.full_name?.[0]}
+                            </div>
+                          )}
                        </div>
-                       {/* Subtle Online Badge */}
-                       <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-4 border-white rounded-full" />
                     </div>
                   </div>
                </div>
@@ -277,7 +273,7 @@ const DashboardLayout = ({ children, userType = 'ADMIN' }) => {
         {/* Dynamic Canvas Area */}
         <div 
           id="dashboard-main-content"
-          className="flex-1 overflow-y-auto no-scrollbar p-8 lg:p-12 relative"
+          className="flex-1 overflow-y-auto no-scrollbar p-6 lg:p-10 relative"
         >
            <div className="max-w-7xl mx-auto w-full">
               {children}

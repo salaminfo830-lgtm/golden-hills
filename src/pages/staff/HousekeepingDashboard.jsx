@@ -72,142 +72,136 @@ const HousekeepingDashboard = () => {
   };
 
   return (
-    <div className="space-y-8 font-sans">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <div className="space-y-10 font-apple">
+      {/* Apple-Style Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 pb-8 border-b border-gray-100">
         <div>
-          <h2 className="text-3xl font-serif font-bold tracking-tight text-luxury-black">Housekeeping Control</h2>
-          <p className="text-gray-400 font-medium tracking-wide text-sm font-semibold uppercase tracking-[0.2em]">Floor & Room Integrity Management</p>
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#C9A84C]">Housekeeping</span>
+            <span className="text-gray-300">•</span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">Inventory Status</span>
+          </div>
+          <h2 className="text-3xl font-bold text-[#050B18] tracking-tight">Environmental Integrity</h2>
         </div>
-        <div className="flex gap-4 items-center bg-white px-6 py-3 rounded-2xl shadow-sm border border-gray-100">
-           <div className="flex flex-col items-end border-r border-gray-100 pr-4">
-              <span className="text-[10px] font-bold text-gray-400 uppercase">Live Shift</span>
-              <span className="text-sm font-bold text-luxury-gold">Active Now</span>
+        <div className="flex items-center gap-4 bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-50">
+           <div className="text-right border-r border-gray-100 pr-4">
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Shift Status</p>
+              <p className="text-xs font-bold text-[#C9A84C]">Active Duty</p>
            </div>
-           <Clock className="w-5 h-5 text-luxury-gold animate-pulse" />
+           <Clock className="w-5 h-5 text-[#C9A84C] animate-pulse" />
         </div>
       </div>
 
+      {/* Stats Stream */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-         <GlassCard className="bg-white border-gray-100">
-            <div className="flex items-center gap-4">
-               <div className="p-3 bg-luxury-gold/10 rounded-xl text-luxury-gold"><Bed className="w-6 h-6" /></div>
+         {[
+           { icon: <Bed className="w-5 h-5" />, label: 'Inventory', value: stats.total, color: 'bg-[#F5F5F7]', text: 'text-gray-400' },
+           { icon: <Sparkles className="w-5 h-5" />, label: 'Pending Clean', value: rooms.filter(r => r.status === 'Cleaning').length, color: 'bg-orange-50', text: 'text-orange-500' },
+           { icon: <Hammer className="w-5 h-5" />, label: 'Maintenance', value: rooms.filter(r => r.status === 'Maintenance').length, color: 'bg-red-50', text: 'text-red-500' },
+         ].map((stat, i) => (
+            <div key={i} className="apple-card p-6 flex items-center gap-4">
+               <div className={`w-12 h-12 rounded-xl ${stat.color} flex items-center justify-center ${stat.text}`}>
+                  {stat.icon}
+               </div>
                <div>
-                  <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Total Rooms</p>
-                  <h3 className="text-2xl font-bold">{stats.total}</h3>
+                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">{stat.label}</p>
+                  <h3 className="text-2xl font-bold text-[#050B18]">{stat.value}</h3>
                </div>
             </div>
-         </GlassCard>
-         <GlassCard className="bg-white border-gray-100 border-l-4 border-l-orange-400">
-            <div className="flex items-center gap-4">
-               <div className="p-3 bg-orange-50 rounded-xl text-orange-500"><Sparkles className="w-6 h-6" /></div>
-               <div>
-                  <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Awaiting Cleaning</p>
-                  <h3 className="text-2xl font-bold">{rooms.filter(r => r.status === 'Cleaning').length}</h3>
-               </div>
-            </div>
-         </GlassCard>
-         <GlassCard className="bg-white border-gray-100 border-l-4 border-l-red-400">
-            <div className="flex items-center gap-4">
-               <div className="p-3 bg-red-50 rounded-xl text-red-500"><Hammer className="w-6 h-6" /></div>
-               <div>
-                  <p className="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Maintenance Req.</p>
-                  <h3 className="text-2xl font-bold">{rooms.filter(r => r.status === 'Maintenance').length}</h3>
-               </div>
-            </div>
-         </GlassCard>
+         ))}
       </div>
 
-      <div className="space-y-6">
-         <h4 className="text-lg font-bold font-serif text-luxury-black flex items-center gap-3">
-            Priority Tasks <div className="h-0.5 flex-1 bg-gradient-to-r from-gray-100 to-transparent" />
-         </h4>
+      <div className="space-y-8">
+         <div className="flex items-center gap-4">
+            <h3 className="text-xl font-bold text-[#050B18]">Priority Tasks</h3>
+            <div className="h-px flex-1 bg-gray-100" />
+         </div>
 
          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <AnimatePresence mode="popLayout">
                {rooms.filter(r => r.status === 'Cleaning' || r.status === 'Maintenance').map((room) => (
                   <motion.div
                     layout
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
                     key={room.id}
                   >
-                     <GlassCard className="bg-white border-gray-100 hover:shadow-xl transition-all group overflow-hidden relative">
-                        <div className={`absolute top-0 right-0 w-24 h-24 rounded-full translate-x-12 -translate-y-12 blur-2xl opacity-10 ${room.status === 'Cleaning' ? 'bg-orange-400' : 'bg-red-400'}`} />
-                        
-                        <div className="flex justify-between items-start mb-6">
-                           <div className="w-12 h-12 gold-gradient rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-lg group-hover:scale-110 transition-transform">
+                     <div className="apple-card apple-card-hover p-6 relative overflow-hidden group">
+                        <div className="flex justify-between items-start mb-8">
+                           <div className="w-12 h-12 bg-[#050B18] text-white rounded-2xl flex items-center justify-center font-bold text-xl group-hover:scale-105 transition-all">
                               {room.number}
                            </div>
-                           <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${room.status === 'Cleaning' ? 'bg-orange-50 text-orange-600 border border-orange-100' : 'bg-red-50 text-red-600 border border-red-100'}`}>
+                           <span className={`badge-apple ${
+                             room.status === 'Cleaning' ? 'bg-orange-50 text-orange-600 border-orange-100' : 'bg-red-50 text-red-600 border-red-100'
+                           }`}>
                               {room.status}
                            </span>
                         </div>
 
                         <div className="space-y-4 mb-8">
-                           <h4 className="font-bold text-luxury-black">{room.type}</h4>
-                           <div className="flex items-center gap-3 text-xs text-gray-500 font-medium">
-                              <MapPin className="w-4 h-4 text-gray-400" />
-                              Floor {room.number[0]} • South Wing
-                           </div>
-                           <div className="flex items-center gap-3 text-xs text-gray-500 font-medium">
-                              <User className="w-4 h-4 text-gray-400" />
-                              Assigned: {room.housekeeper || 'Unassigned'}
+                           <h4 className="text-lg font-bold text-[#050B18]">{room.type}</h4>
+                           <div className="space-y-2">
+                              <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
+                                 <MapPin className="w-3.5 h-3.5" /> <span>Floor {room.number[0]} • North Wing</span>
+                              </div>
+                              <div className="flex items-center gap-2 text-xs text-gray-400 font-medium">
+                                 <User className="w-3.5 h-3.5" /> <span>Assigned: {room.housekeeper || 'Unassigned'}</span>
+                              </div>
                            </div>
                         </div>
 
                         <div className="flex gap-3">
                            {room.status === 'Cleaning' ? (
-                              <GoldButton 
+                              <button 
                                 onClick={() => updateRoomStatus(room.id, 'Vacant')}
-                                className="flex-1 py-3 text-[10px] flex items-center justify-center gap-2 group/btn shadow-lg"
+                                className="btn-apple-primary flex-1 flex items-center justify-center gap-2 text-[10px]"
                               >
-                                 <CheckCircle2 className="w-4 h-4 group-hover/btn:scale-110 transition-transform" /> MARK AS CLEAN
-                              </GoldButton>
+                                 <CheckCircle2 className="w-4 h-4" /> <span>COMPLETE</span>
+                              </button>
                            ) : (
-                              <GoldButton 
-                                outline
+                              <button 
                                 onClick={() => updateRoomStatus(room.id, 'Cleaning')}
-                                className="flex-1 py-3 text-[10px] flex items-center justify-center gap-2"
+                                className="btn-apple-secondary flex-1 flex items-center justify-center gap-2 text-[10px]"
                               >
-                                 READY FOR CLEANING
-                              </GoldButton>
+                                 READY CLEAN
+                              </button>
                            )}
-                           <button className="p-3 bg-gray-50 hover:bg-red-50 text-gray-400 hover:text-red-500 rounded-xl border border-gray-100 transition-all">
+                           <button className="p-3 bg-[#F5F5F7] text-gray-400 hover:text-red-500 rounded-xl transition-all">
                               <AlertTriangle className="w-4 h-4" />
                            </button>
                         </div>
-                     </GlassCard>
+                     </div>
                   </motion.div>
                ))}
             </AnimatePresence>
          </div>
 
          {rooms.filter(r => r.status === 'Cleaning' || r.status === 'Maintenance').length === 0 && (
-            <GlassCard className="bg-green-50/50 border-green-100 p-20 text-center flex flex-col items-center">
-               <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mb-6">
-                  <CheckCircle2 className="w-10 h-10" />
+            <div className="apple-card p-20 flex flex-col items-center text-center">
+               <div className="w-16 h-16 bg-green-50 text-green-500 rounded-full flex items-center justify-center mb-6">
+                  <CheckCircle2 className="w-8 h-8" />
                </div>
-               <h4 className="text-2xl font-serif font-bold text-green-900 mb-2">All Clear</h4>
-               <p className="text-green-700/60 font-medium">All assigned rooms have been processed and confirmed clean.</p>
-            </GlassCard>
+               <h4 className="text-xl font-bold text-[#050B18] mb-2">Protocol Complete</h4>
+               <p className="text-sm text-gray-400 max-w-xs">All assigned inventory has been processed and confirmed to standards.</p>
+            </div>
          )}
       </div>
 
-      <div className="pt-10 border-t border-gray-100 flex justify-between items-center text-gray-400">
-         <p className="text-xs font-bold uppercase tracking-widest">Golden Hills • Excellence in Every Detail</p>
-          <div className="flex gap-6">
+      <div className="pt-10 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-6">
+         <p className="text-[10px] font-bold text-gray-300 uppercase tracking-widest italic">Golden Hills • Environmental Standards</p>
+          <div className="flex gap-8">
             <button 
               onClick={handleRequestSupplies}
-              className="text-[10px] font-bold uppercase tracking-widest hover:text-luxury-gold transition-colors"
+              className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#C9A84C] transition-all"
             >
-              Request Supplies
+              Order Supplies
             </button>
             <button 
-              onClick={() => console.log("View Schedule clicked")}
-              className="text-[10px] font-bold uppercase tracking-widest hover:text-luxury-gold transition-colors"
+              onClick={() => console.log("Schedule clicked")}
+              className="text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-[#C9A84C] transition-all"
             >
-              View Schedule
+              Master Schedule
             </button>
           </div>
       </div>
