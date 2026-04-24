@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Waves, Sparkles, Droplets, Wind, Star, ChevronRight, Loader2, ArrowRight, ShieldCheck, Heart } from 'lucide-react';
+import { Waves, Sparkles, Droplets, Wind, Star, ChevronRight, Loader2, ArrowRight, ShieldCheck, Heart, Clock } from 'lucide-react';
 import BrochureLayout from '../components/BrochureLayout';
 import GoldButton from '../components/GoldButton';
+import GlassCard from '../components/GlassCard';
 import { supabase } from '../lib/supabase';
 import { useNavigate } from 'react-router-dom';
 
@@ -10,6 +11,8 @@ const SpaPage = () => {
   const navigate = useNavigate();
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedService, setSelectedService] = useState(null);
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   const fallbackServices = [
     {
@@ -66,7 +69,8 @@ const SpaPage = () => {
   }
 
   return (
-    <BrochureLayout>
+    <>
+      <BrochureLayout>
       {/* Hero Section */}
       <section className="relative h-[75vh] flex items-center justify-center overflow-hidden bg-luxury-black text-white">
          <motion.div 
@@ -169,11 +173,25 @@ const SpaPage = () => {
                        </p>
                        
                        <div className="flex items-center gap-10 pt-6">
-                          <GoldButton onClick={() => navigate('/search')} className="px-16 py-7 shadow-gold text-[10px]">BOOK TREATMENT</GoldButton>
-                          <button onClick={() => navigate('/search')} className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group">
+                           <GoldButton 
+                             onClick={() => {
+                               setSelectedService(service);
+                               setShowBookingModal(true);
+                             }} 
+                             className="px-16 py-7 shadow-gold text-[10px]"
+                           >
+                             BOOK TREATMENT
+                           </GoldButton>
+                           <button 
+                             onClick={() => {
+                               setSelectedService(service);
+                               setShowBookingModal(true);
+                             }} 
+                             className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group"
+                           >
                              VIEW DETAILS <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                          </button>
-                       </div>
+                           </button>
+                        </div>
                     </div>
                  </motion.div>
                ))}
@@ -199,6 +217,82 @@ const SpaPage = () => {
          </div>
       </section>
     </BrochureLayout>
+
+    <AnimatePresence>
+      {showBookingModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12">
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setShowBookingModal(false)}
+            className="absolute inset-0 bg-luxury-black/90 backdrop-blur-xl"
+          />
+          <motion.div 
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            className="relative w-full max-w-2xl bg-white rounded-[3rem] overflow-hidden shadow-2xl"
+          >
+            <div className="p-12 md:p-16 space-y-10">
+              <div className="flex justify-between items-start">
+                <div className="space-y-2">
+                  <span className="text-luxury-gold font-bold uppercase tracking-[0.4em] text-[10px]">Spa Ritual Reservation</span>
+                  <h3 className="text-3xl md:text-5xl font-medium text-luxury-black">{selectedService?.name}</h3>
+                </div>
+                <button 
+                  onClick={() => setShowBookingModal(false)}
+                  className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-luxury-gold hover:text-white transition-all"
+                >
+                  <span className="text-2xl">&times;</span>
+                </button>
+              </div>
+
+              <div className="space-y-6 text-gray-500">
+                <p className="text-xl leading-relaxed italic">"{selectedService?.description}"</p>
+                <div className="flex items-center gap-4 text-luxury-gold">
+                   <Clock className="w-5 h-5" />
+                   <span className="text-sm font-bold tracking-widest uppercase">{selectedService?.hours} • {selectedService?.location}</span>
+                </div>
+              </div>
+
+              <form className="space-y-8" onSubmit={async (e) => {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                const { error } = await supabase.from('DiningReservation').insert([{
+                  guest_name: formData.get('fullName'),
+                  venue_name: selectedService?.name,
+                  reservation_date: formData.get('date'),
+                  reservation_time: 'Spa Session',
+                  party_size: 1,
+                  status: 'Pending'
+                }]);
+
+                if (error) {
+                  alert('Error sending request: ' + error.message);
+                } else {
+                  alert('Your spa ritual has been requested. Our wellness coordinator will confirm your appointment shortly.');
+                  setShowBookingModal(false);
+                }
+              }}>
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-4">Full Name</label>
+                    <input name="fullName" type="text" required className="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 ring-luxury-gold/20 outline-none" placeholder="Guest Name" />
+                  </div>
+                  <div className="space-y-3">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-4">Date</label>
+                    <input name="date" type="date" required className="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 ring-luxury-gold/20 outline-none" />
+                  </div>
+                </div>
+                <GoldButton type="submit" className="w-full py-6 shadow-gold">REQUEST TREATMENT</GoldButton>
+              </form>
+            </div>
+          </motion.div>
+        </div>
+      )}
+      </AnimatePresence>
+    </>
   );
 };
 

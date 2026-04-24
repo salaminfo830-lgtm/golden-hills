@@ -55,6 +55,42 @@ const RoomDetails = () => {
       setLoading(true);
       
       // 1. Fetch Room Details
+      if (id && id.startsWith('fallback-')) {
+        const fallbackRooms = [
+          {
+            id: 'fallback-1',
+            type: 'Heritage Deluxe',
+            price: 25000,
+            capacity: 2,
+            description: 'Experience a sanctuary where timeless Algerian elegance meets modern 4-star refinement.',
+            image_url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070',
+            amenities: []
+          },
+          {
+            id: 'fallback-2',
+            type: 'Royal Gold Suite',
+            price: 45000,
+            capacity: 2,
+            description: 'Expansive views of the high plateau with dedicated living spaces and premium amenities.',
+            image_url: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?auto=format&fit=crop&q=80&w=2070',
+            amenities: []
+          }
+        ];
+        const roomData = fallbackRooms.find(r => r.id === id);
+        if (!roomData) {
+          navigate('/search');
+          return;
+        }
+        setRoom({
+          ...roomData,
+          images: [roomData.image_url]
+        });
+        setRelatedRooms([]);
+        setIsAvailable(true);
+        setLoading(false);
+        return;
+      }
+
       const { data: roomData, error: roomError } = await supabase
         .from('Room')
         .select('*, amenities:Amenity(*)')

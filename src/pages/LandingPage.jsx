@@ -92,7 +92,7 @@ const LandingPage = () => {
               <div className="hidden sm:block h-px w-20 bg-luxury-gold/50" />
             </div>
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-medium text-white tracking-tight leading-[1.1] mb-10">
-               <span className="text-mask capitalize">{settings?.hotel_name || "Hôtel Golden Hills"}</span> <br /> 
+               <span className="gold-text-gradient capitalize">{settings?.hotel_name || "Hôtel Golden Hills"}</span> <br /> 
                <span className="text-luxury-gold/90 text-2xl md:text-4xl tracking-widest uppercase block mt-4">A Symphony of Luxury & Light</span>
             </h1>
             <p className="text-lg md:text-2xl text-white/80 max-w-2xl mx-auto mb-16 font-medium leading-relaxed italic">
@@ -100,12 +100,6 @@ const LandingPage = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-6 md:gap-8 justify-center items-center">
               <GoldButton className="px-10 py-4 shadow-sm hover:scale-105 transition-all w-full sm:w-auto" onClick={() => navigate('/search')}>START YOUR JOURNEY</GoldButton>
-              <button className="flex items-center gap-4 text-xs font-bold tracking-[0.4em] text-white uppercase hover:text-luxury-gold transition-all group">
-                <div className="w-16 h-16 rounded-full border border-white/20 flex items-center justify-center group-hover:bg-white/10 group-hover:scale-110 transition-all">
-                   <PlayCircle className="w-8 h-8" />
-                </div>
-                THE FILM
-              </button>
             </div>
           </motion.div>
         </div>
@@ -134,12 +128,12 @@ const LandingPage = () => {
                     <div className="flex items-center gap-5">
                        <div className="text-luxury-gold opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all"><Calendar /></div>
                        <div className="flex flex-col flex-1">
-                  <span className="text-xs font-bold uppercase text-gray-400 tracking-widest mb-1">Check-In</span>
+                  <span className="text-xs font-bold uppercase text-gray-600 tracking-widest mb-1">Check-In</span>
                           <input 
                             type="date" 
                             value={searchParams.checkIn}
                             onChange={(e) => setSearchParams({...searchParams, checkIn: e.target.value})}
-                            className="font-bold text-luxury-black text-sm bg-transparent outline-none cursor-pointer" 
+                            className="font-bold text-luxury-black text-sm bg-transparent outline-none cursor-pointer w-full" 
                           />
                        </div>
                     </div>
@@ -148,12 +142,12 @@ const LandingPage = () => {
                     <div className="flex items-center gap-5">
                        <div className="text-luxury-gold opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all"><Calendar /></div>
                        <div className="flex flex-col flex-1">
-                          <span className="text-xs font-bold uppercase text-gray-400 tracking-widest mb-1">Check-Out</span>
+                          <span className="text-xs font-bold uppercase text-gray-600 tracking-widest mb-1">Check-Out</span>
                           <input 
                             type="date" 
                             value={searchParams.checkOut}
                             onChange={(e) => setSearchParams({...searchParams, checkOut: e.target.value})}
-                            className="font-bold text-luxury-black text-sm bg-transparent outline-none cursor-pointer" 
+                            className="font-bold text-luxury-black text-sm bg-transparent outline-none cursor-pointer w-full" 
                           />
                        </div>
                     </div>
@@ -162,13 +156,13 @@ const LandingPage = () => {
                     <div className="flex items-center gap-5">
                        <div className="text-luxury-gold opacity-60 group-hover:opacity-100 group-hover:scale-110 transition-all"><Users /></div>
                        <div className="flex flex-col flex-1">
-                          <span className="text-xs font-bold uppercase text-gray-400 tracking-widest mb-1">Guests</span>
+                          <span className="text-xs font-bold uppercase text-gray-600 tracking-widest mb-1">Guests</span>
                           <input 
                             type="number" 
                             min="1"
                             value={searchParams.guests}
                             onChange={(e) => setSearchParams({...searchParams, guests: e.target.value})}
-                            className="font-bold text-luxury-black text-sm bg-transparent outline-none cursor-pointer" 
+                            className="font-bold text-luxury-black text-sm bg-transparent outline-none cursor-pointer w-full" 
                           />
                        </div>
                     </div>
@@ -190,7 +184,7 @@ const LandingPage = () => {
            <motion.div {...fadeInUp}>
               <span className="text-luxury-gold font-bold text-xs uppercase tracking-widest mb-8 block">The Soul of Setif</span>
               <h2 className="text-4xl md:text-7xl font-bold text-luxury-black leading-[1.1] tracking-tight mb-8 md:mb-12">Rugged beauty, <br/><span className="text-luxury-gold">refined.</span></h2>
-              <p className="text-xl text-gray-500 leading-relaxed font-medium mb-16 max-w-xl">
+              <p className="text-xl text-gray-700 leading-relaxed font-medium mb-16 max-w-xl">
                  Located at Rue Champs d'azur, {settings?.hotel_name || "Hôtel Golden Hills"} is a sanctuary of 54 rooms and suites. We offer a perfect blend of traditional Algerian hospitality and modern luxury, just steps away from Sétif's most iconic landmarks.
               </p>
               <div className="space-y-10">
@@ -204,7 +198,7 @@ const LandingPage = () => {
                       </div>
                       <div>
                          <h4 className="text-xl font-bold text-luxury-black mb-2 tracking-tight">{item.title}</h4>
-                         <p className="text-gray-500 text-sm font-medium">{item.desc}</p>
+                         <p className="text-gray-600 text-sm font-medium">{item.desc}</p>
                       </div>
                    </div>
                  ))}
@@ -231,7 +225,7 @@ const LandingPage = () => {
                 className="absolute -top-12 -left-12 p-10 bg-white/80 backdrop-blur-3xl rounded-[2rem] shadow-2xl border border-luxury-gold/10 z-20 hidden xl:block"
               >
                  <p className="text-6xl font-bold text-luxury-gold mb-2 tracking-tighter">100%</p>
-                 <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.4em]">Authenticity Rating</p>
+                 <p className="text-xs font-bold text-gray-600 uppercase tracking-[0.4em]">Authenticity Rating</p>
               </motion.div>
            </div>
         </div>
@@ -264,7 +258,7 @@ const LandingPage = () => {
                        {item.icon}
                     </div>
                     <h4 className="text-xl font-bold mb-3 tracking-tight">{item.title}</h4>
-                    <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+                    <p className="text-gray-600 text-sm leading-relaxed">{item.desc}</p>
                  </motion.div>
                ))}
             </div>
@@ -279,7 +273,7 @@ const LandingPage = () => {
                   <h4 className="text-luxury-gold font-bold text-xs uppercase tracking-widest mb-6">Accommodations</h4>
                   <h2 className="text-5xl md:text-6xl font-bold text-luxury-black leading-[1.1] tracking-tight">Sanctuaries of <br/><span>profound stillness</span></h2>
                </motion.div>
-               <Link to="/suites" className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-gray-400 hover:text-luxury-gold transition-colors group">
+               <Link to="/suites" className="flex items-center gap-4 text-xs font-bold uppercase tracking-[0.2em] text-gray-600 hover:text-luxury-gold transition-colors group">
                   EXPLORE ALL SUITES <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                </Link>
             </div>
@@ -294,9 +288,10 @@ const LandingPage = () => {
                  >
                     <div className="relative aspect-[3/4] rounded-[2.5rem] overflow-hidden mb-12 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.15)] group-hover:shadow-gold/20 transition-all duration-700">
                        <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-[2s]" alt={room.type} />
-                       <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent p-12 flex flex-col justify-end text-white">
+                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent p-12 flex flex-col justify-end text-white">
                           <span className="text-xs font-bold uppercase tracking-widest text-luxury-gold mb-3">{room.type}</span>
-                          <h3 className="text-4xl font-bold transition-all leading-tight tracking-tight">{room.type.split(' ')[0]}</h3>
+                          <h3 className="text-4xl font-bold transition-all leading-tight tracking-tight mb-2">{room.type.split(' ')[0]}</h3>
+                          <p className="text-luxury-gold text-lg font-bold">{room.price} DZD / night</p>
                           <div className="mt-6 flex items-center gap-3 opacity-0 group-hover:opacity-100 transition-all translate-y-4 group-hover:translate-y-0 duration-500">
                              <span className="text-xs font-bold uppercase tracking-[0.3em]">Discovery Profile</span>
                              <ChevronRight className="w-4 h-4 text-luxury-gold" />
@@ -322,13 +317,13 @@ const LandingPage = () => {
                   <div className="space-y-6">
                      <h4 className="text-luxury-gold font-bold text-sm tracking-widest uppercase">The Gastronomy</h4>
                      <h2 className="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight">The Saffron <br/>Theater.</h2>
-                     <p className="text-white/60 text-xl leading-relaxed max-w-xl font-medium">
+                     <p className="text-white/80 text-xl leading-relaxed max-w-xl font-medium">
                         A sensory journey through the heart of Algeria. Experience the theater of fine dining where each dish is a masterpiece of hill-grown spices and artisanal precision.
                      </p>
                   </div>
                   <div className="flex gap-8">
                      <GoldButton className="px-10 py-4 text-xs" onClick={() => navigate('/dining')}>VIEW VENUES</GoldButton>
-                     <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors" onClick={() => navigate('/dining')}>
+                     <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white transition-colors" onClick={() => navigate('/dining')}>
                         Discovery Menu <ArrowRight className="w-4 h-4 text-luxury-gold" />
                      </button>
                   </div>
@@ -342,9 +337,9 @@ const LandingPage = () => {
                   <div className="aspect-[16/11] rounded-[3rem] overflow-hidden shadow-2xl rotate-2 group-hover:rotate-0 transition-transform duration-1000">
                      <img src="https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&q=80&w=1974" className="w-full h-full object-cover" alt="Dining" />
                   </div>
-                  <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/5 backdrop-blur-3xl rounded-2xl p-10 border border-white/10 flex flex-col justify-center text-center">
+                  <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-white/10 backdrop-blur-3xl rounded-2xl p-10 border border-white/20 flex flex-col justify-center text-center shadow-xl">
                      <UtensilsCrossed className="w-8 h-8 text-luxury-gold mx-auto mb-4" />
-                     <p className="text-xs font-bold uppercase tracking-widest">3 Signature Concepts</p>
+                     <p className="text-xs font-bold uppercase tracking-widest text-white">3 Signature Concepts</p>
                   </div>
                </motion.div>
             </div>
@@ -359,21 +354,21 @@ const LandingPage = () => {
                   <div className="aspect-[16/11] rounded-[3rem] overflow-hidden shadow-2xl -rotate-2 group-hover:rotate-0 transition-transform duration-1000">
                      <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=2070" className="w-full h-full object-cover" alt="Spa" />
                   </div>
-                  <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/5 backdrop-blur-3xl rounded-2xl p-10 border border-white/10 flex flex-col justify-center text-center">
+                  <div className="absolute -top-10 -right-10 w-48 h-48 bg-white/10 backdrop-blur-3xl rounded-2xl p-10 border border-white/20 flex flex-col justify-center text-center shadow-xl">
                      <Waves className="w-8 h-8 text-luxury-gold mx-auto mb-4" />
-                     <p className="text-xs font-bold uppercase tracking-widest">Royal Hammam</p>
+                     <p className="text-xs font-bold uppercase tracking-widest text-white">Royal Hammam</p>
                   </div>
                </motion.div>
                <motion.div {...fadeInUp} className="space-y-16 order-1 lg:order-2">
                   <div className="space-y-6">
                      <h4 className="text-luxury-gold font-bold text-sm tracking-widest uppercase text-right">The Rituals</h4>
                      <h2 className="text-5xl md:text-7xl font-bold leading-[1.1] tracking-tight text-right">Pure <br/>Atmosphere.</h2>
-                     <p className="text-white/60 text-xl leading-relaxed max-w-xl ml-auto text-right font-medium">
+                     <p className="text-white/80 text-xl leading-relaxed max-w-xl ml-auto text-right font-medium">
                         Immerse yourself in the ancient wisdom of the hills. Our spa rituals are choreographies of silence, steam, and restoration.
                      </p>
                   </div>
                   <div className="flex gap-8 justify-end">
-                     <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white/40 hover:text-white transition-colors" onClick={() => navigate('/spa')}>
+                     <button className="flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-white/70 hover:text-white transition-colors" onClick={() => navigate('/spa')}>
                         Explore Rituals <ArrowRight className="w-4 h-4 text-luxury-gold" />
                      </button>
                      <GoldButton className="px-10 py-4 text-xs" onClick={() => navigate('/spa')}>BOOK WELLNESS</GoldButton>
@@ -406,10 +401,10 @@ const LandingPage = () => {
                    <div className="flex gap-1">
                       {[1,2,3,4].map(s => <Star key={s} className="w-4 h-4 text-luxury-gold fill-current" />)}
                    </div>
-                   <p className="text-gray-600 text-lg leading-relaxed font-medium flex-1">"{review.text}"</p>
+                   <p className="text-gray-800 text-lg leading-relaxed font-medium flex-1">"{review.text}"</p>
                    <div className="pt-8 border-t border-gray-50">
                       <p className="font-bold text-luxury-black">{review.name}</p>
-                      <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">{review.city} • Verified Stay</p>
+                      <p className="text-xs font-bold text-gray-600 uppercase tracking-widest">{review.city} • Verified Stay</p>
                    </div>
                 </GlassCard>
               </motion.div>
@@ -439,7 +434,7 @@ const LandingPage = () => {
                   <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-luxury-gold">Exploration</h4>
                   <nav className="flex flex-col gap-5">
                      {navItems.map(item => (
-                       <Link key={item.label} to={item.path} className="text-sm font-bold text-white/40 hover:text-white transition-colors flex items-center gap-2 group">
+                       <Link key={item.label} to={item.path} className="text-sm font-bold text-white/70 hover:text-white transition-colors flex items-center gap-2 group">
                           {item.label} <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
                        </Link>
                      ))}
@@ -448,7 +443,7 @@ const LandingPage = () => {
 
                <div className="space-y-10">
                   <h4 className="text-xs font-bold uppercase tracking-[0.4em] text-luxury-gold">Contact Enclave</h4>
-                   <div className="space-y-6 text-sm text-white/40 font-medium">
+                   <div className="space-y-6 text-sm text-white/70 font-medium">
                       <p className="leading-relaxed">{settings?.address || "Rue Champs d'azur, Sétif 19000, Algeria"}</p>
                       <p>{settings?.contact_phone || "030 793 030 / 07 70 51 53 59"}</p>
                       <p className="text-luxury-gold">{settings?.contact_email || "hotelgoldenhillsreservation@gmail.com"}</p>

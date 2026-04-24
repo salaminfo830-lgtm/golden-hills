@@ -147,94 +147,101 @@ const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-luxury-cream flex font-sans">
+    <div className="min-h-screen bg-[#FDFBF7] flex font-sans overflow-hidden">
       {/* Visual Column */}
       <div className="hidden lg:flex w-1/2 relative bg-luxury-black overflow-hidden items-center justify-center">
         <motion.div 
-          initial={{ scale: 1.1 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 15, ease: "linear" }}
-          className="absolute inset-0 opacity-40"
+          initial={{ scale: 1.2, opacity: 0 }}
+          animate={{ scale: 1, opacity: 0.5 }}
+          transition={{ duration: 2, ease: [0.16, 1, 0.3, 1] }}
+          className="absolute inset-0"
         >
           <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=2070" className="w-full h-full object-cover" alt="Hotel View" />
         </motion.div>
-        <div className="absolute inset-0 bg-gradient-to-br from-luxury-black via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-luxury-black via-luxury-black/60 to-transparent" />
         
         <div className="relative z-10 p-24 text-center">
-          <Logo inverse className="mx-auto mb-12 scale-150" />
-          <h2 className="text-4xl md:text-5xl font-medium text-white mb-6 leading-tight">Welcome Back to <br /> <span className="italic">the Sanctuary</span></h2>
-          <p className="text-white/40 text-lg max-w-md mx-auto font-medium leading-relaxed uppercase tracking-[0.2em]">Authentic Algerian Grandeur • Setif</p>
+          <Logo inverse className="mx-auto mb-16 scale-[1.8]" />
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5, duration: 1 }}
+          >
+            <h2 className="text-5xl md:text-6xl font-serif text-white mb-8 leading-tight italic">The Sanctuary <br/> <span className="not-italic font-light opacity-80">Awaits Your Return</span></h2>
+            <div className="w-24 h-1 bg-luxury-gold mx-auto mb-8 rounded-full shadow-[0_0_15px_rgba(201,168,76,0.5)]" />
+            <p className="text-white/40 text-sm max-w-md mx-auto font-medium leading-relaxed uppercase tracking-[0.4em]">Authentic Algerian Grandeur • Setif</p>
+          </motion.div>
         </div>
 
-        <div className="absolute bottom-12 left-12 flex gap-10 text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
-          <span>GHE-SECURITY</span>
+        <div className="absolute bottom-12 left-12 flex gap-12 text-[10px] font-bold text-white/10 uppercase tracking-[0.5em]">
+          <span>GHE-SECURITY-V3</span>
           <span>EST. 2017</span>
         </div>
       </div>
 
       {/* Form Column */}
-      <div className="flex-1 flex items-center justify-center p-8 md:p-20 bg-white relative">
-        <Link to="/" className="absolute top-6 md:top-10 right-6 md:right-10 text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400 hover:text-luxury-gold transition-colors">
-          Exit to Public Portal
+      <div className="flex-1 flex items-center justify-center p-8 md:p-24 bg-[#FAF9F6] relative overflow-y-auto">
+        <Link to="/" className="absolute top-10 right-12 text-[11px] font-bold uppercase tracking-[0.3em] text-gray-400 hover:text-luxury-gold transition-all flex items-center gap-3 group">
+          Exit to Public Portal <ArrowRight className="w-4 h-4 group-hover:translate-x-2 transition-transform" />
         </Link>
 
-        <div className="w-full max-w-md space-y-12">
-          <div className="text-center md:text-left space-y-3 md:space-y-4">
-            <h1 className="text-3xl md:text-4xl font-medium text-luxury-black">
-              {isResetting ? "Update Access Key" : "Authorized Access"}
+        <div className="w-full max-w-lg space-y-16 py-20">
+          <div className="text-center md:text-left space-y-6">
+            <h1 className="text-4xl md:text-5xl font-serif text-luxury-black leading-tight">
+              {isResetting ? "Update Your <br/><span className='italic gold-text-gradient'>Access Key</span>" : "Authorized <br/><span className='italic gold-text-gradient'>Access Portal</span>"}
             </h1>
-            <p className="text-gray-400 font-medium text-base md:text-lg">
-              {isResetting ? "Set a new secure key for your account." : "Secure your session with your credentials."}
+            <p className="text-gray-400 font-light text-lg tracking-wide max-w-sm">
+              {isResetting ? "Establish a new secure key for your digital signature." : "Secure your active session within the Sanctuary's encrypted core."}
             </p>
           </div>
 
-          <form onSubmit={isResetting ? handleUpdatePassword : handleLogin} className="space-y-8">
+          <form onSubmit={isResetting ? handleUpdatePassword : handleLogin} className="space-y-10">
             {error && (
               <motion.div 
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="p-5 bg-red-50 border border-red-100 rounded-2xl text-red-600 text-xs font-bold uppercase tracking-widest flex items-center gap-3"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="p-6 bg-red-50 border border-red-100 rounded-3xl text-red-600 text-xs font-bold uppercase tracking-[0.2em] flex items-center gap-4 shadow-sm"
               >
-                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" /> {error}
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_rgba(239,68,68,0.5)]" /> {error}
               </motion.div>
             )}
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               {!isResetting ? (
                 <>
-                  <div className="space-y-2">
-                    <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em] pl-2">Email Identity</label>
+                  <div className="space-y-3">
+                    <label className="text-[11px] uppercase font-bold text-gray-400 tracking-[0.3em] pl-6">Email Identity</label>
                     <div className="relative group">
-                      <Mail className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                      <Mail className="absolute left-8 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
                       <input 
                         type="email" 
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="input-luxury w-full pl-16 h-16"
+                        className="input-luxury w-full pl-20 h-20 text-lg rounded-[2.5rem] bg-white border-gray-100/50 shadow-sm focus:shadow-2xl transition-all"
                         placeholder="concierge@goldenhills.dz"
                         required
                       />
                     </div>
                   </div>
 
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center px-2">
-                      <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em]">Access Key</label>
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center px-6">
+                      <label className="text-[11px] uppercase font-bold text-gray-400 tracking-[0.3em]">Access Key</label>
                       <button 
                         type="button" 
                         onClick={handleResetPassword}
-                        className="text-[10px] font-bold text-luxury-gold uppercase tracking-widest hover:underline transition-all"
+                        className="text-[11px] font-bold text-luxury-gold uppercase tracking-[0.2em] hover:opacity-70 transition-all"
                       >
                         Recover Key
                       </button>
                     </div>
                     <div className="relative group">
-                      <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                      <Lock className="absolute left-8 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
                       <input 
                         type="password" 
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="input-luxury w-full pl-16 h-16"
+                        className="input-luxury w-full pl-20 h-20 text-lg rounded-[2.5rem] bg-white border-gray-100/50 shadow-sm focus:shadow-2xl transition-all"
                         placeholder="••••••••"
                         required
                       />
@@ -242,15 +249,15 @@ const LoginPage = () => {
                   </div>
                 </>
               ) : (
-                <div className="space-y-2">
-                  <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.3em] pl-2">New Access Key</label>
+                <div className="space-y-3">
+                  <label className="text-[11px] uppercase font-bold text-gray-400 tracking-[0.3em] pl-6">New Access Key</label>
                   <div className="relative group">
-                    <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
+                    <Lock className="absolute left-8 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-luxury-gold transition-colors" />
                     <input 
                       type="password" 
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
-                      className="input-luxury w-full pl-16 h-16"
+                      className="input-luxury w-full pl-20 h-20 text-lg rounded-[2.5rem] bg-white border-gray-100/50 shadow-sm focus:shadow-2xl transition-all"
                       placeholder="••••••••"
                       required
                     />
@@ -261,23 +268,23 @@ const LoginPage = () => {
 
             <GoldButton 
               type="submit" 
-              className="w-full py-4 md:py-5 shadow-2xl flex items-center justify-center gap-4 text-[10px] md:text-xs tracking-[0.2em]"
+              className="w-full py-6 md:py-7 shadow-[0_30px_60px_-15px_rgba(201,168,76,0.3)] flex items-center justify-center gap-5 text-xs md:text-sm tracking-[0.4em] rounded-[2.5rem]"
               disabled={loading}
             >
               {loading ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+                <Loader2 className="w-6 h-6 animate-spin" />
               ) : (
-                <>{isResetting ? "UPDATE ACCESS KEY" : "INITIALIZE SESSION"} <ArrowRight className="w-4 h-4" /></>
+                <>{isResetting ? "UPDATE ACCESS KEY" : "INITIALIZE SESSION"} <ArrowRight className="w-5 h-5" /></>
               )}
             </GoldButton>
           </form>
 
-          <div className="pt-12 border-t border-gray-50 text-center space-y-6">
-            <p className="text-[10px] font-bold text-gray-300 uppercase tracking-[0.3em] flex items-center justify-center gap-3">
-              <Shield className="w-4 h-4 text-luxury-gold/50" /> End-to-End Encrypted Secure Portal
+          <div className="pt-16 border-t border-gray-100 text-center space-y-8">
+            <p className="text-[11px] font-bold text-gray-300 uppercase tracking-[0.4em] flex items-center justify-center gap-4">
+              <Shield className="w-5 h-5 text-luxury-gold/40" /> End-to-End Encrypted Secure Portal
             </p>
-            <p className="text-sm font-medium text-gray-500">
-              New to the Golden Hills? <Link to="/register" className="text-luxury-gold font-bold hover:underline">Apply for membership</Link>
+            <p className="text-base font-light text-gray-500">
+              New to the Golden Hills? <Link to="/register" className="text-luxury-gold font-bold hover:underline tracking-wide">Apply for Membership</Link>
             </p>
           </div>
         </div>

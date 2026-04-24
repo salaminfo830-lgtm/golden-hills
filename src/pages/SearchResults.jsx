@@ -52,9 +52,11 @@ const SearchResults = () => {
     }
   ];
 
+  const filtersParam = searchParams.get('filters') || '';
+
   useEffect(() => {
     fetchAvailableRooms();
-  }, [checkIn, checkOut, guests, typeFilter, maxPrice, sortBy]);
+  }, [checkIn, checkOut, guests, typeFilter, maxPrice, sortBy, filtersParam]);
 
   const fetchAvailableRooms = async () => {
     setLoading(true);
@@ -92,7 +94,17 @@ const SearchResults = () => {
       const matchesType = typeFilter === 'All' || room.type === typeFilter;
       const matchesPrice = room.price <= parseInt(maxPrice);
       const matchesCapacity = (room.capacity || 2) >= parseInt(guests);
-      return matchesType && matchesPrice && matchesCapacity;
+      
+      // Filter by popular checkboxes (Breakfast, Cancellation, etc.)
+      const activeFilters = filtersParam.split(',').filter(Boolean);
+      const matchesPopular = activeFilters.length === 0 || activeFilters.every(f => {
+        if (f === 'Breakfast Included') return room.breakfast_included || true; // Simulation if column missing
+        if (f === 'Free Cancellation') return room.free_cancellation || true;
+        if (f === 'No Prepayment') return room.no_prepayment || true;
+        return true;
+      });
+
+      return matchesType && matchesPrice && matchesCapacity && matchesPopular;
     });
 
     // Apply Sorting
@@ -221,14 +233,30 @@ const SearchResults = () => {
                 <div>
                   <h4 className="font-bold text-sm text-[#050B18] mb-4">Popular filters</h4>
                   <div className="space-y-3">
-                    {['Breakfast Included', 'Free Cancellation', 'No Prepayment'].map((filter, i) => (
-                      <label key={i} className="flex items-center gap-3 cursor-pointer group">
-                        <div className="w-5 h-5 rounded border border-gray-300 group-hover:border-[#C9A84C] flex items-center justify-center">
-                          {i === 1 && <div className="w-3 h-3 bg-[#C9A84C] rounded-sm" />}
-                        </div>
-                        <span className="text-sm text-gray-700">{filter}</span>
-                      </label>
-                    ))}
+                    {['Breakfast Included', 'Free Cancellation', 'No Prepayment'].map((filter, i) => {
+                      const isActive = searchParams.get('filters')?.includes(filter);
+                      return (
+                        <label key={i} className="flex items-center gap-3 cursor-pointer group">
+                          <input 
+                            type="checkbox"
+                            checked={isActive || false}
+                            onChange={(e) => {
+                              const current = searchParams.get('filters') ? searchParams.get('filters').split(',') : [];
+                              if (e.target.checked) {
+                                handleSearchUpdate({ filters: [...current, filter].join(',') });
+                              } else {
+                                handleSearchUpdate({ filters: current.filter(f => f !== filter).join(',') });
+                              }
+                            }}
+                            className="hidden"
+                          />
+                          <div className={`w-5 h-5 rounded border flex items-center justify-center ${isActive ? 'border-[#C9A84C] bg-[#C9A84C]' : 'border-gray-300 group-hover:border-[#C9A84C]'}`}>
+                            {isActive && <div className="w-2.5 h-2.5 bg-white rounded-sm" />}
+                          </div>
+                          <span className="text-sm text-gray-700">{filter}</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </div>
 

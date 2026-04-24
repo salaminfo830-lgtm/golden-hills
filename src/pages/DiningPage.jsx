@@ -242,6 +242,89 @@ const DiningPage = () => {
             </motion.div>
          </div>
       </section>
+
+      <AnimatePresence>
+        {showBookingModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 md:p-12">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowBookingModal(false)}
+              className="absolute inset-0 bg-luxury-black/90 backdrop-blur-xl"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl bg-white rounded-[3rem] overflow-hidden shadow-2xl"
+            >
+              <div className="p-12 md:p-16 space-y-10">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2">
+                    <span className="text-luxury-gold font-bold uppercase tracking-[0.4em] text-[10px]">Reservation Request</span>
+                    <h3 className="text-3xl md:text-5xl font-medium text-luxury-black">{selectedVenue?.name}</h3>
+                  </div>
+                  <button 
+                    onClick={() => setShowBookingModal(false)}
+                    className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 hover:bg-luxury-gold hover:text-white transition-all"
+                  >
+                    <span className="text-2xl">&times;</span>
+                  </button>
+                </div>
+
+                <form className="space-y-8" onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target);
+                  const { error } = await supabase.from('DiningReservation').insert([{
+                    guest_name: formData.get('fullName'),
+                    venue_name: selectedVenue?.name,
+                    reservation_date: formData.get('date'),
+                    reservation_time: formData.get('time'),
+                    party_size: parseInt(formData.get('partySize')),
+                    status: 'Pending'
+                  }]);
+
+                  if (error) {
+                    alert('Error sending request: ' + error.message);
+                  } else {
+                    alert('Your table reservation request has been sent. Our concierge will contact you shortly.');
+                    setShowBookingModal(false);
+                  }
+                }}>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-4">Full Name</label>
+                      <input name="fullName" type="text" required className="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 ring-luxury-gold/20 outline-none" placeholder="Enter name" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-4">Guest Count</label>
+                      <input name="partySize" type="number" min="1" max="10" defaultValue="2" required className="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 ring-luxury-gold/20 outline-none" />
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-4">Date</label>
+                      <input name="date" type="date" required className="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 ring-luxury-gold/20 outline-none" />
+                    </div>
+                    <div className="space-y-3">
+                      <label className="text-[10px] font-bold uppercase tracking-widest text-gray-400 ml-4">Preferred Time</label>
+                      <select name="time" required className="w-full bg-gray-50 border-0 rounded-2xl px-6 py-4 text-sm font-bold focus:ring-2 ring-luxury-gold/20 outline-none appearance-none">
+                        <option>19:00</option>
+                        <option>19:30</option>
+                        <option>20:00</option>
+                        <option>20:30</option>
+                        <option>21:00</option>
+                      </select>
+                    </div>
+                  </div>
+                  <GoldButton type="submit" className="w-full py-6 shadow-gold">CONFIRM REQUEST</GoldButton>
+                </form>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </BrochureLayout>
   );
 };
