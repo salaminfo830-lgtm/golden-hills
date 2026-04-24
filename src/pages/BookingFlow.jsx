@@ -15,6 +15,26 @@ import GlassCard from '../components/GlassCard';
 import GoldButton from '../components/GoldButton';
 import Logo from '../components/Logo';
 import BookingSummary from '../components/BookingSummary';
+import React from 'react';
+
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error", error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return <div className="p-10 bg-red-50 text-red-500 font-mono text-sm">{this.state.error?.message || 'Unknown Error in Render'}</div>;
+    }
+    return this.props.children;
+  }
+}
 
 const BookingFlow = () => {
   const { roomId } = useParams();
@@ -260,14 +280,11 @@ const BookingFlow = () => {
 
         <div className="container mx-auto px-8 pt-48">
           <div className="max-w-7xl mx-auto">
-            <AnimatePresence mode="wait">
+            <div className="relative">
               {step < 4 ? (
-                <motion.div 
+                <div 
                   key="booking-content"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24"
+                  className="grid grid-cols-1 lg:grid-cols-12 gap-16 xl:gap-24 animate-in fade-in slide-in-from-bottom-4 duration-500"
                 >
                   {/* Left Column: Form Steps */}
                   <div className="lg:col-span-7 space-y-16">
@@ -596,14 +613,13 @@ const BookingFlow = () => {
                       hasSpaBenefit={hasSpaBenefit}
                     />
                   </div>
-                </motion.div>
+                </div>
               ) : (
-                <motion.div
-                  key="success-screen"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  className="max-w-4xl mx-auto"
-                >
+                <ErrorBoundary>
+                  <div
+                    key="success-screen"
+                    className="max-w-4xl mx-auto animate-in zoom-in-95 duration-500"
+                  >
                   <div className="bg-white p-12 md:p-24 rounded-[5rem] shadow-[0_100px_150px_-50px_rgba(212,175,55,0.2)] border border-luxury-gold/10 relative overflow-hidden text-center space-y-16">
                     <div className="absolute top-0 left-0 w-full h-4 bg-luxury-gold shadow-lg" />
                     <div className="absolute -top-32 -left-32 w-80 h-80 bg-luxury-gold/5 rounded-full blur-[100px]" />
@@ -669,9 +685,10 @@ const BookingFlow = () => {
                       <button onClick={() => navigate('/dashboard')} className="px-20 py-7 bg-white border border-gray-100 rounded-[2.5rem] text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all shadow-sm">PRIVATE MEMBER DASHBOARD</button>
                     </div>
                   </div>
-                </motion.div>
+                </div>
+              </ErrorBoundary>
               )}
-            </AnimatePresence>
+            </div>
           </div>
         </div>
       </div>
