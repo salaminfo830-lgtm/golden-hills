@@ -23,26 +23,26 @@ function App() {
     <>
       <ScrollToTop />
       <Routes>
-        <Route path="/" element={<ProtectedRoute public><LandingPage /></ProtectedRoute>} />
-        <Route path="/login" element={<ProtectedRoute public><LoginPage /></ProtectedRoute>} />
-        <Route path="/register" element={<ProtectedRoute public><RegisterPage /></ProtectedRoute>} />
-        <Route path="/room/:id" element={<ProtectedRoute public><RoomDetails /></ProtectedRoute>} />
-        <Route path="/search" element={<ProtectedRoute public><SearchResults /></ProtectedRoute>} />
-        <Route path="/book/:roomId" element={<ProtectedRoute public><BookingFlow /></ProtectedRoute>} />
+        <Route path="/" element={<ProtectedRoute isPublic><LandingPage /></ProtectedRoute>} />
+        <Route path="/login" element={<ProtectedRoute isPublic><LoginPage /></ProtectedRoute>} />
+        <Route path="/register" element={<ProtectedRoute isPublic><RegisterPage /></ProtectedRoute>} />
+        <Route path="/room/:id" element={<ProtectedRoute isPublic><RoomDetails /></ProtectedRoute>} />
+        <Route path="/search" element={<ProtectedRoute isPublic><SearchResults /></ProtectedRoute>} />
+        <Route path="/book/:roomId" element={<ProtectedRoute isPublic><BookingFlow /></ProtectedRoute>} />
         <Route path="/dashboard" element={
           <ProtectedRoute requiredRole="guest">
             <GuestDashboard />
           </ProtectedRoute>
         } />
-        <Route path="/about" element={<ProtectedRoute public><AboutPage /></ProtectedRoute>} />
-        <Route path="/suites" element={<ProtectedRoute public><SuitesPage /></ProtectedRoute>} />
-        <Route path="/dining" element={<ProtectedRoute public><DiningPage /></ProtectedRoute>} />
-        <Route path="/spa" element={<ProtectedRoute public><SpaPage /></ProtectedRoute>} />
-        <Route path="/privacy" element={<ProtectedRoute public><LegalPages type="privacy" /></ProtectedRoute>} />
-        <Route path="/terms" element={<ProtectedRoute public><LegalPages type="terms" /></ProtectedRoute>} />
-        <Route path="/security" element={<ProtectedRoute public><LegalPages type="security" /></ProtectedRoute>} />
-        <Route path="/faq" element={<ProtectedRoute public><LegalPages type="faq" /></ProtectedRoute>} />
-        <Route path="/contact" element={<ProtectedRoute public><ContactPage /></ProtectedRoute>} />
+        <Route path="/about" element={<ProtectedRoute isPublic><AboutPage /></ProtectedRoute>} />
+        <Route path="/suites" element={<ProtectedRoute isPublic><SuitesPage /></ProtectedRoute>} />
+        <Route path="/dining" element={<ProtectedRoute isPublic><DiningPage /></ProtectedRoute>} />
+        <Route path="/spa" element={<ProtectedRoute isPublic><SpaPage /></ProtectedRoute>} />
+        <Route path="/privacy" element={<ProtectedRoute isPublic><LegalPages type="privacy" /></ProtectedRoute>} />
+        <Route path="/terms" element={<ProtectedRoute isPublic><LegalPages type="terms" /></ProtectedRoute>} />
+        <Route path="/security" element={<ProtectedRoute isPublic><LegalPages type="security" /></ProtectedRoute>} />
+        <Route path="/faq" element={<ProtectedRoute isPublic><LegalPages type="faq" /></ProtectedRoute>} />
+        <Route path="/contact" element={<ProtectedRoute isPublic><ContactPage /></ProtectedRoute>} />
         <Route path="/status" element={
           <ProtectedRoute requiredRole="staff">
             <StatusPage />

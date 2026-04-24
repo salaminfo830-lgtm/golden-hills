@@ -14,7 +14,7 @@ const SuitesPage = () => {
 
   const fallbackRooms = [
     {
-      id: 'r1',
+      id: 'fallback-1',
       type: 'Royal Atlas Suite',
       price: 1200,
       description: 'Our flagship residence, offering 180-degree views of the Sétif highlands. A masterpiece of gilded marble and handcrafted cedar.',
@@ -22,7 +22,7 @@ const SuitesPage = () => {
       features: ['Private Terrace', 'Personal Butler', 'Hammam-style Bath']
     },
     {
-      id: 'r2',
+      id: 'fallback-2',
       type: 'Golden Hill Oasis',
       price: 850,
       description: 'A sanctuary of peace designed for deep rejuvenation. Features a private meditation courtyard and direct spa access.',

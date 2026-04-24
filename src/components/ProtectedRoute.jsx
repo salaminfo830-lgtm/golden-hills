@@ -3,7 +3,9 @@ import { Navigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { Loader2 } from 'lucide-react';
 
-const ProtectedRoute = ({ children, requiredRole, public: isPublic }) => {
+const ProtectedRoute = ({ children, requiredRole, isPublic }) => {
+  if (isPublic) return children;
+
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -67,13 +69,7 @@ const ProtectedRoute = ({ children, requiredRole, public: isPublic }) => {
   }
 
   if (!session) {
-    if (isPublic) return children;
     return <Navigate to="/login" replace state={{ from: window.location.pathname }} />;
-  }
-
-  // Allow all users (Guests, Admin, Staff) to stay on public routes
-  if (isPublic) {
-    return children;
   }
 
   // Handle Staff Status
