@@ -188,7 +188,11 @@ const LoginPage = () => {
         <div className="w-full max-w-lg space-y-16 py-20">
           <div className="text-center md:text-left space-y-6">
             <h1 className="text-4xl md:text-5xl font-serif text-luxury-black leading-tight">
-              {isResetting ? "Update Your <br/><span className='italic gold-text-gradient'>Access Key</span>" : "Authorized <br/><span className='italic gold-text-gradient'>Access Portal</span>"}
+              {isResetting ? (
+                <>Update Your <br/><span className='italic gold-text-gradient'>Access Key</span></>
+              ) : (
+                <>Authorized <br/><span className='italic gold-text-gradient'>Access Portal</span></>
+              )}
             </h1>
             <p className="text-gray-400 font-light text-lg tracking-wide max-w-sm">
               {isResetting ? "Establish a new secure key for your digital signature." : "Secure your active session within the Sanctuary's encrypted core."}

@@ -6,7 +6,7 @@ import {
   MapPin, ShieldCheck, Loader2, ArrowRight,
   Shield, Sparkles, AlertCircle, Info,
   MessageSquare, PlaneTakeoff, Bell, Upload,
-  DollarSign, Landmark, Wallet
+  DollarSign, Landmark, Wallet, Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PayPalScriptProvider, PayPalButtons } from "@paypal/react-paypal-js";
@@ -232,10 +232,10 @@ const BookingFlow = () => {
 
   return (
     <PayPalScriptProvider options={{ "client-id": settings?.paypal_client_id || "test", currency: "USD" }}>
-      <div className="min-h-screen bg-[#FDFBF7] pb-32">
+      <div className="min-h-screen bg-gradient-to-br from-[#FDFBF7] via-white to-[#F9F7F2] pb-32 selection:bg-luxury-gold/20">
         <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-2xl border-b border-luxury-gold/10 py-6">
           <div className="container mx-auto px-8 flex justify-between items-center">
-            <button onClick={() => navigate(-1)} className="group flex items-center gap-4 text-gray-400 hover:text-luxury-black font-bold text-[10px] uppercase tracking-[0.4em] transition-all">
+            <button onClick={() => navigate(-1)} className="group flex items-center gap-4 text-gray-500 hover:text-luxury-black font-bold text-[11px] uppercase tracking-[0.4em] transition-all">
               <ChevronLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" /> BACK TO SANCTUARY
             </button>
             <Logo className="scale-90" />
@@ -243,10 +243,10 @@ const BookingFlow = () => {
               <div className="hidden xl:flex gap-6 items-center">
                 {[1, 2, 3].map(s => (
                   <div key={s} className="flex items-center gap-4">
-                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center text-[10px] font-bold transition-all duration-700 ${step >= s ? 'bg-luxury-gold text-white shadow-lg shadow-luxury-gold/30' : 'bg-gray-50 text-gray-300 border border-gray-100'}`}>
-                      {step > s ? <CheckCircle2 className="w-5 h-5" /> : s}
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-[11px] font-bold transition-all duration-700 ${step >= s ? 'bg-luxury-black text-white shadow-2xl shadow-luxury-black/20' : 'bg-white text-gray-300 border border-gray-100'}`}>
+                      {step > s ? <CheckCircle2 className="w-6 h-6 text-luxury-gold" /> : s}
                     </div>
-                    {s < 3 && <div className={`w-12 h-px ${step > s ? 'bg-luxury-gold' : 'bg-gray-100'}`} />}
+                    {s < 3 && <div className={`w-16 h-px ${step > s ? 'bg-luxury-gold' : 'bg-gray-200'}`} />}
                   </div>
                 ))}
               </div>
@@ -273,52 +273,60 @@ const BookingFlow = () => {
                     {step === 1 && (
                       <div className="space-y-16">
                         <div className="space-y-6">
-                          <h1 className="text-5xl md:text-6xl font-serif font-bold text-luxury-black tracking-tight">Identity Protocol</h1>
-                          <p className="text-gray-400 font-medium text-lg italic">"Your comfort is our priority. Please provide your official credentials for the guest list."</p>
+                          <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-4 text-luxury-gold"
+                          >
+                            <div className="w-12 h-[2px] bg-luxury-gold" />
+                            <span className="text-[11px] font-bold uppercase tracking-[0.5em]">Phase 01</span>
+                          </motion.div>
+                          <h1 className="text-6xl md:text-7xl font-serif font-bold text-luxury-black tracking-tight leading-none">Identity <span className="italic text-luxury-gold">Protocol</span></h1>
+                          <p className="text-gray-500 font-medium text-xl italic max-w-xl border-l-4 border-luxury-gold/20 pl-6 py-2">"Your comfort is our priority. Please provide your official credentials for the guest list."</p>
                         </div>
 
                         <form className="space-y-10" onSubmit={(e) => { e.preventDefault(); handleNextStep(); }}>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                             <div className="space-y-4">
-                              <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Full Legal Name</label>
+                              <label className="text-[11px] uppercase font-bold text-gray-500 tracking-[0.3em] pl-2">Full Legal Name</label>
                               <div className="relative group">
-                                <User className={`absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${validationErrors.fullName ? 'text-red-400' : 'text-gray-300 group-focus-within:text-luxury-gold'}`} />
+                                <User className={`absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${validationErrors.fullName ? 'text-red-400' : 'text-gray-400 group-focus-within:text-luxury-gold'}`} />
                                 <input 
                                   required
                                   type="text" 
                                   placeholder="Ex: Mourad Brahimi" 
                                   value={formData.fullName}
                                   onChange={(e) => setFormData({...formData, fullName: e.target.value})}
-                                  className={`input-luxury w-full pl-16 h-16 rounded-2xl ${validationErrors.fullName ? 'border-red-200 bg-red-50' : 'bg-white border-gray-100'}`} 
+                                  className={`w-full pl-16 h-20 rounded-[2rem] border-2 text-luxury-black font-semibold transition-all duration-500 outline-none ${validationErrors.fullName ? 'border-red-200 bg-red-50' : 'bg-white/50 border-gray-100 focus:bg-white focus:border-luxury-gold focus:shadow-2xl focus:shadow-luxury-gold/10'}`} 
                                 />
                               </div>
                             </div>
                             <div className="space-y-4">
-                              <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Digital Address</label>
+                              <label className="text-[11px] uppercase font-bold text-gray-500 tracking-[0.3em] pl-2">Digital Address</label>
                               <div className="relative group">
-                                <Mail className={`absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${validationErrors.email ? 'text-red-400' : 'text-gray-300 group-focus-within:text-luxury-gold'}`} />
+                                <Mail className={`absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${validationErrors.email ? 'text-red-400' : 'text-gray-400 group-focus-within:text-luxury-gold'}`} />
                                 <input 
                                   required
                                   type="email" 
                                   placeholder="mourad@gmail.com" 
                                   value={formData.email}
                                   onChange={(e) => setFormData({...formData, email: e.target.value})}
-                                  className={`input-luxury w-full pl-16 h-16 rounded-2xl ${validationErrors.email ? 'border-red-200 bg-red-50' : 'bg-white border-gray-100'}`} 
+                                  className={`w-full pl-16 h-20 rounded-[2rem] border-2 text-luxury-black font-semibold transition-all duration-500 outline-none ${validationErrors.email ? 'border-red-200 bg-red-50' : 'bg-white/50 border-gray-100 focus:bg-white focus:border-luxury-gold focus:shadow-2xl focus:shadow-luxury-gold/10'}`} 
                                 />
                               </div>
                             </div>
                           </div>
                           <div className="space-y-4">
-                            <label className="text-[10px] uppercase font-bold text-gray-400 tracking-[0.4em] pl-2">Mobile Sanctuary Line</label>
+                            <label className="text-[11px] uppercase font-bold text-gray-500 tracking-[0.3em] pl-2">Mobile Sanctuary Line</label>
                             <div className="relative group">
-                              <Phone className={`absolute left-6 top-1/2 -translate-y-1/2 w-4 h-4 transition-colors ${validationErrors.phone ? 'text-red-400' : 'text-gray-300 group-focus-within:text-luxury-gold'}`} />
+                              <Phone className={`absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${validationErrors.phone ? 'text-red-400' : 'text-gray-400 group-focus-within:text-luxury-gold'}`} />
                               <input 
                                 required
                                 type="tel" 
                                 placeholder="+213 --- --- ---" 
                                 value={formData.phone}
                                 onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                                className={`input-luxury w-full pl-16 h-16 rounded-2xl ${validationErrors.phone ? 'border-red-200 bg-red-50' : 'bg-white border-gray-100'}`} 
+                                className={`w-full pl-16 h-20 rounded-[2rem] border-2 text-luxury-black font-semibold transition-all duration-500 outline-none ${validationErrors.phone ? 'border-red-200 bg-red-50' : 'bg-white/50 border-gray-100 focus:bg-white focus:border-luxury-gold focus:shadow-2xl focus:shadow-luxury-gold/10'}`} 
                               />
                             </div>
                           </div>
@@ -345,8 +353,16 @@ const BookingFlow = () => {
                     {step === 2 && (
                       <div className="space-y-16">
                         <div className="space-y-6">
-                          <h1 className="text-5xl md:text-6xl font-serif font-bold text-luxury-black tracking-tight">Settlement</h1>
-                          <p className="text-gray-400 font-medium text-lg italic">"Select your preferred financial ritual for confirmation."</p>
+                          <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-4 text-luxury-gold"
+                          >
+                            <div className="w-12 h-[2px] bg-luxury-gold" />
+                            <span className="text-[11px] font-bold uppercase tracking-[0.5em]">Phase 02</span>
+                          </motion.div>
+                          <h1 className="text-6xl md:text-7xl font-serif font-bold text-luxury-black tracking-tight leading-none">Financial <span className="italic text-luxury-gold">Settlement</span></h1>
+                          <p className="text-gray-500 font-medium text-xl italic max-w-xl border-l-4 border-luxury-gold/20 pl-6 py-2">"Select your preferred financial ritual for confirmation."</p>
                         </div>
 
                         <div className="grid grid-cols-1 gap-8">
@@ -358,16 +374,19 @@ const BookingFlow = () => {
                             <div 
                               key={method.id}
                               onClick={() => setFormData({...formData, paymentMethod: method.id})}
-                              className={`p-10 rounded-[3rem] border-2 transition-all duration-500 cursor-pointer flex items-center gap-10 ${formData.paymentMethod === method.id ? 'bg-luxury-gold/5 border-luxury-gold shadow-2xl shadow-luxury-gold/10 scale-[1.02]' : 'bg-white border-gray-50 hover:border-luxury-gold/20'}`}
+                              className={`p-10 rounded-[3rem] border-2 transition-all duration-500 cursor-pointer flex items-center gap-10 group relative overflow-hidden ${formData.paymentMethod === method.id ? 'bg-white border-luxury-gold shadow-2xl shadow-luxury-gold/10 scale-[1.02]' : 'bg-white/50 border-gray-100 hover:border-luxury-gold/30'}`}
                             >
-                              <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 ${formData.paymentMethod === method.id ? 'bg-luxury-gold text-white rotate-6' : 'bg-gray-50 text-gray-400'}`}>
+                              {formData.paymentMethod === method.id && (
+                                <motion.div layoutId="active-bg" className="absolute inset-0 bg-gradient-to-r from-luxury-gold/5 to-transparent pointer-events-none" />
+                              )}
+                              <div className={`w-20 h-20 rounded-3xl flex items-center justify-center transition-all duration-500 z-10 ${formData.paymentMethod === method.id ? 'bg-luxury-black text-white rotate-6' : 'bg-gray-50 text-gray-400 group-hover:bg-luxury-gold/5 group-hover:text-luxury-gold'}`}>
                                 <method.icon className="w-10 h-10" />
                               </div>
-                              <div className="flex-1">
+                              <div className="flex-1 z-10">
                                 <h5 className="text-2xl font-serif font-bold text-luxury-black mb-1">{method.title}</h5>
-                                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-bold">{method.sub}</p>
+                                <p className="text-[11px] text-gray-500 uppercase tracking-widest font-bold">{method.sub}</p>
                               </div>
-                              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-500 ${formData.paymentMethod === method.id ? 'bg-luxury-gold border-luxury-gold' : 'border-gray-100'}`}>
+                              <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-all duration-500 z-10 ${formData.paymentMethod === method.id ? 'bg-luxury-gold border-luxury-gold' : 'border-gray-200'}`}>
                                 {formData.paymentMethod === method.id && <CheckCircle2 className="w-5 h-5 text-white" />}
                               </div>
                             </div>
@@ -375,8 +394,8 @@ const BookingFlow = () => {
                         </div>
 
                         <div className="flex gap-8">
-                          <button onClick={() => setStep(1)} className="px-14 h-20 bg-white border border-gray-100 rounded-3xl text-[10px] font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all">BACK</button>
-                          <GoldButton onClick={handleNextStep} className="flex-1 h-20 shadow-2xl flex items-center justify-center gap-4 text-[10px] tracking-[0.3em]">
+                          <button onClick={() => setStep(1)} className="px-14 h-20 bg-white border border-gray-100 rounded-[2rem] text-[11px] font-bold uppercase tracking-[0.4em] hover:bg-gray-50 transition-all text-gray-500 hover:text-luxury-black">BACK</button>
+                          <GoldButton onClick={handleNextStep} className="flex-1 h-20 shadow-2xl flex items-center justify-center gap-4 text-[11px] tracking-[0.3em] rounded-[2rem]">
                             CONTINUE TO VERIFICATION <ArrowRight className="w-4 h-4" />
                           </GoldButton>
                         </div>
@@ -386,18 +405,27 @@ const BookingFlow = () => {
                     {step === 3 && (
                       <div className="space-y-16">
                         <div className="space-y-6">
-                          <h1 className="text-5xl md:text-6xl font-serif font-bold text-luxury-black tracking-tight">Final Verification</h1>
-                          <p className="text-gray-400 font-medium text-lg italic">"Finalize your booking with the selected protocol."</p>
+                          <motion.div
+                            initial={{ opacity: 0, x: -20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            className="flex items-center gap-4 text-luxury-gold"
+                          >
+                            <div className="w-12 h-[2px] bg-luxury-gold" />
+                            <span className="text-[11px] font-bold uppercase tracking-[0.5em]">Phase 03</span>
+                          </motion.div>
+                          <h1 className="text-6xl md:text-7xl font-serif font-bold text-luxury-black tracking-tight leading-none">Final <span className="italic text-luxury-gold">Verification</span></h1>
+                          <p className="text-gray-500 font-medium text-xl italic max-w-xl border-l-4 border-luxury-gold/20 pl-6 py-2">"Finalize your booking with the selected protocol."</p>
                         </div>
 
                         {formData.paymentMethod === 'paypal' && (
                           <div className="space-y-10">
-                            <div className="bg-blue-50/50 border border-blue-100 p-10 rounded-[3rem] flex items-center gap-8">
-                              <div className="w-16 h-16 rounded-2xl bg-blue-500 text-white flex items-center justify-center shrink-0 shadow-lg shadow-blue-500/20">
+                            <div className="bg-blue-50/50 border border-blue-100 p-10 rounded-[3rem] flex items-center gap-8 relative overflow-hidden">
+                              <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 rounded-full blur-2xl" />
+                              <div className="w-16 h-16 rounded-2xl bg-blue-600 text-white flex items-center justify-center shrink-0 shadow-xl shadow-blue-600/20">
                                 <Wallet className="w-8 h-8" />
                               </div>
-                              <div className="space-y-1">
-                                <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest leading-none mb-1">Secure Digital Channel</p>
+                              <div className="space-y-1 relative z-10">
+                                <p className="text-[11px] font-bold text-blue-600 uppercase tracking-widest leading-none mb-1">Secure Digital Channel</p>
                                 <p className="text-sm text-blue-800 font-medium leading-relaxed italic">
                                   Your transaction is handled via PayPal Secure Tunnel. Confirmation is immediate upon success.
                                 </p>
@@ -437,24 +465,24 @@ const BookingFlow = () => {
                               </div>
                               <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
                                 <div className="space-y-2">
-                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Official Bank</p>
+                                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.4em]">Official Bank</p>
                                   <p className="text-lg font-bold text-luxury-black tracking-tight">{bankAccount?.bank_name || 'BEA - Sétif Branch'}</p>
                                 </div>
                                 <div className="space-y-2">
-                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Beneficiary</p>
+                                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.4em]">Beneficiary</p>
                                   <p className="text-lg font-bold text-luxury-black tracking-tight">{bankAccount?.account_holder || 'Hôtel Golden Hills Luxury Group'}</p>
                                 </div>
                                 <div className="md:col-span-2 space-y-2">
-                                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Corporate IBAN</p>
-                                  <div className="bg-gray-50 p-6 rounded-2xl border border-gray-100 flex items-center justify-between group">
+                                  <p className="text-[11px] font-bold text-gray-500 uppercase tracking-[0.4em]">Corporate IBAN</p>
+                                  <div className="bg-[#FDFBF7] p-8 rounded-2xl border border-gray-100 flex items-center justify-between group">
                                      <p className="text-sm font-mono font-bold text-luxury-gold break-all select-all">{bankAccount?.iban || 'DZ91 0020 0012 3456 7890 1234'}</p>
-                                     <button className="opacity-0 group-hover:opacity-100 transition-opacity text-[10px] font-bold text-luxury-gold uppercase tracking-widest">Copy</button>
+                                     <button className="opacity-0 group-hover:opacity-100 transition-opacity text-[11px] font-bold text-luxury-gold uppercase tracking-widest bg-white px-4 py-2 rounded-xl shadow-sm border border-luxury-gold/10">Copy</button>
                                   </div>
                                 </div>
                               </div>
 
-                              <div className="pt-10 border-t border-gray-50 space-y-8">
-                                <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-[0.4em]">Official Protocol Proof (Mandatory)</label>
+                              <div className="pt-10 border-t border-gray-100 space-y-8">
+                                <label className="block text-[11px] font-bold text-gray-500 uppercase tracking-[0.4em]">Official Protocol Proof (Mandatory)</label>
                                 <div className="relative group">
                                   <input 
                                     type="file" 
@@ -465,7 +493,7 @@ const BookingFlow = () => {
                                   />
                                   <label 
                                     htmlFor="proof-upload"
-                                    className={`w-full h-48 border-2 border-dashed rounded-[3rem] flex flex-col items-center justify-center gap-6 cursor-pointer transition-all duration-700 ${proofFile ? 'border-green-300 bg-green-50/30' : 'border-gray-200 hover:border-luxury-gold group-hover:bg-luxury-gold/5'}`}
+                                    className={`w-full h-56 border-2 border-dashed rounded-[3rem] flex flex-col items-center justify-center gap-6 cursor-pointer transition-all duration-700 ${proofFile ? 'border-green-300 bg-green-50/30' : 'border-gray-200 hover:border-luxury-gold group-hover:bg-luxury-gold/5 bg-gray-50/30'}`}
                                   >
                                     {proofFile ? (
                                       <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} className="flex flex-col items-center gap-4">
@@ -474,10 +502,12 @@ const BookingFlow = () => {
                                       </motion.div>
                                     ) : (
                                       <>
-                                        <Upload className="w-10 h-10 text-gray-200 group-hover:text-luxury-gold transition-colors" />
+                                        <div className="w-16 h-16 rounded-2xl bg-white shadow-sm flex items-center justify-center border border-gray-100 group-hover:border-luxury-gold/30 group-hover:scale-110 transition-all">
+                                          <Upload className="w-8 h-8 text-gray-300 group-hover:text-luxury-gold transition-colors" />
+                                        </div>
                                         <div className="text-center space-y-1">
-                                          <span className="text-sm font-bold text-gray-400 group-hover:text-luxury-black transition-colors">Dispatch Transfer Receipt</span>
-                                          <p className="text-[10px] text-gray-300 uppercase tracking-widest">Image or PDF format accepted</p>
+                                          <span className="text-sm font-bold text-gray-500 group-hover:text-luxury-black transition-colors">Dispatch Transfer Receipt</span>
+                                          <p className="text-[11px] text-gray-400 uppercase tracking-widest">Image or PDF format accepted</p>
                                         </div>
                                       </>
                                     )}
@@ -593,8 +623,8 @@ const BookingFlow = () => {
                     </motion.div>
 
                     <div className="space-y-8 relative z-10">
-                      <h2 className="text-6xl md:text-8xl font-serif font-medium text-luxury-black tracking-tighter leading-[0.9]">Presence <br /> <span className="italic text-luxury-gold">Secured</span></h2>
-                      <p className="text-gray-400 text-xl md:text-2xl font-medium max-w-2xl mx-auto italic leading-relaxed">
+                      <h2 className="text-7xl md:text-8xl font-serif font-medium text-luxury-black tracking-tighter leading-[0.9]">Presence <br /> <span className="italic text-luxury-gold">Secured</span></h2>
+                      <p className="text-gray-500 text-xl md:text-2xl font-medium max-w-2xl mx-auto italic leading-relaxed">
                         "Your arrival is highly anticipated, {formData.fullName.split(' ')[0]}. A master suite is currently being prepared to your exact specifications."
                       </p>
                       
@@ -627,8 +657,8 @@ const BookingFlow = () => {
                             <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Confirmation Sent</p>
                           </div>
                         </div>
-                        <p className="text-lg text-gray-500 leading-relaxed font-medium italic">
-                          "An official digital scroll has been dispatched to <strong>{formData.email}</strong>. It contains all the necessary rituals for your check-in and stay."
+                        <p className="text-lg text-gray-600 leading-relaxed font-medium italic">
+                          "An official digital scroll has been dispatched to <strong className="text-luxury-gold underline underline-offset-4">{formData.email}</strong>. It contains all the necessary rituals for your check-in and stay."
                         </p>
                       </div>
                     </div>

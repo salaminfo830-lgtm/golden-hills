@@ -128,6 +128,14 @@
     background-color: rgba(255, 255, 255, 0.8);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
+
+  .luxury-tile {
+    @apply bg-white border border-gray-100 rounded-[2.5rem] transition-all duration-500 hover:shadow-2xl hover:shadow-luxury-gold/10 hover:border-luxury-gold/30;
+  }
+
+  .gold-border-glow {
+    @apply border-luxury-gold/50 shadow-[0_0_20px_rgba(201,168,76,0.1)];
+  }
 }
 
 /* Custom Scrollbar */

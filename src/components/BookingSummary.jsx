@@ -17,15 +17,15 @@ const BookingSummary = ({ room, nights, guests, checkIn, checkOut, isMobileExpan
       {/* Mobile Collapsible Trigger */}
       <button 
         onClick={() => setIsMobileExpanded(!isMobileExpanded)}
-        className="lg:hidden w-full bg-white border border-luxury-gold/20 p-6 rounded-[2rem] flex justify-between items-center shadow-lg mb-4"
+        className="lg:hidden w-full bg-white border border-luxury-gold/20 p-6 rounded-[2rem] flex justify-between items-center shadow-2xl mb-4"
       >
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-xl overflow-hidden border border-luxury-gold/20">
+          <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-luxury-gold/20 shadow-lg">
             <img src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} className="w-full h-full object-cover" alt="Suite" />
           </div>
           <div className="text-left">
-            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Investment</p>
-            <p className="text-lg font-serif font-bold text-luxury-gold">{formatPrice(total)}</p>
+            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">Total Investment</p>
+            <p className="text-xl font-serif font-bold text-luxury-gold">{formatPrice(total)}</p>
           </div>
         </div>
         {isMobileExpanded ? <ChevronUp className="w-6 h-6 text-luxury-gold" /> : <ChevronDown className="w-6 h-6 text-luxury-gold" />}
@@ -41,42 +41,42 @@ const BookingSummary = ({ room, nights, guests, checkIn, checkOut, isMobileExpan
 
           <div className="space-y-10">
             <div>
-              <h3 className="text-3xl font-serif font-bold text-luxury-black mb-2">{room.type}</h3>
-              <div className="flex items-center gap-3 text-xs font-bold text-gray-400 uppercase tracking-[0.3em]">
-                <MapPin className="w-4 h-4 text-luxury-gold/50" /> Golden Hills • Setif, DZ
+              <h3 className="text-4xl font-serif font-bold text-luxury-black mb-3">{room.type}</h3>
+              <div className="flex items-center gap-3 text-[11px] font-bold text-gray-500 uppercase tracking-[0.3em]">
+                <MapPin className="w-4 h-4 text-luxury-gold/60" /> Golden Hills • Setif, DZ
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4 py-6 border-y border-gray-50">
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Check-In</p>
-                <p className="text-sm font-bold text-luxury-black">{checkIn}</p>
+            <div className="grid grid-cols-2 gap-6 py-8 border-y border-gray-100">
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Check-In</p>
+                <p className="text-[15px] font-bold text-luxury-black">{checkIn}</p>
               </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Check-Out</p>
-                <p className="text-sm font-bold text-luxury-black">{checkOut}</p>
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Check-Out</p>
+                <p className="text-[15px] font-bold text-luxury-black">{checkOut}</p>
               </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Guests</p>
-                <p className="text-sm font-bold text-luxury-black">{guests} Members</p>
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Guests</p>
+                <p className="text-[15px] font-bold text-luxury-black">{guests} Members</p>
               </div>
-              <div>
-                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Duration</p>
-                <p className="text-sm font-bold text-luxury-black">{nights} Evenings</p>
+              <div className="space-y-1">
+                <p className="text-[11px] font-bold text-gray-500 uppercase tracking-widest">Duration</p>
+                <p className="text-[15px] font-bold text-luxury-black">{nights} Evenings</p>
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400 font-medium italic underline underline-offset-4 decoration-luxury-gold/30">{formatPrice(room.price)} x {nights} nights</span>
+            <div className="space-y-5">
+              <div className="flex justify-between items-center text-[15px]">
+                <span className="text-gray-500 font-medium italic underline underline-offset-4 decoration-luxury-gold/30">{formatPrice(room.price)} x {nights} nights</span>
                 <span className="font-bold text-luxury-black">{formatPrice(basePrice)}</span>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400 font-medium flex items-center gap-2">Luxury Tax (10%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
+              <div className="flex justify-between items-center text-[15px]">
+                <span className="text-gray-500 font-medium flex items-center gap-2">Luxury Tax (10%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
                 <span className="font-bold text-luxury-black">{formatPrice(taxes)}</span>
               </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400 font-medium flex items-center gap-2">Gilded Service Protocol (5%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
+              <div className="flex justify-between items-center text-[15px]">
+                <span className="text-gray-500 font-medium flex items-center gap-2">Gilded Service Protocol (5%) <AlertCircle className="w-3.5 h-3.5 text-luxury-gold/40" /></span>
                 <span className="font-bold text-luxury-black">{formatPrice(serviceFee)}</span>
               </div>
 
@@ -103,11 +103,11 @@ const BookingSummary = ({ room, nights, guests, checkIn, checkOut, isMobileExpan
         </GlassCard>
 
         <div className="grid grid-cols-2 gap-4 px-6">
-          <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            <ShieldCheck className="w-5 h-5 text-luxury-gold/40" /> SSL SECURED
+          <div className="flex items-center gap-3 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+            <ShieldCheck className="w-5 h-5 text-luxury-gold/60" /> SSL SECURED
           </div>
-          <div className="flex items-center gap-3 text-[10px] font-bold text-gray-400 uppercase tracking-widest">
-            <Calendar className="w-5 h-5 text-luxury-gold/40" /> INSTANT CONFIRM
+          <div className="flex items-center gap-3 text-[11px] font-bold text-gray-500 uppercase tracking-widest">
+            <Calendar className="w-5 h-5 text-luxury-gold/60" /> INSTANT CONFIRM
           </div>
         </div>
       </div>
