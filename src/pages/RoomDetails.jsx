@@ -94,10 +94,11 @@ const RoomDetails = () => {
       const { data: roomData, error: roomError } = await supabase
         .from('Room')
         .select('*, amenities:Amenity(*)')
-        .eq('id', id)
+        .eq('id', isNaN(id) ? id : parseInt(id))
         .single();
 
       if (roomError || !roomData) {
+        console.error("Room fetch error:", roomError);
         navigate('/search');
         return;
       }

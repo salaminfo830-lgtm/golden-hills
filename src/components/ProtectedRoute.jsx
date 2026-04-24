@@ -71,16 +71,8 @@ const ProtectedRoute = ({ children, requiredRole, public: isPublic }) => {
     return <Navigate to="/login" replace state={{ from: window.location.pathname }} />;
   }
 
-  // If public route but user is logged in, redirect Admin/Staff to their panels
-  if (isPublic && profile) {
-    if (profile.role === 'admin') return <Navigate to="/admin" replace />;
-    if (profile.role === 'staff') {
-      if (profile.status === 'Pending Approval' || profile.status === 'Rejected') {
-        return <Navigate to="/status" replace />;
-      }
-      return <Navigate to="/staff" replace />;
-    }
-    // Guests can stay on public routes
+  // Allow all users (Guests, Admin, Staff) to stay on public routes
+  if (isPublic) {
     return children;
   }
 

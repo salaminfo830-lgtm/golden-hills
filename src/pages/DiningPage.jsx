@@ -194,7 +194,13 @@ const DiningPage = () => {
                        >
                          RESERVE A TABLE
                        </GoldButton>
-                       <button className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group">
+                       <button 
+                         onClick={() => {
+                           setSelectedVenue(venue);
+                           setShowBookingModal(true);
+                         }}
+                         className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-gray-400 hover:text-luxury-black transition-colors group"
+                       >
                           DISCOVERY MENU <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                        </button>
                     </div>
