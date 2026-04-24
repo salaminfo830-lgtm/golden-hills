@@ -91,11 +91,23 @@ const RoomDetails = () => {
         return;
       }
 
-      const { data: roomData, error: roomError } = await supabase
+      let { data: roomData, error: roomError } = await supabase
         .from('Room')
         .select('*, amenities:Amenity(*)')
         .eq('id', isNaN(id) ? id : parseInt(id))
         .single();
+
+      // Fallback if the relationship query fails (e.g., Prisma implicit M2M tables)
+      if (roomError) {
+        console.warn("Retrying fetch without amenities due to relationship error.");
+        const fallbackQuery = await supabase
+          .from('Room')
+          .select('*')
+          .eq('id', isNaN(id) ? id : parseInt(id))
+          .single();
+        roomData = fallbackQuery.data;
+        roomError = fallbackQuery.error;
+      }
 
       if (roomError || !roomData) {
         console.error("Room fetch error:", roomError);
