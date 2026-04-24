@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Plus, ChevronLeft, ChevronRight, User as UserIcon, Star, Loader2, X, Trash2 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
 import GlassCard from '../../components/GlassCard';
 import GoldButton from '../../components/GoldButton';

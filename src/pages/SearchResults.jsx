@@ -120,89 +120,85 @@ const SearchResults = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FDFBF7] selection:bg-luxury-gold selection:text-white">
-      {/* Search Header */}
-      <nav className="fixed top-0 w-full z-50 bg-white/95 backdrop-blur-2xl border-b border-luxury-gold/10 py-6">
-        <div className="container mx-auto px-6 md:px-8 flex flex-col xl:flex-row justify-between items-center gap-8">
-          <div className="flex items-center gap-8 w-full xl:w-auto justify-between xl:justify-start">
-            <Link to="/" className="p-3 hover:bg-gray-50 rounded-2xl transition-all border border-transparent hover:border-gray-100">
-              <ArrowLeft className="w-5 h-5 text-gray-400" />
+    <div className="min-h-screen bg-[#F5F5F7] font-apple selection:bg-luxury-gold selection:text-white">
+      {/* Top Search Banner (Booking.com style) */}
+      <div className="bg-[#050B18] pt-28 pb-8 relative z-20">
+        <div className="container mx-auto px-6 md:px-8">
+          <div className="flex items-center gap-4 mb-8">
+            <Link to="/" className="p-2 hover:bg-white/10 rounded-lg transition-all text-white">
+              <ArrowLeft className="w-5 h-5" />
             </Link>
-            <Logo className="scale-90" />
-            <div className="xl:hidden h-10 w-px bg-gray-100" />
+            <h1 className="text-2xl font-bold text-white tracking-tight">Search Sanctuaries</h1>
           </div>
-          
-          <div className="flex flex-col md:flex-row items-center gap-4 bg-gray-50/50 p-2 rounded-[2rem] w-full xl:w-auto border border-gray-100">
-            <div className="flex items-center gap-4 w-full md:w-auto bg-white px-6 py-4 rounded-2xl shadow-sm border border-gray-100">
-              <Calendar className="w-4 h-4 text-luxury-gold" />
-              <input 
-                type="date" 
-                value={checkIn}
-                onChange={(e) => handleSearchUpdate({ checkIn: e.target.value })}
-                className="bg-transparent text-xs font-bold uppercase tracking-widest outline-none cursor-pointer"
-              />
-              <span className="text-gray-300 mx-2">—</span>
-              <input 
-                type="date" 
-                value={checkOut}
-                onChange={(e) => handleSearchUpdate({ checkOut: e.target.value })}
-                className="bg-transparent text-xs font-bold uppercase tracking-widest outline-none cursor-pointer"
-              />
+
+          <div className="bg-[#C9A84C] p-1.5 rounded-2xl flex flex-col md:flex-row gap-1.5 shadow-2xl">
+            {/* Dates */}
+            <div className="flex-1 bg-white rounded-xl px-4 py-3 flex items-center gap-3">
+              <Calendar className="w-5 h-5 text-gray-400" />
+              <div className="flex-1 flex items-center">
+                <input 
+                  type="date" 
+                  value={checkIn}
+                  onChange={(e) => handleSearchUpdate({ checkIn: e.target.value })}
+                  className="bg-transparent text-sm font-bold text-[#050B18] outline-none cursor-pointer w-full"
+                />
+                <span className="text-gray-300 mx-2">—</span>
+                <input 
+                  type="date" 
+                  value={checkOut}
+                  onChange={(e) => handleSearchUpdate({ checkOut: e.target.value })}
+                  className="bg-transparent text-sm font-bold text-[#050B18] outline-none cursor-pointer w-full"
+                />
+              </div>
             </div>
-            
-            <div className="flex items-center gap-4 w-full md:w-auto bg-white px-6 py-4 rounded-2xl shadow-sm border border-gray-100">
-              <Users className="w-4 h-4 text-luxury-gold" />
+
+            {/* Guests */}
+            <div className="md:w-64 bg-white rounded-xl px-4 py-3 flex items-center gap-3">
+              <Users className="w-5 h-5 text-gray-400" />
               <select 
                 value={guests}
                 onChange={(e) => handleSearchUpdate({ guests: e.target.value })}
-                className="bg-transparent text-xs font-bold uppercase tracking-widest outline-none cursor-pointer appearance-none"
+                className="bg-transparent text-sm font-bold text-[#050B18] outline-none cursor-pointer w-full appearance-none"
               >
                 {[1,2,3,4,5,6].map(n => <option key={n} value={n}>{n} Guests</option>)}
               </select>
             </div>
 
+            {/* Search Button */}
             <button 
               onClick={fetchAvailableRooms}
-              className="h-14 w-full md:w-14 bg-luxury-gold text-white rounded-2xl hover:scale-105 transition-all shadow-lg shadow-luxury-gold/20 flex items-center justify-center shrink-0"
+              className="bg-[#050B18] text-white px-8 py-3 rounded-xl font-bold hover:bg-black transition-colors flex items-center justify-center gap-2"
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-5 h-5" /> Search
             </button>
           </div>
         </div>
-      </nav>
+      </div>
 
-      <div className="container mx-auto px-6 md:px-8 pt-64 xl:pt-48 pb-20">
-        <div className="flex flex-col lg:flex-row gap-12 xl:gap-20">
+      <div className="container mx-auto px-6 md:px-8 py-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           
-          {/* Filters Sidebar */}
-          <aside className="lg:w-80 space-y-12 shrink-0">
-            <div className="lg:sticky lg:top-48">
-              <div className="space-y-12">
-                <div>
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold" /> Suite Selection
-                  </h3>
-                  <div className="flex lg:flex-col gap-3 overflow-x-auto lg:overflow-visible no-scrollbar pb-4 lg:pb-0">
-                    {['All', 'Queen Room', 'King Suite', 'Multi-Bedroom Suite'].map((type) => (
-                      <button 
-                        key={type}
-                        onClick={() => handleSearchUpdate({ type })}
-                        className={`flex items-center justify-between px-6 py-5 rounded-2xl transition-all border-2 whitespace-nowrap min-w-max lg:min-w-0 ${
-                          typeFilter === type ? 'bg-white border-luxury-gold text-luxury-gold shadow-xl shadow-luxury-gold/5' : 'bg-white/50 border-gray-100 text-gray-500 hover:border-luxury-gold/30'
-                        }`}
-                      >
-                        <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{type}</span>
-                        {typeFilter === type && <Sparkles className="w-4 h-4 hidden lg:block" />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
+          {/* Left Sidebar (Filters) */}
+          <aside className="lg:w-[320px] shrink-0 space-y-4">
+            {/* Map Placeholder */}
+            <div className="bg-white rounded-2xl overflow-hidden border border-gray-200 relative h-32 cursor-pointer group flex items-center justify-center">
+               <img src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&q=80&w=800" className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" />
+               <div className="absolute inset-0 bg-blue-900/20" />
+               <button className="relative z-10 bg-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg flex items-center gap-2 hover:bg-gray-50">
+                 <MapPin className="w-4 h-4 text-[#C9A84C]" /> Show on map
+               </button>
+            </div>
 
+            <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+              <div className="p-4 border-b border-gray-100 bg-gray-50">
+                <h3 className="font-bold text-[#050B18]">Filter by:</h3>
+              </div>
+
+              <div className="p-6 space-y-8">
+                {/* Your Budget */}
                 <div>
-                  <h3 className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400 mb-8 flex items-center gap-3">
-                    <div className="w-1.5 h-1.5 rounded-full bg-luxury-gold" /> Price Boundary
-                  </h3>
-                  <div className="px-2 space-y-6">
+                  <h4 className="font-bold text-sm text-[#050B18] mb-4">Your budget (per night)</h4>
+                  <div className="space-y-4">
                     <input 
                       type="range" 
                       min="10000" 
@@ -210,176 +206,195 @@ const SearchResults = () => {
                       step="5000"
                       value={maxPrice}
                       onChange={(e) => handleSearchUpdate({ maxPrice: e.target.value })}
-                      className="w-full accent-luxury-gold h-1 bg-gray-200 rounded-lg appearance-none cursor-pointer" 
+                      className="w-full accent-[#C9A84C] h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer" 
                     />
-                    <div className="flex justify-between items-center">
-                      <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Up to</span>
-                      <span className="text-sm font-bold text-luxury-gold underline decoration-2 underline-offset-8">{formatPrice(maxPrice)}</span>
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-gray-500">DZD 10,000</span>
+                      <span className="font-bold text-[#C9A84C]">{formatPrice(maxPrice)}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="hidden lg:block pt-8">
-                  <GlassCard className="bg-luxury-black text-white p-10 border-0 relative overflow-hidden group rounded-[3rem]">
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-luxury-gold/20 rounded-full translate-x-20 -translate-y-20 blur-3xl" />
-                    <div className="relative z-10 space-y-6">
-                      <ShieldCheck className="text-luxury-gold w-10 h-10" />
-                      <div>
-                        <h4 className="text-2xl font-serif font-bold mb-3">Gilded Member</h4>
-                        <p className="text-white/40 text-xs leading-relaxed font-medium">Unlock exclusive sanctuaries and 15% preferred pricing.</p>
-                      </div>
-                      <button 
-                        onClick={() => navigate('/register')}
-                        className="w-full py-5 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-luxury-gold hover:border-luxury-gold transition-all"
-                      >
-                        ENROLL NOW
-                      </button>
-                    </div>
-                  </GlassCard>
+                <hr className="border-gray-100" />
+
+                {/* Popular Filters */}
+                <div>
+                  <h4 className="font-bold text-sm text-[#050B18] mb-4">Popular filters</h4>
+                  <div className="space-y-3">
+                    {['Breakfast Included', 'Free Cancellation', 'No Prepayment'].map((filter, i) => (
+                      <label key={i} className="flex items-center gap-3 cursor-pointer group">
+                        <div className="w-5 h-5 rounded border border-gray-300 group-hover:border-[#C9A84C] flex items-center justify-center">
+                          {i === 1 && <div className="w-3 h-3 bg-[#C9A84C] rounded-sm" />}
+                        </div>
+                        <span className="text-sm text-gray-700">{filter}</span>
+                      </label>
+                    ))}
+                  </div>
                 </div>
+
+                <hr className="border-gray-100" />
+
+                {/* Room Type */}
+                <div>
+                  <h4 className="font-bold text-sm text-[#050B18] mb-4">Room Type</h4>
+                  <div className="space-y-3">
+                    {['All', 'Queen Room', 'King Suite', 'Multi-Bedroom Suite'].map((type) => (
+                      <label key={type} className="flex items-center gap-3 cursor-pointer group">
+                        <input 
+                          type="radio" 
+                          name="roomType"
+                          checked={typeFilter === type}
+                          onChange={() => handleSearchUpdate({ type })}
+                          className="hidden"
+                        />
+                        <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${typeFilter === type ? 'border-[#C9A84C]' : 'border-gray-300 group-hover:border-[#C9A84C]'}`}>
+                          {typeFilter === type && <div className="w-2.5 h-2.5 bg-[#C9A84C] rounded-full" />}
+                        </div>
+                        <span className="text-sm text-gray-700">{type}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+
               </div>
             </div>
           </aside>
 
-          {/* Results Grid */}
-          <main className="flex-1 space-y-12">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 border-b border-gray-100 pb-10">
-              <div>
-                <h2 className="text-3xl md:text-5xl font-serif font-medium text-luxury-black mb-4 tracking-tight">Available Sanctuaries</h2>
-                <p className="text-gray-400 font-medium text-lg italic">Curating {rooms.length} exclusive experiences for your stay.</p>
-              </div>
-              <div className="flex items-center gap-6 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400 bg-white px-8 py-4 rounded-2xl border border-gray-100 shadow-sm w-full md:w-auto">
-                <SlidersHorizontal className="w-4 h-4 text-luxury-gold" />
-                <span className="h-4 w-px bg-gray-100" />
+          {/* Main Content (Results List) */}
+          <main className="flex-1 space-y-6">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+              <h2 className="text-2xl font-bold text-[#050B18]">
+                Setif: {rooms.length} properties found
+              </h2>
+              
+              <div className="flex items-center gap-2 bg-white rounded-xl border border-gray-200 p-1 shadow-sm">
+                <span className="pl-3 pr-2 text-sm text-gray-500 font-medium">Sort by:</span>
                 <select 
                   value={sortBy}
                   onChange={(e) => handleSearchUpdate({ sortBy: e.target.value })}
-                  className="bg-transparent outline-none cursor-pointer text-luxury-black hover:text-luxury-gold transition-colors appearance-none"
+                  className="bg-transparent text-sm font-bold text-[#050B18] outline-none cursor-pointer appearance-none py-2 pr-8 pl-2"
                 >
-                  <option value="price-low">Price: Low to High</option>
-                  <option value="price-high">Price: High to Low</option>
+                  <option value="price-low">Price (lowest first)</option>
+                  <option value="price-high">Price (highest first)</option>
                   <option value="capacity">Highest Capacity</option>
                 </select>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 gap-12">
+            <div className="space-y-4">
               {loading ? (
                 [1, 2, 3].map(i => (
-                  <div key={i} className="h-[450px] bg-white rounded-[3rem] animate-pulse border border-gray-100" />
+                  <div key={i} className="h-64 bg-white rounded-2xl animate-pulse border border-gray-200" />
                 ))
               ) : (
                 <AnimatePresence mode="popLayout">
                   {rooms.map((room, i) => (
                     <motion.div
                       layout
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.95 }}
-                      transition={{ delay: i * 0.05 }}
+                      transition={{ duration: 0.2 }}
                       key={room.id}
+                      className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-lg transition-all flex flex-col md:flex-row"
                     >
-                      <GlassCard 
-                        onClick={() => navigate(`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}
-                        className="group p-0 bg-white border-gray-100 overflow-hidden hover:shadow-[0_50px_100px_-30px_rgba(212,175,55,0.15)] hover:border-luxury-gold/30 transition-all duration-1000 cursor-pointer rounded-[3rem]"
-                      >
-                        <div className="flex flex-col lg:flex-row min-h-[450px]">
-                          <div className="lg:w-[45%] relative overflow-hidden h-[300px] lg:h-auto">
-                            <img 
-                              src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} 
-                              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[3s] ease-out" 
-                              alt={room.type} 
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-luxury-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000" />
-                            
-                            <div className="absolute top-8 left-8 flex flex-col gap-3">
-                              <div className="px-6 py-2 bg-white/90 backdrop-blur-md rounded-full text-[10px] font-bold uppercase tracking-[0.3em] text-luxury-gold border border-luxury-gold/10">
-                                {room.type}
-                              </div>
-                              {i === 0 && (
-                                <div className="px-6 py-2 bg-luxury-gold text-white rounded-full text-[10px] font-bold uppercase tracking-[0.3em] shadow-lg shadow-luxury-gold/30 animate-pulse">
-                                  Most Coveted
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="absolute bottom-8 left-8 flex items-center gap-1.5 text-luxury-gold">
-                               {[1,2,3,4,5].map(s => <Star key={s} className="w-3.5 h-3.5 fill-current" />)}
-                            </div>
+                      {/* Left Image */}
+                      <div className="md:w-72 h-64 md:h-auto relative shrink-0 cursor-pointer" onClick={() => navigate(`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}>
+                        <img 
+                          src={room.image_url || 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?auto=format&fit=crop&q=80&w=2070'} 
+                          className="w-full h-full object-cover" 
+                          alt={room.type} 
+                        />
+                        {i === 0 && (
+                          <div className="absolute top-4 left-4 bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded">
+                            Popular Choice
                           </div>
-                          
-                          <div className="flex-1 p-10 lg:p-16 flex flex-col justify-between">
-                            <div className="space-y-8">
-                              <div className="flex flex-col md:flex-row justify-between items-start gap-6">
-                                <div>
-                                  <h3 className="text-3xl lg:text-4xl font-serif font-bold text-luxury-black mb-4 leading-tight">{room.type}</h3>
-                                  <div className="flex flex-wrap gap-8 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
-                                    <span className="flex items-center gap-3"><Users className="w-4 h-4 text-luxury-gold" /> {room.capacity} Guests</span>
-                                    <span className="flex items-center gap-3"><Wind className="w-4 h-4 text-luxury-gold" /> Climate Ritual</span>
-                                    <span className="flex items-center gap-3 text-green-600 font-extrabold italic">Flexible Protocol</span>
+                        )}
+                      </div>
+                      
+                      {/* Middle & Right Content Wrapper */}
+                      <div className="p-4 md:p-5 flex-1 flex flex-col sm:flex-row gap-6">
+                         
+                         {/* Middle Details */}
+                         <div className="flex-1 space-y-3 cursor-pointer" onClick={() => navigate(`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`)}>
+                            <div className="flex justify-between items-start">
+                               <div>
+                                  <div className="flex items-center gap-1 mb-1">
+                                    {[1,2,3,4,5].map(s => <Star key={s} className="w-3 h-3 fill-[#C9A84C] text-[#C9A84C]" />)}
                                   </div>
-                                </div>
-                                <div className="text-left md:text-right">
-                                  <p className="text-3xl lg:text-4xl font-serif font-bold text-luxury-gold mb-1">{formatPrice(room.price)}</p>
-                                  <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-gray-400">Per Evening</p>
-                                </div>
-                              </div>
-
-                              <p className="text-gray-500 text-lg leading-relaxed font-medium line-clamp-3 italic">
-                                "{room.description || 'Experience a sanctuary where timeless Algerian elegance meets modern refinement. A masterpiece of hospitality designed for the discerning traveler.'}"
-                              </p>
-
-                              <div className="inline-flex items-center gap-4 px-6 py-3 bg-orange-50 border border-orange-100 rounded-2xl text-orange-600 text-[10px] font-bold uppercase tracking-[0.2em]">
-                                 <AlertCircle className="w-4 h-4 animate-pulse" /> Highly Coveted: Only {Math.floor(Math.random() * 2) + 1} remaining
-                              </div>
+                                  <h3 className="text-xl font-bold text-[#006CE4] hover:text-[#004CB8] underline-offset-4">{room.type}</h3>
+                                  <div className="flex items-center gap-1.5 text-xs text-blue-600 mt-1">
+                                     <span className="font-medium underline decoration-dotted">Setif City Center</span>
+                                     <span className="text-gray-500">• 1.2 km from center</span>
+                                  </div>
+                               </div>
                             </div>
 
-                            <div className="mt-12 pt-10 border-t border-gray-50 flex flex-wrap items-center justify-between gap-8">
-                              <div className="flex gap-4">
-                                {[Coffee, Waves, Wifi].map((Icon, idx) => (
-                                  <div key={idx} className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center text-luxury-gold border border-gray-100 hover:bg-luxury-gold hover:text-white transition-all duration-500">
-                                    <Icon className="w-5 h-5" />
-                                  </div>
-                                ))}
-                              </div>
-                              <GoldButton 
-                                className="w-full sm:w-auto px-16 py-6 text-xs shadow-2xl"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  navigate(`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`);
-                                }}
-                              >
-                                ENTER SANCTUARY
-                              </GoldButton>
+                            <div className="text-xs text-gray-700 bg-gray-50 p-2 rounded-lg inline-block border border-gray-100">
+                               <p className="font-bold mb-1">{room.capacity} Guests • Entire Suite</p>
+                               <p>1 extra-large double bed • Private bathroom • Air conditioning</p>
                             </div>
-                          </div>
-                        </div>
-                      </GlassCard>
+
+                            <div className="space-y-1">
+                               <p className="text-xs font-bold text-green-700">Free cancellation</p>
+                               <p className="text-xs text-green-700">You can cancel later, so lock in this great price today!</p>
+                               {i % 2 === 0 && (
+                                  <p className="text-xs font-bold text-red-600 mt-1">Only {Math.floor(Math.random() * 3) + 1} left at this price on our site</p>
+                               )}
+                            </div>
+                         </div>
+
+                         {/* Right Pricing */}
+                         <div className="sm:w-48 flex flex-col justify-between sm:items-end border-t sm:border-t-0 sm:border-l border-gray-100 pt-4 sm:pt-0 sm:pl-4">
+                            <div className="flex flex-row sm:flex-col justify-between sm:justify-start sm:items-end w-full gap-2">
+                               <div className="flex items-center gap-2 bg-[#003B95] text-white p-1 rounded-lg">
+                                  <div className="px-2 font-bold text-sm">9.4</div>
+                                  <div className="pr-2 text-xs flex flex-col leading-tight">
+                                     <span>Superb</span>
+                                     <span className="font-normal text-[10px] text-white/80">142 reviews</span>
+                                  </div>
+                               </div>
+                               
+                               <div className="text-right mt-2">
+                                  <p className="text-xs text-gray-500 mb-0.5">1 night, {guests} adults</p>
+                                  <div className="flex items-center justify-end gap-2">
+                                     <span className="text-sm text-red-600 line-through">{formatPrice(room.price * 1.2)}</span>
+                                     <span className="text-xl font-bold text-[#050B18]">{formatPrice(room.price)}</span>
+                                  </div>
+                                  <p className="text-xs text-gray-500 mt-1">+DZD 2,000 taxes and charges</p>
+                               </div>
+                            </div>
+
+                            <button 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                navigate(`/room/${room.id}?checkIn=${checkIn}&checkOut=${checkOut}&guests=${guests}`);
+                              }}
+                              className="w-full mt-4 bg-[#006CE4] hover:bg-[#004CB8] text-white py-2.5 px-4 rounded font-bold text-sm transition-colors shadow-sm"
+                            >
+                              See availability <ChevronRight className="w-4 h-4 inline" />
+                            </button>
+                         </div>
+                      </div>
                     </motion.div>
                   ))}
                 </AnimatePresence>
               )}
               
               {!loading && rooms.length === 0 && (
-                <motion.div 
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  className="py-40 text-center space-y-10"
-                >
-                  <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center mx-auto border border-gray-100">
-                    <Search className="w-12 h-12 text-gray-200" />
+                <div className="bg-white p-12 rounded-2xl border border-gray-200 text-center space-y-4">
+                  <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <Search className="w-8 h-8 text-gray-300" />
                   </div>
-                  <div className="space-y-4">
-                    <h3 className="text-4xl font-serif font-bold text-luxury-black tracking-tight">No Sanctuaries Available</h3>
-                    <p className="text-gray-400 max-w-lg mx-auto text-lg italic font-medium">All our exclusive suites are currently reserved for these dates. Please explore alternative dates for your stay.</p>
-                  </div>
+                  <h3 className="text-xl font-bold text-[#050B18]">No properties found</h3>
+                  <p className="text-gray-500 text-sm">Try adjusting your filters or search dates.</p>
                   <button 
                     onClick={() => handleSearchUpdate({ type: 'All', maxPrice: '200000' })}
-                    className="text-luxury-gold font-bold uppercase text-[10px] tracking-[0.5em] border-b-2 border-luxury-gold pb-3 hover:text-luxury-black hover:border-luxury-black transition-all"
+                    className="mt-4 px-6 py-2 bg-[#006CE4] text-white rounded font-bold text-sm"
                   >
-                    RESET SEARCH PROTOCOLS
+                    Clear all filters
                   </button>
-                </motion.div>
+                </div>
               )}
             </div>
           </main>
